@@ -4,6 +4,8 @@
     "@typescript-eslint/parser": "^6.2.1",
     "css-loader": "^6.8.1",
     "eslint": "^8.46.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
     "style-loader": "^3.3.3",
     "typescript": "^5.1.6",
     "webpack": "^5.88.2",
@@ -13,5 +15,18 @@
   "dependencies": {
     "sass": "^1.64.2",
     "sass-loader": "^13.3.2"
+  },
+  "scripts": {
+    "prepare": "husky install" ,
+    "lint": "eslint --debug src/",
+    "lint:write": "eslint --debug src/ --fix"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.(ts)": ["npm run lint:write", "git add"]
   }
 }
