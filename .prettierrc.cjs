@@ -10,5 +10,4 @@ module.exports = {
   trailingComma: 'all',
   singleQuote: true,
   useTabs: false,
-  objectCurlyNewline: false,
 };
