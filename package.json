@@ -29,7 +29,9 @@
   "scripts": {
     "prepare": "husky install",
     "lint": "eslint src/",
-    "lint:write": "eslint src/ --fix"
+    "lint:write": "eslint src/ --fix",
+    "prettier:format": "npx prettier . --write",
+    "prettier:check": "npx prettier . --check"
   },
   "husky": {
     "hooks": {
