@@ -1,12 +1,66 @@
-CourseStore powered by commercetools, vanilla ts, webpack, eslint recommended config.
-This is a shop, where you can buy courses.
-Jira:
-https://tamarafedanova.atlassian.net/jira/software/projects/KAN/boards/1
-Figma:
-https://www.figma.com/file/HLj8DILrDeAsb5pXJYvkGF/eCommerce?type=design&node-id=0-1&mode=design&t=CnX1wQyzrh0LVkMb-0
+# CourseStore
 
-Scripts:
-  npx jest ./folder/filename.ext - прогнать тесты из указанного файла
-  npx lint-staged - запускается автоматически при комите, прерывает комит, если найдены ошибки по линту.
-  npx webpack - сборка
-  npx webpack serve - запуск девсервака
+> CourseStore is a SPA (Single Page Application) that allows you to purchase educational courses
+
+Features:
+
+- Sign-in / Sign-up
+- Product list
+- Product search
+- Cart
+
+## Scripts
+
+### Start dev server
+
+```bash
+# Start dev server on http://localhost:8080/
+npm start
+```
+
+### Build
+
+```bash
+# Production build
+npx run build
+```
+
+### Lint
+
+```bash
+# Show lint errors and warnings
+npm run lint
+
+# Lint and apply auto-fixes
+npm run lint:write
+
+```
+
+### Tests
+
+```bash
+npm test
+```
+
+## Tech. stack
+
+CourseStore powered by `commercetools` `API` and vanilla `TypeScript`
+
+#### Bundler
+
+- `webpack`
+
+#### Linter
+
+- `ESLint` with `eslint:recommended` and `plugin:@typescript-eslint/recommended` rule sets
+
+#### Testing
+
+- `Jest`
+
+## Project managment
+[Jira link](https://tamarafedanova.atlassian.net/jira/software/projects/KAN/boards/1)
+
+## Design
+
+[Figma link](https://www.figma.com/file/HLj8DILrDeAsb5pXJYvkGF/eCommerce?type=design&node-id=0-1&mode=design&t=CnX1wQyzrh0LVkMb-0)
