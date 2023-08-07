@@ -22,7 +22,7 @@ npm start
 
 ```bash
 # Production build
-npx run build
+npm run build
 ```
 
 ### Lint
