@@ -28,6 +28,8 @@
   },
   "scripts": {
     "prepare": "husky install",
+    "start": "webpack serve",
+    "build": "webpack",
     "lint": "eslint src/",
     "lint:write": "eslint src/ --fix",
     "prettier:format": "npx prettier . --write",
