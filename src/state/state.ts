@@ -15,7 +15,7 @@ export class State {
     // empty
   }
 
-  static getInstance() {
+  static getInstance(): State {
     return this.instanceDataState;
   }
 
@@ -34,7 +34,7 @@ export class State {
   public subscribe<T extends AppState, U extends StateKeys>(
     nameEvent: U,
     listenerMethod: (param: T[U]) => void,
-  ) {
+  ): void {
     let listListeners = this.listeners.get(nameEvent) as Set<(param: T[U]) => void> | undefined;
     if (!listListeners) {
       listListeners = new Set<(param: T[U]) => void>();
@@ -46,14 +46,14 @@ export class State {
   public unsubscribe<T extends AppState, U extends StateKeys>(
     nameEvent: U,
     listenerMethod: (param: T[U]) => void,
-  ) {
+  ): void {
     const listListeners = this.listeners.get(nameEvent) as Set<(param: T[U]) => void> | undefined;
     if (listListeners) {
       listListeners.delete(listenerMethod);
     }
   }
 
-  private notify<T extends AppState, U extends StateKeys>(nameEvent: U, params: T[U]) {
+  private notify<T extends AppState, U extends StateKeys>(nameEvent: U, params: T[U]): void {
     const listListeners = this.listeners.get(nameEvent);
     if (listListeners) {
       listListeners.forEach((listener) => listener(params));
