@@ -40,6 +40,7 @@ module.exports = (env) => {
       ],
     },
     devServer: {
+      historyApiFallback: true, //npx webpack serve --history-api-fallback
       static: {
         directory: path.join(__dirname, 'dist'),
       },
