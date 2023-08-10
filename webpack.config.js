@@ -18,7 +18,7 @@ module.exports = (env) => {
         template: path.join(__dirname, 'src', 'index.html'),
         filename: 'index.html',
       }),
-      new FaviconsWebpackPlugin(path.join(__dirname, './src/assets/favicon.ico')), //'src', 'assets',
+      new FaviconsWebpackPlugin(path.join(__dirname, './src/assets/favicon.svg')), //'src', 'assets',
     ],
     module: {
       rules: [
