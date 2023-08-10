@@ -53,6 +53,10 @@ export class State {
     }
   }
 
+  public static reset(): void {
+    this.instanceDataState = new State();
+  }
+
   private notify<T extends AppState, U extends StateKeys>(nameEvent: U, params: T[U]): void {
     const listListeners = this.listeners.get(nameEvent);
     if (listListeners) {
