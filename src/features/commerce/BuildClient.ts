@@ -3,8 +3,7 @@ import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { createApiBuilderFromCtpClient, ApiRoot } from '@commercetools/platform-sdk';
 import {
   ClientBuilder,
-  // Import middlewares
-  type AuthMiddlewareOptions, // Required for auth
+  type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
@@ -60,5 +59,21 @@ export default class EcommerceClient {
       .categories()
       .get()
       .execute();
+  }
+
+  public static async getProducts() {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .products()
+      .get()
+      .execute();
+  }
+
+  public static async getProductsFromCategory(categoryId: string) {
+    const prods = await EcommerceClient.getProducts();
+    return prods.body.results.filter((prod) => {
+      const prodCats = prod.masterData.current.categories.map((item) => item.id);
+      return prodCats.includes(categoryId);
+    });
   }
 }
