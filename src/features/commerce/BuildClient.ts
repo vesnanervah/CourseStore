@@ -25,7 +25,7 @@ export default class EcommerceClient {
     host: CUSTOMER_API_CREDS.API_Host,
     fetch,
   };
-  public static stockAuth() {
+  public static stockRootPrepare() {
     const builder = this.clientBuilder
       .withClientCredentialsFlow(this.authOptions)
       .withHttpMiddleware(this.httpMiddlewareOptions)
@@ -34,7 +34,7 @@ export default class EcommerceClient {
     this.apiRoot = createApiBuilderFromCtpClient(builder);
   }
 
-  public static passwordAuth(email: string, password: string) {
+  public static passwordRootPrepare(email: string, password: string) {
     const passwordAuthOptions: PasswordAuthMiddlewareOptions = {
       ...this.authOptions,
       credentials: {
@@ -75,5 +75,15 @@ export default class EcommerceClient {
       const prodCats = prod.masterData.current.categories.map((item) => item.id);
       return prodCats.includes(categoryId);
     });
+  }
+
+  public static async login(email: string, password: string) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .login()
+      .post({
+        body: { email, password },
+      });
   }
 }
