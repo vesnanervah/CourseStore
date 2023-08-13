@@ -33,4 +33,8 @@ export default class BaseTxtInp extends BaseView {
   failValidation(): void {
     this.validElem.classList.add('validation-failed');
   }
+
+  getTypedValue(): string {
+    return this.inpElem.value;
+  }
 }
