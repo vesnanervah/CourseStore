@@ -4,7 +4,6 @@ export default class BaseTxtInp extends BaseView {
   private labelElem: HTMLSpanElement;
   private inpElem: HTMLInputElement;
   private validElem: HTMLSpanElement;
-
   constructor() {
     super();
     this.htmlElement = document.createElement('div');
@@ -32,6 +31,20 @@ export default class BaseTxtInp extends BaseView {
 
   failValidation(): void {
     this.validElem.classList.add('validation-failed');
+  }
+
+  resetValidation(): void {
+    this.validElem.classList.remove('validation-failed');
+  }
+
+  validateInput(validation: (target: string) => boolean): void {
+    this.inpElem.addEventListener('keyup', () => {
+      if (validation(this.inpElem.value)) {
+        this.resetValidation();
+      } else {
+        this.failValidation();
+      }
+    });
   }
 
   getTypedValue(): string {

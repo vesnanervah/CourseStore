@@ -59,12 +59,24 @@ export default class LoginView extends BaseView {
     this.passwordField.failValidation();
   }
 
+  private resetValidationError(): void {
+    this.validationMsg.classList.add('hidden');
+    this.mailField.resetValidation();
+    this.passwordField.resetValidation();
+  }
+
   private async handleLoginClick() {
     try {
       await Auth.loggin(this.mailField.getTypedValue(), this.passwordField.getTypedValue());
+      this.resetValidationError();
+      //  TODO: replace alert with real redirect
       alert('Successfully logged in');
     } catch {
       this.throwValidationError();
     }
   }
+  /*
+  private mailValidation(): void {
+
+  }*/
 }

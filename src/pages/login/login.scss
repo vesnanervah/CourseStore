@@ -2,6 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 30px;
   padding: 10% 0px;
   background-color: #f3f3f3;
   font-family: 'Inter', sans-serif;
@@ -16,7 +17,12 @@
     gap: 14px;
   }
   .login__stripe {
-    display: none;
+    display: inline-block;
+    height: 272px;
+    background-color: black;
+    border-radius: 6px;
+    width: 8px;
+    align-self: flex-start;
   }
   .login__or {
     color: #1e1e1e;
