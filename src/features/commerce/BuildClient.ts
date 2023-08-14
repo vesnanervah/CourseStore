@@ -1,12 +1,14 @@
 import fetch from 'node-fetch';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { createApiBuilderFromCtpClient, ApiRoot } from '@commercetools/platform-sdk';
+
 import {
   ClientBuilder,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
+import { RegisterBody } from '../../types/reg';
 
 export default class EcommerceClient {
   private static clientBuilder = new ClientBuilder();
@@ -84,6 +86,18 @@ export default class EcommerceClient {
       .login()
       .post({
         body: { email, password },
-      });
+      })
+      .execute();
+  }
+
+  public static async registerUser(body: RegisterBody) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .signup()
+      .post({
+        body,
+      })
+      .execute();
   }
 }

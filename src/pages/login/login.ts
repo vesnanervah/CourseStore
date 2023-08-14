@@ -93,7 +93,7 @@ export default class LoginView extends BaseView {
   }
 
   private passwordValidation(): void {
-    this.passwordField.validateInput((target) => target.length > 6);
+    this.passwordField.validateInput((target) => target.length > 3);
   }
 
   private checkValidStatus(): boolean {

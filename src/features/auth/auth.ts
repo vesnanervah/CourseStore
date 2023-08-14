@@ -22,7 +22,7 @@ export default class Auth {
 
   public static async loggin(mail: string, password: string) {
     EcommerceClient.passwordRootPrepare(mail, password);
-    const resp = await (await EcommerceClient.login(mail, password)).execute();
+    const resp = await EcommerceClient.login(mail, password);
     if (resp.statusCode === 200) {
       Auth.password = password;
       Auth.mail = mail;
