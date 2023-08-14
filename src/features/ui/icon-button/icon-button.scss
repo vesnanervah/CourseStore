@@ -1,0 +1,16 @@
+.icon-btn {
+  padding: 0;
+  border: none;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.icon-btn__icon {
+  display: block;
+  color: var(--color-button-text);
+
+  svg {
+    display: block;
+  }
+}

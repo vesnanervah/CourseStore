@@ -1,0 +1,42 @@
+@use '../../../style/abstracts/constants' as vars;
+
+$gap: 1.25rem;
+
+.app-header {
+  color: var(--color-button-text);
+  background-color: var(--color-dark);
+}
+
+.app-header__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $gap;
+  height: 44px;
+}
+
+.app-header__user-buttons {
+  display: flex;
+  gap: $gap;
+
+  @media (max-width: vars.$tablet-width) {
+    flex-grow: 1;
+    justify-content: flex-end;
+  }
+}
+
+.app-header__search {
+  .icon {
+    color: var(--color-text-primary);
+  }
+
+  @media (max-width: vars.$tablet-width) {
+    display: none;
+  }
+}
+
+.app-header__search-toggle {
+  @media (min-width: vars.$tablet-width) {
+    display: none;
+  }
+}
