@@ -1,10 +1,11 @@
+import './search-field.scss';
 import { BaseView } from '../../base-view';
 import { TextField } from '../../text-field';
 import { Icon } from '../../icon';
 import { IconButton } from '../../icon-button';
 import searchIcon from '../../../../assets/images/icons/search.svg';
 
-export class SearchField extends BaseView {
+export class SearchField extends BaseView<HTMLElement> {
   constructor() {
     super();
 
@@ -12,7 +13,8 @@ export class SearchField extends BaseView {
   }
 
   private createElement(): void {
-    const fragment = document.createDocumentFragment();
+    const container = document.createElement('div');
+    container.classList.add('search-field');
 
     const searchFieldIcon = new Icon({
       id: searchIcon.id,
@@ -26,9 +28,10 @@ export class SearchField extends BaseView {
       icon: searchFieldIconElement,
     });
     const searchFieldElement = searchField.getHtmlElement();
-    searchFieldElement.classList.add('app-header__search');
-    fragment.append(searchFieldElement);
+    searchFieldElement.classList.add('search-field__input');
+    container.append(searchFieldElement);
 
+    // TODO: replace with IconButton and handle click
     const searchToggleIcon = new Icon({
       id: searchIcon.id,
       viewBox: searchIcon.viewBox,
@@ -39,9 +42,9 @@ export class SearchField extends BaseView {
       icon: searchToggleIcon.getHtmlElement() as HTMLElement,
     });
     const searchToggleElement = searchToggle.getHtmlElement();
-    searchToggleElement.classList.add('app-header__search-toggle');
-    fragment.append(searchToggleElement);
+    searchToggleElement.classList.add('search-field__toggle');
+    container.append(searchToggleElement);
 
-    this.htmlElement = fragment;
+    this.htmlElement = container;
   }
 }

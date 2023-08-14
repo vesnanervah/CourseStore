@@ -2,7 +2,7 @@ import './icon-button.scss';
 import { BaseView } from '../base-view';
 
 type IconButtonProps = {
-  type: HTMLButtonElement['type'];
+  type?: HTMLButtonElement['type'];
   icon: HTMLElement;
 };
 
@@ -14,7 +14,7 @@ export class IconButton extends BaseView<HTMLButtonElement> {
   }
 
   private createElement(props: IconButtonProps): void {
-    const { type, icon } = props;
+    const { type = 'button', icon } = props;
 
     const button = document.createElement('button');
     button.classList.add('icon-btn');

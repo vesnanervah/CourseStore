@@ -1,14 +1,22 @@
+@use '../../../../style/abstracts/constants' as vars;
+
 $stroke: 2px;
 
 .side-nav-toggle {
-  position: relative;
-  width: 2rem;
-  height: 1.25rem;
-  padding: 0;
-  border: none;
-  background-color: var(--transparent, transparent);
-  appearance: none;
-  cursor: pointer;
+  @media (max-width: vars.$bp-down-md) {
+    position: relative;
+    width: 2rem;
+    height: 1.25rem;
+    padding: 0;
+    border: none;
+    background-color: var(--transparent, transparent);
+    appearance: none;
+    cursor: pointer;
+  }
+
+  @media (min-width: vars.$bp-up-md) {
+    display: none;
+  }
 }
 
 .side-nav-toggle__icon {

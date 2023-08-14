@@ -5,15 +5,15 @@ type IconProps = {
   id: string;
   viewBox?: string;
   color?: string;
-  width?: string;
-  height?: string;
+  width?: string | null;
+  height?: string | null;
 };
 
 const DEFAULT_PROPS: Required<Omit<IconProps, 'id'>> = {
   viewBox: '',
   color: 'none',
-  width: '20',
-  height: '20',
+  width: null,
+  height: null,
 };
 
 export class Icon extends BaseView<HTMLElement> {
@@ -34,8 +34,12 @@ export class Icon extends BaseView<HTMLElement> {
     icon.innerHTML = `<use xlink:href="#${id}" />`;
     icon.setAttribute('viewBox', viewBox);
     icon.setAttribute('fill', color);
-    icon.setAttribute('width', width);
-    icon.setAttribute('height', height);
+    if (width) {
+      icon.setAttribute('width', width);
+    }
+    if (height) {
+      icon.setAttribute('height', height);
+    }
     container.append(icon);
 
     this.htmlElement = container;

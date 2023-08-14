@@ -1,6 +1,8 @@
 @use '../../../style/abstracts/constants' as vars;
 
+$header-height: 44px;
 $gap: 1.25rem;
+$btn-size: 1.5rem;
 
 .app-header {
   color: var(--color-button-text);
@@ -12,31 +14,36 @@ $gap: 1.25rem;
   justify-content: center;
   align-items: center;
   gap: $gap;
-  height: 44px;
+  height: $header-height;
 }
 
 .app-header__user-buttons {
   display: flex;
+  align-items: center;
   gap: $gap;
 
-  @media (max-width: vars.$tablet-width) {
+  @media (max-width: vars.$bp-down-md) {
     flex-grow: 1;
     justify-content: flex-end;
   }
 }
 
 .app-header__search {
-  .icon {
-    color: var(--color-text-primary);
+  @media (max-width: vars.$bp-down-md) {
+    .search-field__input {
+      display: none;
+    }
   }
 
-  @media (max-width: vars.$tablet-width) {
-    display: none;
+  @media (min-width: vars.$bp-up-md) {
+    .search-field__toggle {
+      display: none;
+    }
   }
 }
 
-.app-header__search-toggle {
-  @media (min-width: vars.$tablet-width) {
-    display: none;
-  }
+.app-header__cart-btn,
+.app-header__profile-btn {
+  width: $btn-size;
+  height: $btn-size;
 }

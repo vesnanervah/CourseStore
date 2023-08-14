@@ -15,7 +15,7 @@ export class AppHeader {
     return this.view;
   }
 
-  private handleNavClick(pageSlug: PageSlug) {
+  private handleNavClick(pageSlug: PageSlug): void {
     this.state.setValue(StateKeys.CURRENT_PAGE_SLUG, pageSlug);
   }
 }

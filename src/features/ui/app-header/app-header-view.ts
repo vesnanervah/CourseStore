@@ -6,6 +6,10 @@ import { PageSlug } from '../../../types';
 import { SideNavToggle } from './components/side-nav-toggle';
 import { SearchField } from './components/search-field';
 import { Wrapper } from '../wrapper/wrapper';
+import { IconButton } from '../icon-button';
+import { Icon } from '../icon';
+import cartIcon from '../../../assets/images/icons/cart.svg';
+import profileIcon from '../../../assets/images/icons/user.svg';
 
 type NavClickHandler = (pageSlug: PageSlug) => void;
 
@@ -31,7 +35,7 @@ export class AppHeaderView extends BaseView {
     const content = this.createAppHeaderContent();
     wrapper.append(content);
 
-    const sideNavToggle = new SideNavToggle({ onClick: this.handleSideNavToggleClick.bind(this) });
+    const sideNavToggle = new SideNavToggle();
     content.append(sideNavToggle.getHtmlElement());
 
     const userButtons = this.createUserButtons();
@@ -56,21 +60,39 @@ export class AppHeaderView extends BaseView {
     const search = this.createSearchField();
     container.append(search);
 
-    // TODO: add cart button
-    // TODO: add profile button
+    const cartButton = this.createCartButton();
+    container.append(cartButton);
+
+    const profileButton = this.createProfileButton();
+    container.append(profileButton);
 
     return container;
   }
 
   private createSearchField(): HTMLElement {
     const searchField = new SearchField();
+    const searchFieldElement = searchField.getHtmlElement();
+    searchFieldElement.classList.add('app-header__search');
 
-    return searchField.getHtmlElement() as HTMLElement;
+    return searchField.getHtmlElement();
   }
 
-  private handleSideNavToggleClick(e: MouseEvent) {
-    e.preventDefault();
-    // TODO: handle event
-    console.log(e);
+  private createCartButton(): HTMLElement {
+    // TODO: add cart items counter
+    const icon = new Icon({ id: cartIcon.id, viewBox: cartIcon.viewBox });
+    const button = new IconButton({ icon: icon.getHtmlElement() });
+    const buttonElement = button.getHtmlElement();
+    buttonElement.classList.add('app-header__cart-btn');
+
+    return buttonElement;
+  }
+
+  private createProfileButton(): HTMLElement {
+    const icon = new Icon({ id: profileIcon.id, viewBox: profileIcon.viewBox });
+    const button = new IconButton({ icon: icon.getHtmlElement() });
+    const buttonElement = button.getHtmlElement();
+    buttonElement.classList.add('app-header__profile-btn');
+
+    return buttonElement;
   }
 }
