@@ -11,6 +11,8 @@
   --color-input-search: #{vars.$color-input-search};
   --color-text-secondary: #{vars.$color-text-secondary};
   --color-inactive: #{vars.$color-inactive};
+  --color-bg-secondary: #{vars.$color-bg-secondary};
+  --color-white: #{vars.$color-white};
 }
 
 html,
@@ -23,4 +25,8 @@ body {
 img,
 svg {
   max-width: 100%;
+}
+
+.overflow-hidden {
+  overflow: hidden;
 }
