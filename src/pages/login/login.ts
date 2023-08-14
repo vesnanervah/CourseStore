@@ -14,6 +14,7 @@ export default class LoginView extends BaseView {
   constructor() {
     super();
     this.init();
+    this.mailValidation();
   }
 
   private init(): void {
@@ -75,8 +76,15 @@ export default class LoginView extends BaseView {
       this.throwValidationError();
     }
   }
-  /*
-  private mailValidation(): void {
 
-  }*/
+  private mailValidation(): void {
+    this.mailField.validateInput((target) => {
+      return (
+        target.includes('@') &&
+        target.slice(target.indexOf('@')).includes('.') &&
+        target.slice(target.indexOf('@')).slice(target.slice(target.indexOf('@')).indexOf('.'))
+          .length > 1
+      );
+    });
+  }
 }
