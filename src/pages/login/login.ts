@@ -15,6 +15,7 @@ export default class LoginView extends BaseView {
     super();
     this.init();
     this.mailValidation();
+    this.passwordValidation();
   }
 
   private init(): void {
@@ -67,6 +68,9 @@ export default class LoginView extends BaseView {
   }
 
   private async handleLoginClick() {
+    if (!this.checkValidStatus()) {
+      return;
+    }
     try {
       await Auth.loggin(this.mailField.getTypedValue(), this.passwordField.getTypedValue());
       this.resetValidationError();
@@ -86,5 +90,13 @@ export default class LoginView extends BaseView {
           .length > 1
       );
     });
+  }
+
+  private passwordValidation(): void {
+    this.passwordField.validateInput((target) => target.length > 6);
+  }
+
+  private checkValidStatus(): boolean {
+    return this.mailField.checkValid() && this.passwordField.checkValid();
   }
 }

@@ -4,6 +4,8 @@ export default class BaseTxtInp extends BaseView {
   private labelElem: HTMLSpanElement;
   private inpElem: HTMLInputElement;
   private validElem: HTMLSpanElement;
+  private validStatus: boolean = false;
+
   constructor() {
     super();
     this.htmlElement = document.createElement('div');
@@ -14,7 +16,7 @@ export default class BaseTxtInp extends BaseView {
     this.htmlElement.className = 'login__textarea-wrapper';
     this.labelElem.className = 'login__textarea-label';
     this.inpElem.className = 'login__textarea-input';
-    this.validElem.className = 'login__textarea-valid';
+    this.validElem.className = 'login__textarea-valid validation-failed';
     this.htmlElement.append(this.labelElem, this.inpElem, this.validElem);
   }
 
@@ -31,10 +33,12 @@ export default class BaseTxtInp extends BaseView {
 
   failValidation(): void {
     this.validElem.classList.add('validation-failed');
+    this.validStatus = false;
   }
 
   resetValidation(): void {
     this.validElem.classList.remove('validation-failed');
+    this.validStatus = true;
   }
 
   validateInput(validation: (target: string) => boolean): void {
@@ -49,5 +53,9 @@ export default class BaseTxtInp extends BaseView {
 
   getTypedValue(): string {
     return this.inpElem.value;
+  }
+
+  checkValid(): boolean {
+    return this.validStatus;
   }
 }
