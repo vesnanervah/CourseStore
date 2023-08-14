@@ -1,4 +1,5 @@
 import { AppHeader, BaseView } from '../ui';
+import { SideNav } from '../ui/side-nav';
 
 export class MainLayout extends BaseView {
   constructor(children: Node) {
@@ -20,9 +21,13 @@ export class MainLayout extends BaseView {
     const footer = document.createElement('footer');
     footer.classList.add('app-footer');
 
+    const sideNav = new SideNav();
+    sideNav.init();
+
     fragment.append(headerView.getHtmlElement());
     fragment.append(main);
     fragment.append(footer);
+    fragment.append(sideNav.getHtmlElement());
 
     this.htmlElement = fragment;
   }
