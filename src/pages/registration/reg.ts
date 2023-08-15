@@ -19,6 +19,7 @@ export default class RegView extends BaseView {
     this.init();
     this.mailValidation();
     this.passwordValidation();
+    this.nameValidation();
   }
 
   private init(): void {
@@ -63,14 +64,15 @@ export default class RegView extends BaseView {
 
   private throwValidationError(): void {
     this.validationMsg.classList.remove('hidden');
-    // this.mailField.failValidation();
-    // this.passwordField.failValidation();
   }
 
   private resetValidationError(): void {
     this.validationMsg.classList.add('hidden');
-    // this.mailField.resetValidation();
-    // this.passwordField.resetValidation();
+  }
+  private throwValidationErrorNameField(): void {
+    this.validationMsg.classList.remove('hidden');
+    this.throwValidationError();
+    this.nameField.failValidation();
   }
 
   private async handleLoginClick() {
@@ -124,6 +126,30 @@ export default class RegView extends BaseView {
           'Пароль должен содержать минимум 8 символов, 1 заглавную букву, 1 строчную буква и 1 цифру';
         this.throwValidationError();
         this.passwordField.failValidation();
+        return false;
+      }
+    });
+  }
+
+  private nameValidation(): void {
+    this.nameField.validateInput((target) => {
+      if (target.split(' ').length > 1) {
+        for (const elem of target.split(' ')) {
+          const text = elem.toLowerCase();
+          if (/[0-9]/g.test(text) || /\W/.test(text)) {
+            this.validationMsg.textContent =
+              'Сведения не должны содержать специальных символов или цифр';
+            this.throwValidationErrorNameField();
+            return false;
+          }
+        }
+        this.validationMsg.textContent = '';
+        this.resetValidationError();
+        this.nameField.resetValidation();
+        return true;
+      } else {
+        this.validationMsg.textContent = 'Укажите фамилию и имя';
+        this.throwValidationErrorNameField();
         return false;
       }
     });
