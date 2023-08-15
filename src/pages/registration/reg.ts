@@ -49,7 +49,7 @@ export default class RegView extends BaseView {
     this.passwordField.setLabel('Пароль*:');
     this.dateField.setLabel('Дата рождения*:'); //
     this.regBtn.setPlaceholder('ЗАРЕГИСТРИРОВАТЬСЯ');
-    stripe.className = 'login__stripe';
+    stripe.className = 'reg__stripe';
     content.append(
       linkFieldElem,
       mailFieldElem,
