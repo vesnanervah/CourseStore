@@ -63,14 +63,14 @@ export default class RegView extends BaseView {
 
   private throwValidationError(): void {
     this.validationMsg.classList.remove('hidden');
-    this.mailField.failValidation();
-    this.passwordField.failValidation();
+    // this.mailField.failValidation();
+    // this.passwordField.failValidation();
   }
 
   private resetValidationError(): void {
     this.validationMsg.classList.add('hidden');
-    this.mailField.resetValidation();
-    this.passwordField.resetValidation();
+    // this.mailField.resetValidation();
+    // this.passwordField.resetValidation();
   }
 
   private async handleLoginClick() {
@@ -89,12 +89,21 @@ export default class RegView extends BaseView {
 
   private mailValidation(): void {
     this.mailField.validateInput((target) => {
-      return (
-        target.includes('@') &&
-        target.slice(target.indexOf('@')).includes('.') &&
-        target.slice(target.indexOf('@')).slice(target.slice(target.indexOf('@')).indexOf('.'))
-          .length > 1
-      );
+      if (
+        /[a-zа-я0-9_-]+@[a-zA-Z0-9]+\.[a-z]{2,3}/.test(target) &&
+        target.indexOf('@') != 0 &&
+        target.trim().indexOf(' ') == -1
+      ) {
+        this.resetValidationError();
+        this.mailField.resetValidation();
+        return true;
+      } else {
+        this.validationMsg.textContent =
+          'Неправильный адрес электронной почты. Корректный формат: example@email.com';
+        this.throwValidationError();
+        this.mailField.failValidation();
+        return false;
+      }
     });
   }
 
@@ -106,12 +115,15 @@ export default class RegView extends BaseView {
         /[A-ZА-Я]/.test(target) &&
         /[a-zа-я]/.test(target)
       ) {
+        this.validationMsg.textContent = '';
         this.resetValidationError();
+        this.passwordField.resetValidation();
         return true;
       } else {
         this.validationMsg.textContent =
           'Пароль должен содержать минимум 8 символов, 1 заглавную букву, 1 строчную буква и 1 цифру';
         this.throwValidationError();
+        this.passwordField.failValidation();
         return false;
       }
     });
