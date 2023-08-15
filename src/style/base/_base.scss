@@ -1,6 +1,10 @@
 @use '../abstracts/constants' as vars;
 
 :root {
+  // fonts
+  --ff-roboto: #{vars.$font-roboto};
+  --ff-inter: #{vars.$font-interl};
+  // colors
   --color-primary: #{vars.$color-primary};
   --color-button-text: #{vars.$color-button-text};
   --color-dark: #{vars.$color-dark};
@@ -17,9 +21,19 @@
 
 html,
 body {
-  min-height: 100%;
   padding: 0;
   margin: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  font-family: var(--ff-roboto);
+  background-color: var(--color-bg-primary);
 }
 
 img,
