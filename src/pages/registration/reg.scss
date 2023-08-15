@@ -1,3 +1,20 @@
+.form__back {
+  width: 153px;
+  position: relative;
+  left: -220px;
+  margin-bottom: 10px;
+  a {
+    text-decoration: none;
+    color: black;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 52px 7px 43px;
+    background-color: #f3f3f3;
+    border: 5px solid black;
+    border-radius: 0px 30px 30px 0px;
+  }
+}
 .reg__text {
   color: #777777;
   font-size: 16px;
@@ -10,7 +27,7 @@
 .reg__validmsg {
   color: #c11668;
   font-size: 16px;
-  width: 300px;
+  width: 382px;
   font-style: italic;
   font-weight: 400;
   display: flex;
@@ -20,5 +37,12 @@
   transition: opacity 0.3s;
   &.hidden {
     opacity: 0;
+  }
+}
+
+//TODO style for mobile
+@media (max-width: 470px) {
+  .login__stripe {
+    display: none;
   }
 }

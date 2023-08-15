@@ -1,6 +1,7 @@
 import '../login/login.scss';
 import './reg.scss';
 import { BaseView } from '../../features/ui';
+import BaseRegLink from '../../features/ui/base-reg-link/base-reg-link';
 import BaseLogBtn from '../../features/ui/base-log-btn/base-log-btn';
 import BaseTxtInp from '../../features/ui/base-txt-inp/base-txt-inp';
 import Auth from '../../features/auth/auth';
@@ -11,6 +12,7 @@ export default class RegView extends BaseView {
   passwordField = new BaseTxtInp();
   dateField = new BaseTxtInp(); //
   regBtn = new BaseLogBtn();
+  backBtn = new BaseRegLink('#'); //TODO add link to page login
 
   validationMsg: HTMLElement = document.createElement('div');
 
@@ -27,13 +29,13 @@ export default class RegView extends BaseView {
     const content = document.createElement('div');
     const stripe = document.createElement('div');
     const text = document.createElement('div');
+    const linkFieldElem = this.backBtn.getHtmlElement();
     const mailFieldElem = this.mailField.getHtmlElement();
     const nameFieldElem = this.nameField.getHtmlElement(); //
     const passwordFieldElem = this.passwordField.getHtmlElement();
     const dateFieldElem = this.dateField.getHtmlElement();
-    const dateInput = dateFieldElem.querySelector('input');
-    dateInput?.setAttribute('type', 'date');
-    if (dateInput) dateInput.value = '2000-06-01';
+    dateFieldElem.querySelector('input')?.setAttribute('type', 'date');
+    (dateFieldElem.querySelector('input') as HTMLInputElement).value = '2000-06-01';
     const regBtnElem = this.regBtn.getHtmlElement();
     text.textContent = '* Поле обязательно для заполнения';
     text.classList.add('reg__text');
@@ -49,6 +51,7 @@ export default class RegView extends BaseView {
     this.regBtn.setPlaceholder('ЗАРЕГИСТРИРОВАТЬСЯ');
     stripe.className = 'login__stripe';
     content.append(
+      linkFieldElem,
       mailFieldElem,
       nameFieldElem,
       passwordFieldElem,
@@ -156,6 +159,8 @@ export default class RegView extends BaseView {
   }
 
   private checkValidStatus(): boolean {
-    return this.mailField.checkValid() && this.passwordField.checkValid();
+    return (
+      this.mailField.checkValid() && this.passwordField.checkValid() && this.nameField.checkValid()
+    );
   }
 }
