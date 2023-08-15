@@ -94,7 +94,14 @@ export default class RegView extends BaseView {
   }
 
   private passwordValidation(): void {
-    this.passwordField.validateInput((target) => target.length > 3);
+    this.passwordField.validateInput((target) => {
+      return (
+        target.length > 7 &&
+        /[0-9]/.test(target) &&
+        /[A-ZА-Я]/.test(target) &&
+        /[a-zа-я]/.test(target)
+      );
+    });
   }
 
   private checkValidStatus(): boolean {
