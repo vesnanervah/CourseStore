@@ -31,11 +31,15 @@ module.exports = (env) => {
           use: 'ts-loader',
         },
         {
-          test: /\.(png|svg|jpg|jpeg|gif)$/i,
+          test: /\.(png|jpg|jpeg|gif)$/i,
           type: 'asset/resource',
           generator: {
             filename: 'assets/[name][ext]',
           },
+        },
+        {
+          test: /\.svg$/,
+          use: [{ loader: 'svg-sprite-loader' }],
         },
       ],
     },
