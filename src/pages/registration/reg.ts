@@ -1,10 +1,11 @@
 import '../login/login.scss';
 import './reg.scss';
+import { RegisterBody } from '../../types/reg';
 import { BaseView } from '../../features/ui';
 import BaseRegLink from '../../features/ui/base-reg-link/base-reg-link';
 import BaseLogBtn from '../../features/ui/base-log-btn/base-log-btn';
 import BaseTxtInp from '../../features/ui/base-txt-inp/base-txt-inp';
-import Auth from '../../features/auth/auth';
+import EcommerceClient from '../../features/commerce/BuildClient';
 
 export default class RegView extends BaseView {
   mailField = new BaseTxtInp();
@@ -47,7 +48,7 @@ export default class RegView extends BaseView {
     this.mailField.setLabel('Почта*:');
     this.nameField.setLabel('ФИО*:'); //
     this.passwordField.setLabel('Пароль*:');
-    this.dateField.setLabel('Дата рождения*:'); //
+    this.dateField.setLabel('Дата рождения:'); //
     this.regBtn.setPlaceholder('ЗАРЕГИСТРИРОВАТЬСЯ');
     stripe.className = 'reg__stripe';
     content.append(
@@ -60,7 +61,7 @@ export default class RegView extends BaseView {
       text,
       this.validationMsg,
     );
-    //this.regBtn.getHtmlElement().addEventListener('click', async () => this.handleLoginClick());
+    this.regBtn.getHtmlElement().addEventListener('click', async () => this.handleLoginClick());
     wrapper.append(stripe, content);
     this.htmlElement = wrapper;
   }
@@ -79,15 +80,41 @@ export default class RegView extends BaseView {
   }
 
   private async handleLoginClick() {
+    console.log(this.checkValidStatus());
     if (!this.checkValidStatus()) {
+      this.validationMsg.textContent = 'Заполните обязательные поля';
+      this.throwValidationError();
       return;
     }
     try {
-      await Auth.loggin(this.mailField.getTypedValue(), this.passwordField.getTypedValue());
-      this.resetValidationError();
-      //  TODO: replace alert with real redirect
-      alert('Successfully logged in');
+      const mail = this.mailField.getHtmlElement().querySelector('input')?.value || '';
+      const passw = this.passwordField.getHtmlElement().querySelector('input')?.value || '';
+      const arrayName = this.nameField.getHtmlElement().querySelector('input')?.value.split(' ');
+      console.log(arrayName?.slice(0, 1).join(''));
+      const name = arrayName?.slice(0, 1).join('');
+      const surname = arrayName?.slice(1, 2).join('');
+      const middlename = arrayName?.slice(2).join('');
+      const date = this.dateField.getHtmlElement().querySelector('input')?.value || '';
+      const clientBody: RegisterBody = {
+        email: mail,
+        password: passw,
+        firstName: name,
+        lastName: surname,
+        middleName: middlename,
+        dateOfBirth: date,
+        // addresses:
+        // defaultShippingAddress:
+        // defaultBillingAddress:
+      };
+      console.log(clientBody);
+      await EcommerceClient.registerUser(clientBody).then(() => {
+        this.validationMsg.textContent = '';
+        this.resetValidationError();
+        //  TODO: replace alert with real redirect
+        alert('Successfully logged in');
+      });
     } catch {
+      this.validationMsg.textContent = 'Этот email уже используется';
       this.throwValidationError();
     }
   }
