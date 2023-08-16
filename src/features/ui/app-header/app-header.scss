@@ -1,0 +1,49 @@
+@use '../../../style/abstracts/constants' as vars;
+
+$header-height: 44px;
+$gap: 1.25rem;
+$btn-size: 1.5rem;
+
+.app-header {
+  color: var(--color-button-text);
+  background-color: var(--color-dark);
+}
+
+.app-header__content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $gap;
+  height: $header-height;
+}
+
+.app-header__user-buttons {
+  display: flex;
+  align-items: center;
+  gap: $gap;
+
+  @media (max-width: vars.$bp-down-md) {
+    flex-grow: 1;
+    justify-content: flex-end;
+  }
+}
+
+.app-header__search {
+  @media (max-width: vars.$bp-down-md) {
+    .search-field__input {
+      display: none;
+    }
+  }
+
+  @media (min-width: vars.$bp-up-md) {
+    .search-field__toggle {
+      display: none;
+    }
+  }
+}
+
+.app-header__cart-btn,
+.app-header__profile-btn {
+  width: $btn-size;
+  height: $btn-size;
+}
