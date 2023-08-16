@@ -22,16 +22,17 @@ export default class Auth {
 
   public static async loggin(mail: string, password: string) {
     EcommerceClient.passwordRootPrepare(mail, password);
-    const resp = await EcommerceClient.login(mail, password);
-    if (resp.statusCode === 200) {
+    try {
+      const resp = await EcommerceClient.login(mail, password);
       Auth.password = password;
       Auth.mail = mail;
-      Auth.updateStorage();
       Auth.isLoggedIn = true;
-    } else {
+      Auth.updateStorage();
+      return resp;
+    } catch {
       Auth.loggout();
+      throw new Error('User not found');
     }
-    return resp;
   }
 
   private static updateStorage(): void {
@@ -49,8 +50,8 @@ export default class Auth {
   public static loggout(): void {
     Auth.password = '';
     Auth.mail = '';
-    Auth.updateStorage();
     Auth.isLoggedIn = false;
+    Auth.updateStorage();
     EcommerceClient.stockRootPrepare();
     console.log('logout');
   }
@@ -59,7 +60,7 @@ export default class Auth {
     return Auth.isLoggedIn;
   }
 
-  private static getDataFromLocale(): LocaleData {
+  public static getDataFromLocale(): LocaleData {
     const isLoggedIn = !!window.localStorage.getItem('logged_in');
     return {
       isLoggedIn,
