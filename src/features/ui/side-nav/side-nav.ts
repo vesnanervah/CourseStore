@@ -1,7 +1,7 @@
-/*import './side-nav.scss';
+import './side-nav.scss';
 import { BaseView } from '../base-view';
 import { State } from '../../../state';
-//import { routes } from '../../../routes';
+import { routes } from '../../../routs';
 import { IconButton } from '../icon-button';
 import closeIcon from '../../../assets/images/icons/close.svg';
 
@@ -210,4 +210,3 @@ export class SideNav extends BaseView<HTMLElement> {
     return divider;
   }
 }
-*/
