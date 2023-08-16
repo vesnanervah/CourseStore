@@ -80,7 +80,6 @@ export default class RegView extends BaseView {
   }
 
   private async handleLoginClick() {
-    console.log(this.checkValidStatus());
     if (!this.checkValidStatus()) {
       this.validationMsg.textContent = 'Заполните обязательные поля';
       this.throwValidationError();
@@ -107,6 +106,7 @@ export default class RegView extends BaseView {
         // defaultBillingAddress:
       };
       console.log(clientBody);
+      await EcommerceClient.stockRootPrepare();
       await EcommerceClient.registerUser(clientBody).then(() => {
         this.validationMsg.textContent = '';
         this.resetValidationError();
