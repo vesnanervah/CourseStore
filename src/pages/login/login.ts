@@ -61,14 +61,10 @@ export default class LoginView extends BaseView {
 
   private throwValidationError(): void {
     this.validationMsg.appear();
-    this.mailField.failValidation();
-    this.passwordField.failValidation();
   }
 
   private resetValidationError(): void {
     this.validationMsg.dissappear();
-    this.mailField.resetValidation();
-    this.passwordField.resetValidation();
   }
 
   private async handleLoginClick() {
