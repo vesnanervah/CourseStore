@@ -3,9 +3,9 @@
   justify-content: center;
   align-items: center;
   gap: 30px;
-  padding: 10% 0px;
   background-color: #f3f3f3;
   font-family: 'Inter', sans-serif;
+  height: 100%;
   * {
     box-sizing: border-box;
   }
@@ -15,6 +15,8 @@
     justify-content: center;
     align-items: flex-end;
     gap: 14px;
+    position: relative;
+    right: 135px;
   }
   .login__stripe {
     display: inline-block;
@@ -22,7 +24,6 @@
     background-color: black;
     border-radius: 6px;
     width: 8px;
-    align-self: flex-start;
   }
   .login__or {
     color: #1e1e1e;
@@ -30,7 +31,6 @@
     font-style: normal;
     font-weight: 400;
   }
-  .login__textarea-wrapper,
   .login__btn {
     display: flex;
     width: 382px;
@@ -45,35 +45,6 @@
     font-weight: 600;
     line-height: normal;
   }
-  .login__textarea-wrapper {
-    justify-content: space-between;
-    align-items: center;
-    background-color: white;
-    border-radius: 24px;
-    padding: 0 17px;
-  }
-  .login__textarea-label {
-    font-size: 20px;
-    font-weight: 500;
-  }
-  .login__textarea-input {
-    border: none;
-    outline: none;
-    font-size: 16px;
-    font-style: italic;
-    font-weight: 400;
-  }
-  .login__textarea-valid {
-    display: flex;
-    height: 24px;
-    width: 24px;
-    background-color: #45a173;
-    border-radius: 50%;
-    transition: background-color 0.3s;
-    &.validation-failed {
-      background-color: #c11668;
-    }
-  }
   .login__btn-login {
     color: white;
     background-color: black;
@@ -84,18 +55,30 @@
     background-color: white;
     border: solid black 5px;
   }
+  .login__bottom {
+    display: flex;
+    padding-right: 68px;
+  }
   .login__validmsg {
     color: #c11668;
     font-size: 16px;
     font-style: italic;
     font-weight: 400;
-    display: flex;
-    justify-content: center;
-    align-self: center;
     opacity: 1;
     transition: opacity 0.3s;
+    max-width: 380px;
     &.hidden {
       opacity: 0;
     }
+  }
+  .login__top {
+    display: flex;
+    gap: 14px;
+  }
+  .login__top-left {
+    display: flex;
+    gap: 14px;
+    flex-direction: column;
+    align-items: flex-end;
   }
 }
