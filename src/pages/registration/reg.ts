@@ -105,7 +105,6 @@ export default class RegView extends BaseView {
         // defaultShippingAddress:
         // defaultBillingAddress:
       };
-      console.log(clientBody);
       await EcommerceClient.stockRootPrepare();
       await EcommerceClient.registerUser(clientBody).then(() => {
         this.validationMsg.textContent = '';
