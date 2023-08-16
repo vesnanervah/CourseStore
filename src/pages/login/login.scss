@@ -1,0 +1,101 @@
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 10% 0px;
+  background-color: #f3f3f3;
+  font-family: 'Inter', sans-serif;
+  * {
+    box-sizing: border-box;
+  }
+  .login__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 14px;
+  }
+  .login__stripe {
+    display: inline-block;
+    height: 272px;
+    background-color: black;
+    border-radius: 6px;
+    width: 8px;
+    align-self: flex-start;
+  }
+  .login__or {
+    color: #1e1e1e;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+  }
+  .login__textarea-wrapper,
+  .login__btn {
+    display: flex;
+    width: 382px;
+    height: 48px;
+    border-radius: 24px;
+  }
+  .login__btn {
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+  }
+  .login__textarea-wrapper {
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-radius: 24px;
+    padding: 0 17px;
+  }
+  .login__textarea-label {
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .login__textarea-input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .login__textarea-valid {
+    display: flex;
+    height: 24px;
+    width: 24px;
+    background-color: #45a173;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    &.validation-failed {
+      background-color: #c11668;
+    }
+  }
+  .login__btn-login {
+    color: white;
+    background-color: black;
+    border: none;
+  }
+  .login__btn-reg {
+    color: black;
+    background-color: white;
+    border: solid black 5px;
+  }
+  .login__validmsg {
+    color: #c11668;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    opacity: 1;
+    transition: opacity 0.3s;
+    &.hidden {
+      opacity: 0;
+    }
+  }
+}
