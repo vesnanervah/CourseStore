@@ -86,6 +86,7 @@ export default class LoginView extends BaseView {
   }
 
   private mailValidation(): void {
+    this.mailField.setAlertMsg('Почта должна быть в формате: example@mail.ru');
     this.mailField.validateInput((target) => {
       return (
         target.includes('@') &&
@@ -97,6 +98,7 @@ export default class LoginView extends BaseView {
   }
 
   private passwordValidation(): void {
+    this.passwordField.setAlertMsg('Пароль должен содержать не менее 4 символов');
     this.passwordField.validateInput((target) => target.length > 3);
   }
 }
