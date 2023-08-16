@@ -1,0 +1,46 @@
+@use '../abstracts/constants' as vars;
+
+:root {
+  // fonts
+  --ff-roboto: #{vars.$font-roboto};
+  --ff-inter: #{vars.$font-interl};
+  // colors
+  --color-primary: #{vars.$color-primary};
+  --color-button-text: #{vars.$color-button-text};
+  --color-dark: #{vars.$color-dark};
+  --color-error: #{vars.$color-error};
+  --color-yellow: #{vars.$color-yellow};
+  --color-text-primary: #{vars.$color-text-primary};
+  --color-background: #{vars.$color-background};
+  --color-input-search: #{vars.$color-input-search};
+  --color-text-secondary: #{vars.$color-text-secondary};
+  --color-inactive: #{vars.$color-inactive};
+  --color-bg-secondary: #{vars.$color-bg-secondary};
+  --color-white: #{vars.$color-white};
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+  font-family: var(--ff-roboto);
+  background-color: var(--color-bg-primary);
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}

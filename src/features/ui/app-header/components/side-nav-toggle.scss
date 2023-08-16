@@ -1,0 +1,49 @@
+@use '../../../../style/abstracts/constants' as vars;
+
+$stroke: 2px;
+
+.side-nav-toggle {
+  @media (max-width: vars.$bp-down-md) {
+    position: relative;
+    width: 2rem;
+    height: 1.25rem;
+    padding: 0;
+    border: none;
+    background-color: var(--transparent, transparent);
+    appearance: none;
+    cursor: pointer;
+  }
+
+  @media (min-width: vars.$bp-up-md) {
+    display: none;
+  }
+}
+
+.side-nav-toggle__icon {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: $stroke;
+  background-color: var(--white, #ffffff);
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: $stroke;
+    background-color: var(--white, #ffffff);
+  }
+
+  &::before {
+    transform: translateY(-400%);
+  }
+
+  &::after {
+    transform: translateY(400%);
+  }
+}
