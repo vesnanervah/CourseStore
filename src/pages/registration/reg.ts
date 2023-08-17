@@ -1,17 +1,16 @@
-import '../login/login.scss';
 import './reg.scss';
 import { RegisterBody } from '../../types/reg';
 import { BaseView } from '../../features/ui';
 import BaseRegLink from '../../features/ui/base-reg-link/base-reg-link';
 import BaseLogBtn from '../../features/ui/base-log-btn/base-log-btn';
-import BaseTxtInp from '../../features/ui/base-txt-inp/base-txt-inp';
+import BaseRegInp from '../../features/ui/base-reg-inp/base-reg-inp';
 import EcommerceClient from '../../features/commerce/BuildClient';
 
 export default class RegView extends BaseView {
-  mailField = new BaseTxtInp();
-  nameField = new BaseTxtInp(); //
-  passwordField = new BaseTxtInp();
-  dateField = new BaseTxtInp(); //
+  mailField = new BaseRegInp();
+  nameField = new BaseRegInp(); //
+  passwordField = new BaseRegInp();
+  dateField = new BaseRegInp(); //
   regBtn = new BaseLogBtn();
   backBtn = new BaseRegLink('#'); //TODO add link to page login
 
@@ -41,10 +40,10 @@ export default class RegView extends BaseView {
     text.textContent = '* Поле обязательно для заполнения';
     text.classList.add('reg__text');
     this.validationMsg.className = 'reg__validmsg hidden';
-    wrapper.className = 'login';
-    content.className = 'login__content';
-    (regBtnElem as HTMLElement).classList.add('login__btn-login');
-    this.dateField.setClassnames('login');
+    wrapper.className = 'reg';
+    content.className = 'reg__content';
+    (regBtnElem as HTMLElement).id = 'reg__btn';
+    this.dateField.setClassnames('reg');
     this.mailField.setLabel('Почта*:');
     this.nameField.setLabel('ФИО*:'); //
     this.passwordField.setLabel('Пароль*:');
@@ -111,6 +110,7 @@ export default class RegView extends BaseView {
         this.resetValidationError();
         //  TODO: replace alert with real redirect
         alert('Successfully logged in');
+        //TODO user to the application's main page upon successful account creation
       });
     } catch {
       this.validationMsg.textContent = 'Этот email уже используется';

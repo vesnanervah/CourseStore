@@ -1,3 +1,63 @@
+.reg {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 10% 0px;
+  background-color: #f3f3f3;
+  font-family: 'Inter', sans-serif;
+  * {
+    box-sizing: border-box;
+  }
+}
+.reg__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 14px;
+}
+.reg__textarea-wrapper {
+  display: flex;
+  width: 382px;
+  height: 48px;
+  border-radius: 24px;
+}
+.reg__textarea-wrapper {
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-radius: 24px;
+  padding: 0 17px;
+}
+.reg__textarea-label {
+  font-size: 20px;
+  font-weight: 500;
+}
+.reg__textarea-input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+}
+.reg__textarea-valid {
+  display: flex;
+  height: 24px;
+  width: 24px;
+  background-color: #45a173;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+  &.validation-failed {
+    background-color: #c11668;
+  }
+}
+.reg__btn-login {
+  color: white;
+  background-color: black;
+  border: none;
+}
+
 .form__back {
   width: 153px;
   position: relative;
@@ -55,10 +115,22 @@
 .login__btn:hover {
   transform: scale(1.05);
 }
-
+#reg__btn {
+  //переопределила
+  display: flex;
+  width: 382px;
+  height: 48px;
+  border-radius: 24px;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  color: white;
+  background-color: black;
+  border: none;
+}
 //TODO style for mobile
 @media (max-width: 470px) {
-  .login__stripe {
-    display: none;
-  }
 }
