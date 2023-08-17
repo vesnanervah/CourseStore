@@ -10,6 +10,7 @@ import { IconButton } from '../icon-button';
 import { Icon } from '../icon';
 import cartIcon from '../../../assets/images/icons/cart.svg';
 import profileIcon from '../../../assets/images/icons/user.svg';
+import { NavCategories } from './components/nav-categories';
 
 type NavClickHandler = (pageSlug: PageSlug) => void;
 
@@ -40,6 +41,10 @@ export class AppHeaderView extends BaseView {
 
     const userButtons = this.createUserButtons();
     content.append(userButtons);
+
+    const navCategories = new NavCategories();
+    navCategories.init();
+    header.append(navCategories.getHtmlElement());
 
     fragment.append(header);
 
