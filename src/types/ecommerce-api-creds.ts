@@ -1,6 +1,8 @@
+import { UniqueId } from './common';
+
 type EcommerceApiCreds = {
   project_key: string;
-  client_id: string;
+  client_id: UniqueId;
   secret: string;
   scope: string[];
   API_Host: string;
