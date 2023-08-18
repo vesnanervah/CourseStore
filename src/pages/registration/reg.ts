@@ -52,6 +52,7 @@ export default class RegView extends BaseView {
     stripe.className = 'reg__stripe';
     content.append(linkFieldElem, mailFieldElem, nameFieldElem, passwordFieldElem, dateFieldElem);
     content.append(addressFieldElem, regBtnElem, text, this.validationMsg);
+    this.addressField.getHtmlElement().addEventListener('change', () => this.removeBlockAddress());
     this.regBtn.getHtmlElement().addEventListener('click', async () => this.handleLoginClick());
     wrapper.append(stripe, content);
     this.htmlElement = wrapper;
@@ -181,6 +182,16 @@ export default class RegView extends BaseView {
         return false;
       }
     });
+  }
+
+  private removeBlockAddress(): void {
+    const checkbox = document.querySelector('input[type=checkbox]') as HTMLInputElement;
+    const blockAddressShipping = document.querySelector('#addres__block_billing');
+    if (checkbox.checked) {
+      blockAddressShipping?.classList.add('remove');
+    } else {
+      blockAddressShipping?.classList.remove('remove');
+    }
   }
 
   private checkValidStatus(): boolean {

@@ -20,7 +20,7 @@
 .reg__textarea-wrapper {
   display: flex;
   width: 382px;
-  height: 48px;
+  height: 37px;
   border-radius: 24px;
 }
 .reg__textarea-wrapper {
@@ -31,7 +31,7 @@
   padding: 0 17px;
 }
 .reg__textarea-label {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
 }
 .reg__textarea-input {
@@ -81,7 +81,7 @@
 .reg__stripe {
   position: relative;
   top: -15px;
-  height: 350px;
+  height: 62vh;
   background-color: black;
   border-radius: 6px;
   width: 8px;
@@ -131,7 +131,60 @@
   background-color: black;
   border: none;
 }
+h3 {
+  margin-bottom: 0;
+}
+.select__form {
+  padding: 10px;
+  border-radius: 24px;
+  border: 1px solid white;
+  font-weight: bold;
+  font-size: 16px;
+  width: 100%;
+  background-color: white;
+}
+.form__address {
+  width: 382px;
+}
+.addres__block_label {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 5px;
+}
+.field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+  padding: 0;
+  background-color: white;
+}
 
+#field__span {
+  font-size: 10px;
+  font-weight: 300;
+  margin-bottom: 0.25rem;
+  color: #737888;
+}
+.field__input {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: 0;
+  font-weight: 600;
+  font-size: 16px;
+  width: 100%;
+  background-color: white;
+}
+.check__label {
+  color: #777777;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+}
+.remove {
+  display: none;
+}
 //TODO style for mobile
 @media (max-width: 470px) {
 }

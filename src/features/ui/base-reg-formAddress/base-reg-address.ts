@@ -25,6 +25,8 @@ export default class BaseRegAddress extends BaseView {
     this.blockAddress = this.getBlockAddress('Платежный адрес');
     this.checkbox = this.getCheck();
     this.blockAddress1 = this.getBlockAddress('Адрес доставки');
+    this.blockAddress1.id = 'addres__block_billing';
+    this.blockAddress1.classList.add('remove');
     this.htmlElement.append(this.select, this.blockAddress, this.checkbox, this.blockAddress1);
   }
 
@@ -40,11 +42,11 @@ export default class BaseRegAddress extends BaseView {
       const span = document.createElement('span');
       const input = document.createElement('input');
       label.className = 'field';
-      span.className = 'fiels__span';
+      span.id = 'field__span';
       input.className = 'field__input';
-      if (i == 0) span.textContent = 'ГОРОД';
-      else if (i == 1) span.textContent = 'УЛИЦА';
-      else span.textContent = 'ПОЧТОВЫЙ ИНДЕКС';
+      if (i == 0) span.textContent = 'город';
+      else if (i == 1) span.textContent = 'улица';
+      else span.textContent = 'индекс';
       label.append(span, input);
       div1.append(label);
     }
