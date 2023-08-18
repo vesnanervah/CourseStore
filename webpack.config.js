@@ -1,6 +1,8 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+const dotenv = require('dotenv').config();
 
 module.exports = (env) => {
   return {
@@ -14,6 +16,9 @@ module.exports = (env) => {
       extensions: ['.ts', '.js', '.json'],
     },
     plugins: [
+      new webpack.DefinePlugin({
+        'process.env': JSON.stringify(dotenv.parsed),
+      }),
       new HtmlWebpackPlugin({
         template: path.join(__dirname, 'src', 'index.html'),
         filename: 'index.html',
