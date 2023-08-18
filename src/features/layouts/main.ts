@@ -12,7 +12,7 @@ export class MainLayout extends BaseView {
   private createElement(children: Node): void {
     const fragment = document.createDocumentFragment();
 
-    const header = new AppHeader().getView();
+    const header = new AppHeader();
 
     const main = document.createElement('main');
     main.classList.add('app-main');
