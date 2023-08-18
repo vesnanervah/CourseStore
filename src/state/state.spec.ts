@@ -1,4 +1,4 @@
-import { PageSlug, StateKeys } from '../types';
+import { StateKeys } from '../types';
 import { State } from './state';
 import { DEFAULT_STATE } from '../constants/state';
 
@@ -25,8 +25,8 @@ describe('State', () => {
       const state = State.getInstance();
 
       // Assert
-      const value = state.getValue(StateKeys.CURRENT_PAGE_SLUG);
-      expect(value).toBe(DEFAULT_STATE[StateKeys.CURRENT_PAGE_SLUG]);
+      const value = state.getValue(StateKeys.SIDE_NAV_STATUS);
+      expect(value).toBe(DEFAULT_STATE[StateKeys.SIDE_NAV_STATUS]);
     });
   });
 
@@ -40,17 +40,17 @@ describe('State', () => {
     });
   });
 
-  describe("when state's page slug value is set to main", () => {
-    it('should return main page slug', () => {
+  describe("when state's nav status value is set to true", () => {
+    it('should return true', () => {
       // Arrange
       const state = State.getInstance();
 
       // Act
-      state.setValue(StateKeys.CURRENT_PAGE_SLUG, PageSlug.Main);
+      state.setValue(StateKeys.SIDE_NAV_STATUS, true);
 
       // Assert
-      const value = state.getValue(StateKeys.CURRENT_PAGE_SLUG);
-      expect(value).toBe(PageSlug.Main);
+      const value = state.getValue(StateKeys.SIDE_NAV_STATUS);
+      expect(value).toBe(true);
     });
   });
 
@@ -60,12 +60,12 @@ describe('State', () => {
       const state = State.getInstance();
       const cb1 = jest.fn();
       const cb2 = jest.fn();
-      state.subscribe(StateKeys.CURRENT_PAGE_SLUG, cb1);
-      state.subscribe(StateKeys.CURRENT_PAGE_SLUG, cb2);
+      state.subscribe(StateKeys.SIDE_NAV_STATUS, cb1);
+      state.subscribe(StateKeys.SIDE_NAV_STATUS, cb2);
 
       // Act
-      state.setValue(StateKeys.CURRENT_PAGE_SLUG, PageSlug.Main);
-      state.setValue(StateKeys.CURRENT_PAGE_SLUG, PageSlug.NotFound);
+      state.setValue(StateKeys.SIDE_NAV_STATUS, true);
+      state.setValue(StateKeys.SIDE_NAV_STATUS, false);
 
       // Assert
       expect(cb1).toBeCalledTimes(2);
