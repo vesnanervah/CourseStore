@@ -2,57 +2,70 @@ import { BaseView } from '../base-view';
 import { BaseAddress } from '@commercetools/platform-sdk';
 
 export default class BaseRegAddress extends BaseView {
-  private select: HTMLSelectElement;
-  private option: HTMLOptionElement;
-  private option1: HTMLOptionElement;
-  private label: HTMLLabelElement;
-  private label1: HTMLLabelElement;
-  private label2: HTMLLabelElement;
-  private span: HTMLSpanElement;
-  private span1: HTMLSpanElement;
-  private span2: HTMLSpanElement;
-  private input: HTMLInputElement;
-  private input1: HTMLInputElement;
-  private input2: HTMLInputElement;
+  div: HTMLDivElement;
+  select: HTMLSelectElement;
+  option: HTMLOptionElement;
+  option1: HTMLOptionElement;
+  blockAddress: HTMLDivElement;
+  blockAddress1: HTMLDivElement;
+  checkbox: HTMLDivElement;
   constructor() {
     super();
     this.htmlElement = document.createElement('div');
+    this.div = document.createElement('div');
     this.select = document.createElement('select');
     this.option = document.createElement('option');
     this.option1 = document.createElement('option');
-    this.label = document.createElement('label');
-    this.label1 = document.createElement('label');
-    this.label2 = document.createElement('label');
-    this.span = document.createElement('span');
-    this.span1 = document.createElement('span');
-    this.span2 = document.createElement('span');
-    this.input = document.createElement('input');
-    this.input1 = document.createElement('input');
-    this.input2 = document.createElement('input');
     this.htmlElement.className = 'form__address';
+    this.div.className = 'fields__form';
     this.select.className = 'select__form';
-    this.label.className = 'field';
-    this.label1.className = 'field';
-    this.label2.className = 'field';
-    this.span.className = 'fiels__span';
-    this.span1.className = 'fiels__span';
-    this.span2.className = 'fiels__span';
-    this.input.className = 'field__input';
-    this.input1.className = 'field__input';
-    this.input2.className = 'field__input';
-    this.span.textContent = 'CITY';
-    this.span1.textContent = 'STREET NAME';
-    this.span2.textContent = 'POSTAL CODE';
-    this.option.value = 'RUSSIA';
-    this.option1.value = 'USA';
+    this.option.textContent = 'Россия';
+    this.option1.textContent = 'США';
     this.select.append(this.option, this.option1);
-    this.label.append(this.span, this.input);
-    this.label1.append(this.span1, this.input1);
-    this.label2.append(this.span2, this.input2);
-    this.htmlElement.append(this.select, this.label, this.label1, this.label2);
+    this.blockAddress = this.getBlockAddress('Платежный адрес');
+    this.checkbox = this.getCheck();
+    this.blockAddress1 = this.getBlockAddress('Адрес доставки');
+    this.htmlElement.append(this.select, this.blockAddress, this.checkbox, this.blockAddress1);
   }
 
-  private getBaseAddressBody(key: 'keyBilling' | 'keyShipping'): BaseAddress {
+  getBlockAddress(text: string): HTMLDivElement {
+    const div: HTMLDivElement = document.createElement('div');
+    const div1: HTMLDivElement = document.createElement('div');
+    div.className = 'addres__block';
+    div1.className = 'addres__block_label';
+    const h3 = document.createElement('h3');
+    h3.textContent = text;
+    for (let i = 0; i < 3; i++) {
+      const label = document.createElement('label');
+      const span = document.createElement('span');
+      const input = document.createElement('input');
+      label.className = 'field';
+      span.className = 'fiels__span';
+      input.className = 'field__input';
+      if (i == 0) span.textContent = 'ГОРОД';
+      else if (i == 1) span.textContent = 'УЛИЦА';
+      else span.textContent = 'ПОЧТОВЫЙ ИНДЕКС';
+      label.append(span, input);
+      div1.append(label);
+    }
+    div.append(h3, div1);
+    return div;
+  }
+
+  getCheck(): HTMLDivElement {
+    const div: HTMLDivElement = document.createElement('div');
+    div.className = 'checkbox__block';
+    const check = document.createElement('input');
+    check.id = 'checkbox';
+    check.type = 'checkbox';
+    check.checked = true;
+    const label = document.createElement('label');
+    label.className = 'check__label';
+    label.textContent = 'Установить как адрес доставки и платежный адрес';
+    div.append(check, label);
+    return div;
+  }
+  getBaseAddressBody(key: 'keyBilling' | 'keyShipping'): BaseAddress {
     return {
       key: key,
       country: '',

@@ -5,6 +5,7 @@ import BaseRegLink from '../../features/ui/base-reg-link/base-reg-link';
 import BaseLogBtn from '../../features/ui/base-log-btn/base-log-btn';
 import BaseRegInp from '../../features/ui/base-reg-inp/base-reg-inp';
 import EcommerceClient from '../../features/commerce/BuildClient';
+import BaseRegAddress from '../../features/ui/base-reg-formAddress/base-reg-address';
 
 export default class RegView extends BaseView {
   mailField = new BaseRegInp();
@@ -13,7 +14,7 @@ export default class RegView extends BaseView {
   dateField = new BaseRegInp(); //
   regBtn = new BaseLogBtn();
   backBtn = new BaseRegLink('#'); //TODO add link to page login
-
+  addressField = new BaseRegAddress();
   validationMsg: HTMLElement = document.createElement('div');
 
   constructor() {
@@ -28,41 +29,39 @@ export default class RegView extends BaseView {
     const wrapper = document.createElement('div');
     const content = document.createElement('div');
     const stripe = document.createElement('div');
-    const text = document.createElement('div');
+    const text = this.getDivMessage();
     const linkFieldElem = this.backBtn.getHtmlElement();
     const mailFieldElem = this.mailField.getHtmlElement();
     const nameFieldElem = this.nameField.getHtmlElement(); //
     const passwordFieldElem = this.passwordField.getHtmlElement();
     const dateFieldElem = this.dateField.getHtmlElement();
+    const addressFieldElem = this.addressField.getHtmlElement();
     dateFieldElem.querySelector('input')?.setAttribute('type', 'date');
     (dateFieldElem.querySelector('input') as HTMLInputElement).value = '2000-06-01';
     const regBtnElem = this.regBtn.getHtmlElement();
-    text.textContent = '* Поле обязательно для заполнения';
-    text.classList.add('reg__text');
     this.validationMsg.className = 'reg__validmsg hidden';
     wrapper.className = 'reg';
     content.className = 'reg__content';
     (regBtnElem as HTMLElement).id = 'reg__btn';
     this.dateField.setClassnames('reg');
     this.mailField.setLabel('Почта*:');
-    this.nameField.setLabel('ФИО*:'); //
+    this.nameField.setLabel('ФИО*:');
     this.passwordField.setLabel('Пароль*:');
-    this.dateField.setLabel('Дата рождения:'); //
+    this.dateField.setLabel('Дата рождения:');
     this.regBtn.setPlaceholder('ЗАРЕГИСТРИРОВАТЬСЯ');
     stripe.className = 'reg__stripe';
-    content.append(
-      linkFieldElem,
-      mailFieldElem,
-      nameFieldElem,
-      passwordFieldElem,
-      dateFieldElem,
-      regBtnElem,
-      text,
-      this.validationMsg,
-    );
+    content.append(linkFieldElem, mailFieldElem, nameFieldElem, passwordFieldElem, dateFieldElem);
+    content.append(addressFieldElem, regBtnElem, text, this.validationMsg);
     this.regBtn.getHtmlElement().addEventListener('click', async () => this.handleLoginClick());
     wrapper.append(stripe, content);
     this.htmlElement = wrapper;
+  }
+
+  private getDivMessage(): HTMLDivElement {
+    const div = document.createElement('div');
+    div.textContent = '* Поле обязательно для заполнения';
+    div.classList.add('reg__text');
+    return div;
   }
 
   private throwValidationError(): void {
