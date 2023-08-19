@@ -4,3 +4,13 @@ declare module '*.svg' {
   export const viewBox: string;
   export const id: string;
 }
+
+declare module '*.png' {
+  const value: string;
+  export = value;
+}
+
+declare module '*.jpg' {
+  const value: string;
+  export = value;
+}

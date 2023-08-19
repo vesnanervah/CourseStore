@@ -17,6 +17,8 @@
   --color-inactive: #{vars.$color-inactive};
   --color-bg-secondary: #{vars.$color-bg-secondary};
   --color-white: #{vars.$color-white};
+  // shadows
+  --shadow-primary: #{vars.$shadow-primary};
 }
 
 html,
@@ -33,7 +35,7 @@ body {
   display: flex;
   min-height: 100vh;
   font-family: var(--ff-roboto);
-  background-color: var(--color-bg-primary);
+  background-color: var(--color-background);
 }
 
 img,
