@@ -6,6 +6,7 @@ import BaseLogBtn from '../../features/ui/base-log-btn/base-log-btn';
 import BaseRegInp from '../../features/ui/base-reg-inp/base-reg-inp';
 import EcommerceClient from '../../features/commerce/BuildClient';
 import BaseRegAddress from '../../features/ui/base-reg-formAddress/base-reg-address';
+import { BaseAddress } from '@commercetools/platform-sdk';
 
 export default class RegView extends BaseView {
   mailField = new BaseRegInp();
@@ -16,7 +17,7 @@ export default class RegView extends BaseView {
   backBtn = new BaseRegLink('#'); //TODO add link to page login
   addressField = new BaseRegAddress();
   validationMsg: HTMLElement = document.createElement('div');
-
+  arr: Array<BaseAddress> = [];
   constructor() {
     super();
     this.init();
@@ -88,11 +89,11 @@ export default class RegView extends BaseView {
       const mail = this.mailField.getHtmlElement().querySelector('input')?.value || '';
       const passw = this.passwordField.getHtmlElement().querySelector('input')?.value || '';
       const arrayName = this.nameField.getHtmlElement().querySelector('input')?.value.split(' ');
-      console.log(arrayName?.slice(0, 1).join(''));
       const name = arrayName?.slice(0, 1).join('');
       const surname = arrayName?.slice(1, 2).join('');
       const middlename = arrayName?.slice(2).join('');
       const date = this.dateField.getHtmlElement().querySelector('input')?.value || '';
+      this.getArrayAddresses();
       const clientBody: RegisterBody = {
         email: mail,
         password: passw,
@@ -100,21 +101,71 @@ export default class RegView extends BaseView {
         lastName: surname,
         middleName: middlename,
         dateOfBirth: date,
-        // addresses:
-        // defaultShippingAddress:
-        // defaultBillingAddress:
+        addresses: this.arr,
+        defaultShippingAddress: 1,
+        defaultBillingAddress: 0,
       };
       await EcommerceClient.stockRootPrepare();
       await EcommerceClient.registerUser(clientBody).then(() => {
         this.validationMsg.textContent = '';
         this.resetValidationError();
-        //  TODO: replace alert with real redirect
-        alert('Successfully logged in');
-        //TODO user to the application's main page upon successful account creation
+        alert('Successfully logged in'); //TODO user to the application's main page upon successful account creation
       });
     } catch {
       this.validationMsg.textContent = 'Этот email уже используется';
       this.throwValidationError();
+    }
+  }
+
+  private addressInfo(id: string): BaseAddress {
+    //beTwice?: boolean
+    const blockAddressBilling = this.addressField.getHtmlElement().querySelector(id);
+    // let key = '';
+    // if (id == '#addres__block_billing') key = 'keyBilling';
+    // else if (id == '#addres__block_shipping') key = 'keyShipping';
+    // else if (beTwice == true) {
+    //   key = 'keyShipping';
+    // }
+    const key = this.getKeyAddress();
+    const inputs: NodeListOf<HTMLInputElement> | undefined =
+      blockAddressBilling?.querySelectorAll('.field__input');
+    let city = '';
+    if (inputs) city = inputs[0].value;
+    let street = '';
+    if (inputs) street = inputs[1].value;
+    let postal = '';
+    if (inputs) postal = inputs[2].value;
+    const country = blockAddressBilling?.querySelector('.select__form') as HTMLSelectElement;
+    let valueCountry = '';
+    if (country?.value == 'Россия') valueCountry += 'RU';
+    else valueCountry += 'US';
+    return {
+      key: key,
+      country: valueCountry,
+      city: city,
+      streetName: street,
+      postalCode: postal,
+    };
+  }
+
+  private getKeyAddress(): string {
+    const minLength = 2;
+    const maxLength = 256;
+    const randomLength = Math.floor(Math.random() * (maxLength - minLength + 1));
+    const stringValue = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+    let result = '';
+    for (let i = 0; i < randomLength; i++) {
+      result += stringValue[Math.floor(Math.random() * stringValue.length)];
+    }
+    return result;
+  }
+
+  private getArrayAddresses() {
+    this.arr.push(this.addressInfo('#addres__block_billing'));
+    if (document.querySelector('#addres__block_shipping')) {
+      this.arr.push(this.addressInfo('#addres__block_shipping'));
+    } else {
+      this.arr.push(this.addressInfo('#addres__block_billing')); //true
     }
   }
 
@@ -186,7 +237,7 @@ export default class RegView extends BaseView {
 
   private removeBlockAddress(): void {
     const checkbox = document.querySelector('input[type=checkbox]') as HTMLInputElement;
-    const blockAddressShipping = document.querySelector('#addres__block_billing');
+    const blockAddressShipping = document.querySelector('#addres__block_shipping');
     if (checkbox.checked) {
       blockAddressShipping?.classList.add('remove');
     } else {

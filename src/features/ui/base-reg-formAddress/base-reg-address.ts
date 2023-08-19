@@ -25,7 +25,8 @@ export default class BaseRegAddress extends BaseView {
     this.blockAddress = this.getBlockAddress('Платежный адрес');
     this.checkbox = this.getCheck();
     this.blockAddress1 = this.getBlockAddress('Адрес доставки');
-    this.blockAddress1.id = 'addres__block_billing';
+    this.blockAddress1.id = 'addres__block_shipping';
+    this.blockAddress.id = 'addres__block_billing';
     this.blockAddress1.classList.add('remove');
     this.htmlElement.append(this.select, this.blockAddress, this.checkbox, this.blockAddress1);
   }
