@@ -16,7 +16,7 @@ const DEFAULT_NAVIGATE_OPTIONS: NavigateOptions = {
 export class AppRouter {
   private static instance = new AppRouter();
   private routes: Route[] = [];
-  private currentLocation: string = '/';
+  private currentLocation: string | null = null;
   private fallback: Route | null = null;
 
   private constructor() {
