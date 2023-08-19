@@ -1,26 +1,22 @@
 import './app-header.scss';
 import { BaseView } from '../base-view';
-
-import { PageSlug } from '../../../types';
-
+import { routes } from '../../../routes';
+import { AppRouter } from '../../router';
 import { SideNavToggle } from './components/side-nav-toggle';
 import { SearchField } from './components/search-field';
+import { NavCategories } from './components/nav-categories';
 import { Wrapper } from '../wrapper/wrapper';
 import { IconButton } from '../icon-button';
 import { Icon } from '../icon';
 import cartIcon from '../../../assets/images/icons/cart.svg';
 import profileIcon from '../../../assets/images/icons/user.svg';
-import { NavCategories } from './components/nav-categories';
-
-type NavClickHandler = (pageSlug: PageSlug) => void;
 
 export class AppHeaderView extends BaseView {
-  private navLinkClickHandler: NavClickHandler;
+  private router: AppRouter = AppRouter.getInstance();
 
-  constructor(navLinkClickHandler: NavClickHandler) {
+  constructor() {
     super();
 
-    this.navLinkClickHandler = navLinkClickHandler;
     this.createElement();
   }
 
@@ -85,9 +81,14 @@ export class AppHeaderView extends BaseView {
   private createCartButton(): HTMLElement {
     // TODO: add cart items counter
     const icon = new Icon({ id: cartIcon.id, viewBox: cartIcon.viewBox });
+    // TODO: replace with anchor element
     const button = new IconButton({ icon: icon.getHtmlElement() });
     const buttonElement = button.getHtmlElement();
     buttonElement.classList.add('app-header__cart-btn');
+
+    buttonElement.addEventListener('click', () => {
+      this.router.navigate(routes.cart());
+    });
 
     return buttonElement;
   }
@@ -97,6 +98,11 @@ export class AppHeaderView extends BaseView {
     const button = new IconButton({ icon: icon.getHtmlElement() });
     const buttonElement = button.getHtmlElement();
     buttonElement.classList.add('app-header__profile-btn');
+
+    // TODO: show menu with login/register links
+    buttonElement.addEventListener('click', () => {
+      this.router.navigate(routes.login());
+    });
 
     return buttonElement;
   }

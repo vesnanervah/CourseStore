@@ -1,7 +1,6 @@
-import { AppState, PageSlug, StateKeys } from '../types';
+import { AppState, StateKeys } from '../types';
 
 export const DEFAULT_STATE: AppState = {
-  [StateKeys.CURRENT_PAGE_SLUG]: PageSlug.Main,
   [StateKeys.SIDE_NAV_STATUS]: false,
   [StateKeys.NAV_CATEGORIES]: [],
 };

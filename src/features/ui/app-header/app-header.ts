@@ -1,9 +1,8 @@
 import { State } from '../../../state';
 import { AppHeaderView } from './app-header-view';
-
 import EcommerceClient from '../../commerce/BuildClient';
 
-import { LoadingStatus, PageSlug, StateKeys } from '../../../types';
+import { LoadingStatus, StateKeys } from '../../../types';
 
 export class AppHeader {
   private state = State.getInstance();
@@ -11,22 +10,23 @@ export class AppHeader {
   private loadingStatus: LoadingStatus = LoadingStatus.Idle;
 
   constructor() {
-    this.view = new AppHeaderView(this.handleNavClick.bind(this));
+    this.view = new AppHeaderView();
   }
 
   public init(): void {
-    this.fetchCategories();
+    const categories = this.state.getValue(StateKeys.NAV_CATEGORIES);
+    if (!categories.length) {
+      this.fetchCategories();
+    }
   }
 
   public getView(): AppHeaderView {
     return this.view;
   }
-
-  private handleNavClick(pageSlug: PageSlug): void {
-    this.state.setValue(StateKeys.CURRENT_PAGE_SLUG, pageSlug);
-  }
-
   private fetchCategories(): void {
+    if (this.loadingStatus === LoadingStatus.Loading) {
+      return;
+    }
     this.loadingStatus = LoadingStatus.Loading;
     EcommerceClient.getCategories()
       .then((categories) => {

@@ -1,10 +1,11 @@
 import './nav-categories.scss';
 import { BaseView } from '../../base-view';
+import { Wrapper } from '../../wrapper';
 import { State } from '../../../../state';
+import { routes } from '../../../../routes';
+import { AppRouter } from '../../../router';
 
 import { ProductCategory, StateKeys } from '../../../../types';
-import { routes } from '../../../../routes';
-import { Wrapper } from '../../wrapper';
 
 type NavItem = {
   id: string;
@@ -14,6 +15,7 @@ type NavItem = {
 
 export class NavCategories extends BaseView<HTMLElement> {
   private state: State = State.getInstance();
+  private router: AppRouter = AppRouter.getInstance();
   private categories: ProductCategory[] = [];
   private categoryListElement: HTMLElement = NavCategories.createCategoryList();
 
@@ -24,7 +26,10 @@ export class NavCategories extends BaseView<HTMLElement> {
   }
 
   public init(): void {
+    this.categories = this.state.getValue(StateKeys.NAV_CATEGORIES);
     this.state.subscribe(StateKeys.NAV_CATEGORIES, this.setCategories.bind(this));
+
+    this.renderCategories();
     // TODO: show skeleton items on categories load
   }
 
@@ -36,7 +41,7 @@ export class NavCategories extends BaseView<HTMLElement> {
     wrapper.classList.add('nav-categories__wrapper');
     container.append(wrapper);
 
-    const logo = NavCategories.createLogo();
+    const logo = this.createLogo();
     wrapper.append(logo);
 
     wrapper.append(this.categoryListElement);
@@ -44,10 +49,14 @@ export class NavCategories extends BaseView<HTMLElement> {
     this.htmlElement = container;
   }
 
-  private static createLogo(): HTMLElement {
+  private createLogo(): HTMLElement {
     const logo = document.createElement('a');
     logo.href = routes.main();
     logo.classList.add('app-logo');
+    logo.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.router.navigate(routes.main());
+    });
 
     return logo;
   }
@@ -59,7 +68,7 @@ export class NavCategories extends BaseView<HTMLElement> {
     return categoryList;
   }
 
-  private static createNavItem({ label, link }: NavItem): HTMLElement {
+  private createNavItem({ label, link }: NavItem): HTMLElement {
     const sideNavItem = document.createElement('div');
     sideNavItem.classList.add('nav-categories__item');
 
@@ -67,6 +76,10 @@ export class NavCategories extends BaseView<HTMLElement> {
     sideNavLink.classList.add('nav-categories__link', 'text-nav-item');
     sideNavLink.href = link;
     sideNavLink.textContent = label;
+    sideNavLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.router.navigate(link);
+    });
     sideNavItem.append(sideNavLink);
 
     return sideNavItem;
@@ -79,7 +92,7 @@ export class NavCategories extends BaseView<HTMLElement> {
 
     this.categoryListElement.innerHTML = '';
     this.categories.forEach(({ id, name, slug }) => {
-      const navItem = NavCategories.createNavItem({
+      const navItem = this.createNavItem({
         id,
         label: name,
         link: routes.category(slug),
