@@ -1,12 +1,12 @@
 import './side-nav.scss';
 import { BaseView } from '../base-view';
 import { State } from '../../../state';
-import { routes } from '../../../routs';
 import { IconButton } from '../icon-button';
+import { Icon } from '../icon';
+import { routes } from '../../../routes';
 import closeIcon from '../../../assets/images/icons/close.svg';
 
-import { StateKeys, SideNavStatus } from '../../../types';
-import { Icon } from '../icon';
+import { StateKeys, SideNavStatus, ProductCategory } from '../../../types';
 
 type NavItem = {
   id: string;
@@ -16,20 +16,13 @@ type NavItem = {
 
 const MAIN_PAGE_NAV_ITEM: NavItem = { id: 'main', label: 'Главная', link: routes.main() };
 const ABOUT_PAGE_NAV_ITEM: NavItem = { id: 'about', label: 'О нас', link: routes.about() };
-// TODO: replace with API data
-const CATEGORY_NAV_ITEMS: NavItem[] = [
-  { id: 'category-frontend', label: 'Frontend', link: routes.category('frontend') },
-  { id: 'category-backend', label: 'Backend', link: routes.category('backend') },
-  { id: 'category-ui-ux', label: 'Дизайн и UX', link: routes.category('ui-ux') },
-  { id: 'category-testing', label: 'Тестирование', link: routes.category('testing') },
-  { id: 'category-data-science', label: 'Data Science', link: routes.category('data-science') },
-  { id: 'category-analytics', label: 'Аналитика', link: routes.category('analytics') },
-];
 
 export class SideNav extends BaseView<HTMLElement> {
   private state: State = State.getInstance();
   private overlayElement: HTMLElement = SideNav.createOverlay();
   private closeButtonElement: HTMLElement = SideNav.createCloseButton();
+  private categoryListElement: HTMLElement = SideNav.createSideNavList();
+  private categories: ProductCategory[] = [];
 
   constructor() {
     super();
@@ -37,8 +30,12 @@ export class SideNav extends BaseView<HTMLElement> {
     this.createElement();
   }
 
-  public init(): void {
-    this.state.subscribe(StateKeys.SIDE_NAV_STATUS, this.render.bind(this));
+  public async init(): Promise<void> {
+    this.categories = this.state.getValue(StateKeys.NAV_CATEGORIES);
+
+    this.state.subscribe(StateKeys.SIDE_NAV_STATUS, this.renderSideNav.bind(this));
+    this.state.subscribe(StateKeys.NAV_CATEGORIES, this.setCategories.bind(this));
+
     this.overlayElement.addEventListener('click', () => {
       this.state.setValue(StateKeys.SIDE_NAV_STATUS, false);
     });
@@ -47,7 +44,7 @@ export class SideNav extends BaseView<HTMLElement> {
     });
   }
 
-  private render(sideNavOpen: SideNavStatus): void {
+  private renderSideNav(sideNavOpen: SideNavStatus): void {
     if (sideNavOpen) {
       this.showSideNav();
     } else {
@@ -101,7 +98,7 @@ export class SideNav extends BaseView<HTMLElement> {
     sideNavContent.append(SideNav.createDivider());
 
     // Categories section
-    sideNavContent.append(SideNav.createCategoriesSection());
+    sideNavContent.append(this.createCategoriesSection());
     sideNavContent.append(SideNav.createDivider());
 
     // About page section
@@ -119,6 +116,11 @@ export class SideNav extends BaseView<HTMLElement> {
     }
   }
 
+  private setCategories(categories: ProductCategory[]): void {
+    this.categories = categories;
+    this.renderCategories();
+  }
+
   private static createMainPageSection(): HTMLElement {
     const section = SideNav.createSection();
 
@@ -129,17 +131,29 @@ export class SideNav extends BaseView<HTMLElement> {
     return section;
   }
 
-  private static createCategoriesSection(): HTMLElement {
+  private createCategoriesSection(): HTMLElement {
     const section = SideNav.createSection('Направления подготовки');
+    section.append(this.categoryListElement);
 
-    const list = SideNav.createSideNavList();
-    CATEGORY_NAV_ITEMS.forEach((item) => {
-      const navItem = SideNav.createSideNavItem(item);
-      list.append(navItem);
-    });
-    section.append(list);
+    this.renderCategories();
 
     return section;
+  }
+
+  private renderCategories(): void {
+    if (!this.categoryListElement) {
+      return;
+    }
+
+    this.categoryListElement.innerHTML = '';
+    this.categories.forEach(({ id, name, slug }) => {
+      const navItem = SideNav.createSideNavItem({
+        id,
+        label: name,
+        link: routes.category(slug),
+      });
+      this.categoryListElement.append(navItem);
+    });
   }
 
   private static createAboutPageSection(): HTMLElement {

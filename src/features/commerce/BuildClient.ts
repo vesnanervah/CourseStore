@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
-import { createApiBuilderFromCtpClient, ApiRoot } from '@commercetools/platform-sdk';
+import { createApiBuilderFromCtpClient, ApiRoot, Category } from '@commercetools/platform-sdk';
 
 import {
   ClientBuilder,
@@ -8,7 +8,10 @@ import {
   type HttpMiddlewareOptions,
   type PasswordAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
-import { RegisterBody } from '../../types/reg';
+
+import { RegisterBody, ProductCategory } from '../../types';
+
+const LOCALE = 'ru';
 
 export default class EcommerceClient {
   private static clientBuilder = new ClientBuilder();
@@ -27,6 +30,8 @@ export default class EcommerceClient {
     host: CUSTOMER_API_CREDS.API_Host,
     fetch,
   };
+  private static apiClient = EcommerceClient.getApiClient();
+
   public static stockRootPrepare() {
     const builder = this.clientBuilder
       .withClientCredentialsFlow(this.authOptions)
@@ -55,12 +60,12 @@ export default class EcommerceClient {
     this.apiRoot = createApiBuilderFromCtpClient(builded);
   }
 
-  public static async getCategories() {
-    return this.apiRoot
-      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+  public static async getCategories(): Promise<ProductCategory[]> {
+    return this.apiClient
       .categories()
       .get()
-      .execute();
+      .execute()
+      .then((data) => EcommerceClient.normalizeCategories(data.body.results));
   }
 
   public static async getProducts() {
@@ -99,5 +104,25 @@ export default class EcommerceClient {
         body,
       })
       .execute();
+  }
+
+  private static getApiClient() {
+    const builder = this.clientBuilder
+      .withClientCredentialsFlow(this.authOptions)
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+
+    return createApiBuilderFromCtpClient(builder).withProjectKey({
+      projectKey: CUSTOMER_API_CREDS.project_key,
+    });
+  }
+
+  private static normalizeCategories(categories: Category[]): ProductCategory[] {
+    return categories.map(({ id, name, slug }) => ({
+      id,
+      name: name[LOCALE],
+      slug: slug[LOCALE],
+    }));
   }
 }
