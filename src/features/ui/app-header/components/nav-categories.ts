@@ -24,7 +24,10 @@ export class NavCategories extends BaseView<HTMLElement> {
   }
 
   public init(): void {
+    this.categories = this.state.getValue(StateKeys.NAV_CATEGORIES);
     this.state.subscribe(StateKeys.NAV_CATEGORIES, this.setCategories.bind(this));
+
+    this.renderCategories();
     // TODO: show skeleton items on categories load
   }
 

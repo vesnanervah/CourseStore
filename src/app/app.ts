@@ -14,8 +14,6 @@ export class App {
   }
 
   public start(): void {
-    this.renderMainPage();
-
     this.router.setRoutes(
       [
         { location: routes.main(), callback: this.renderMainPage.bind(this) },

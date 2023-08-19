@@ -1,6 +1,5 @@
 import { State } from '../../../state';
 import { AppHeaderView } from './app-header-view';
-
 import EcommerceClient from '../../commerce/BuildClient';
 
 import { LoadingStatus, StateKeys } from '../../../types';
@@ -15,13 +14,19 @@ export class AppHeader {
   }
 
   public init(): void {
-    this.fetchCategories();
+    const categories = this.state.getValue(StateKeys.NAV_CATEGORIES);
+    if (!categories.length) {
+      this.fetchCategories();
+    }
   }
 
   public getView(): AppHeaderView {
     return this.view;
   }
   private fetchCategories(): void {
+    if (this.loadingStatus === LoadingStatus.Loading) {
+      return;
+    }
     this.loadingStatus = LoadingStatus.Loading;
     EcommerceClient.getCategories()
       .then((categories) => {
