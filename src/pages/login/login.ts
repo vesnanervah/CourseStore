@@ -78,8 +78,7 @@ export default class LoginView extends BaseView {
     try {
       await Auth.loggin(this.mailField.getTypedValue(), this.passwordField.getTypedValue());
       this.resetValidationError();
-      //  TODO: replace alert with real redirect
-      alert('Successfully logged in');
+      this.router.navigate(routes.main());
     } catch {
       this.throwValidationError();
     }
