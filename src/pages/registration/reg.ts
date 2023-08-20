@@ -119,7 +119,8 @@ export default class RegView extends BaseView {
         this.router.navigate(routes.main());
       });
     } catch {
-      this.validationMsg.textContent = 'У вас уже есть учетная запись. Войдите в систему (кнопка "Назад")';
+      this.validationMsg.textContent =
+        'У вас уже есть учетная запись. Войдите в систему (кнопка "Назад")';
       this.throwValidationError();
     }
   }

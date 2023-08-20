@@ -97,8 +97,8 @@ export default class LoginView extends BaseView {
   }
 
   private passwordValidation(): void {
-    this.passwordField.setAlertMsg('Пароль должен содержать не менее 4 символов');
-    this.passwordField.validateInput((target) => target.length > 3);
+    this.passwordField.setAlertMsg('Пароль должен содержать не менее 8 символов');
+    this.passwordField.validateInput((target) => target.length > 7);
   }
 
   private bindEvents(): void {
