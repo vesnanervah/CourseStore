@@ -81,4 +81,12 @@
     flex-direction: column;
     align-items: flex-end;
   }
+  @media (max-width: 980px) {
+    .login__content {
+      right: 0px;
+    }
+    .login__stripe {
+      height: 315px;
+    }
+  }
 }

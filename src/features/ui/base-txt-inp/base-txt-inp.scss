@@ -51,4 +51,10 @@
       background-color: #c11668;
     }
   }
+  @media (max-width: 980px) {
+    flex-direction: column;
+    .login__textarea-msg {
+      order: 2;
+    }
+  }
 }
