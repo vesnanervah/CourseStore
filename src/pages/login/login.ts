@@ -4,8 +4,11 @@ import BaseLogBtn from '../../features/ui/base-log-btn/base-log-btn';
 import BaseTxtInp from '../../features/ui/base-txt-inp/base-txt-inp';
 import Auth from '../../features/auth/auth';
 import LoginErrorMessage from '../../features/ui/login-error-message/login-error-msg';
+import { AppRouter } from '../../features/router';
+import { routes } from '../../routes';
 
 export default class LoginView extends BaseView {
+  private router: AppRouter = AppRouter.getInstance();
   mailField = new BaseTxtInp();
   passwordField = new BaseTxtInp();
   loginBtn = new BaseLogBtn();
@@ -57,6 +60,7 @@ export default class LoginView extends BaseView {
     this.loginBtn.getHtmlElement().addEventListener('click', async () => this.handleLoginClick());
     wrapper.append(content);
     this.htmlElement = wrapper;
+    this.bindEvents();
   }
 
   private throwValidationError(): void {
@@ -96,5 +100,12 @@ export default class LoginView extends BaseView {
   private passwordValidation(): void {
     this.passwordField.setAlertMsg('Пароль должен содержать не менее 4 символов');
     this.passwordField.validateInput((target) => target.length > 3);
+  }
+
+  private bindEvents(): void {
+    const regBtnElement = this.regBtn.getHtmlElement();
+    regBtnElement.addEventListener('click', () => {
+      this.router.navigate(routes.signup());
+    });
   }
 }

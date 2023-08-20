@@ -1,7 +1,7 @@
 import './app.scss';
 import { routes } from '../routes';
 import { AppRouter } from '../features/router';
-import { MainPage, LoginPage, NotFoundPage } from '../pages';
+import { MainPage, LoginPage, SignupPage, NotFoundPage } from '../pages';
 
 export class App {
   private appContainer: HTMLElement;
@@ -18,6 +18,7 @@ export class App {
       [
         { location: routes.main(), callback: this.renderMainPage.bind(this) },
         { location: routes.login(), callback: this.renderLoginPage.bind(this) },
+        { location: routes.signup(), callback: this.renderSignupPage.bind(this) },
       ],
       {
         location: routes.notFound(),
@@ -45,6 +46,13 @@ export class App {
     this.appContainer.innerHTML = '';
 
     const page = new LoginPage();
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderSignupPage(): void {
+    this.appContainer.innerHTML = '';
+
+    const page = new SignupPage();
     this.appContainer.append(page.getHtmlElement());
   }
 
