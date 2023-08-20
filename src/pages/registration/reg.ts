@@ -16,7 +16,7 @@ export default class RegView extends BaseView {
   passwordField = new BaseRegInp();
   dateField = new BaseRegInp(); //
   regBtn = new BaseLogBtn();
-  backBtn = new BaseRegLink('#'); //TODO add link to page login
+  backBtn = new BaseRegLink('#');
   addressField = new BaseRegAddress();
   validationMsg: HTMLElement = document.createElement('div');
   arr: Array<BaseAddress> = [];
@@ -119,7 +119,7 @@ export default class RegView extends BaseView {
         this.router.navigate(routes.main());
       });
     } catch {
-      this.validationMsg.textContent = 'Этот email уже используется';
+      this.validationMsg.textContent = 'У вас уже есть учетная запись. Войдите в систему (кнопка "Назад")';
       this.throwValidationError();
     }
   }
@@ -216,7 +216,8 @@ export default class RegView extends BaseView {
       if (target.split(' ').length > 1) {
         for (const elem of target.split(' ')) {
           const text = elem.toLowerCase();
-          if (/[0-9]/g.test(text) || /\W/.test(text)) {
+          const specSymbol = /[$%^&!@#*()_+\-=[\]{};':"\\|,.<>/?]+/;
+          if (/[0-9]/g.test(text) || specSymbol.test(text)) {
             this.validationMsg.textContent =
               'Сведения не должны содержать специальных символов или цифр';
             this.throwValidationErrorNameField();
