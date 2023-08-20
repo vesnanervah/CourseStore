@@ -4,9 +4,6 @@
  */
 
 /** @type {import('jest').Config} */
-
-require('dotenv').config();
-
 const config = {
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
