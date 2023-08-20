@@ -7,6 +7,8 @@ import BaseRegInp from '../../features/ui/base-reg-inp/base-reg-inp';
 import EcommerceClient from '../../features/commerce/BuildClient';
 import BaseRegAddress from '../../features/ui/base-reg-formAddress/base-reg-address';
 import { BaseAddress } from '@commercetools/platform-sdk';
+import { AppRouter } from '../../features/router';
+import { routes } from '../../routes';
 
 export default class RegView extends BaseView {
   mailField = new BaseRegInp();
@@ -18,6 +20,7 @@ export default class RegView extends BaseView {
   addressField = new BaseRegAddress();
   validationMsg: HTMLElement = document.createElement('div');
   arr: Array<BaseAddress> = [];
+  private router: AppRouter = AppRouter.getInstance();
   constructor() {
     super();
     this.init();
@@ -55,6 +58,10 @@ export default class RegView extends BaseView {
     content.append(addressFieldElem, regBtnElem, text, this.validationMsg);
     this.addressField.getHtmlElement().addEventListener('change', () => this.removeBlockAddress());
     this.regBtn.getHtmlElement().addEventListener('click', async () => this.handleLoginClick());
+    this.backBtn.getHtmlElement().addEventListener('click', (e) => {
+      e.preventDefault();
+      this.router.navigate(routes.login());
+    });
     wrapper.append(stripe, content);
     this.htmlElement = wrapper;
   }
@@ -109,7 +116,7 @@ export default class RegView extends BaseView {
       await EcommerceClient.registerUser(clientBody).then(() => {
         this.validationMsg.textContent = '';
         this.resetValidationError();
-        alert('Successfully logged in'); //TODO user to the application's main page upon successful account creation
+        this.router.navigate(routes.main());
       });
     } catch {
       this.validationMsg.textContent = 'Этот email уже используется';
