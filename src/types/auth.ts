@@ -4,4 +4,9 @@ type LocaleData = {
   password?: string | undefined | null;
 };
 
-export { LocaleData };
+interface AuthListener {
+  listenLogout(): void;
+  listenLogin(): void;
+}
+
+export { LocaleData, AuthListener };

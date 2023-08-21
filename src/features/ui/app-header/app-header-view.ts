@@ -9,8 +9,9 @@ import { Wrapper } from '../wrapper/wrapper';
 import { IconButton } from '../icon-button';
 import { Icon } from '../icon';
 import cartIcon from '../../../assets/images/icons/cart.svg';
-import profileIcon from '../../../assets/images/icons/user.svg';
-//import logoutIcon from '../../../assets/images/icons/logout.svg';
+import LogoutBtn from '../logout-btn/logout-btn';
+import Auth from '../../auth/auth';
+import ProfileBtn from '../profile-btn/profile-btn';
 
 export class AppHeaderView extends BaseView {
   private router: AppRouter = AppRouter.getInstance();
@@ -68,6 +69,9 @@ export class AppHeaderView extends BaseView {
     const profileButton = this.createProfileButton();
     container.append(profileButton);
 
+    const logoutButton = this.createLogoutButton();
+    container.append(logoutButton);
+
     return container;
   }
 
@@ -95,7 +99,10 @@ export class AppHeaderView extends BaseView {
   }
 
   private createProfileButton(): HTMLElement {
-    const icon = new Icon({ id: profileIcon.id, viewBox: profileIcon.viewBox });
+    const profileBtn = new ProfileBtn();
+    Auth.subscribe(profileBtn);
+    return profileBtn.getHtmlElement() as HTMLElement;
+    /*const icon = new Icon({ id: profileIcon.id, viewBox: profileIcon.viewBox });
     const button = new IconButton({ icon: icon.getHtmlElement() });
     const buttonElement = button.getHtmlElement();
     buttonElement.classList.add('app-header__profile-btn');
@@ -105,10 +112,12 @@ export class AppHeaderView extends BaseView {
       this.router.navigate(routes.login());
     });
 
-    return buttonElement;
+    return buttonElement;*/
   }
 
-  private createLogoutButton() {
-    //TODO: Implement logout
+  private createLogoutButton(): HTMLElement {
+    const logoutBtn = new LogoutBtn();
+    Auth.subscribe(logoutBtn);
+    return logoutBtn.getHtmlElement() as HTMLElement;
   }
 }

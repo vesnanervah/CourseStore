@@ -2,6 +2,7 @@ import './app.scss';
 import { routes } from '../routes';
 import { AppRouter } from '../features/router';
 import { MainPage, LoginPage, SignupPage, NotFoundPage } from '../pages';
+import Auth from '../features/auth/auth';
 
 export class App {
   private appContainer: HTMLElement;
@@ -9,6 +10,8 @@ export class App {
 
   constructor(root: HTMLElement) {
     this.appContainer = this.createAppContainer();
+
+    Auth.init();
 
     root.append(this.appContainer);
   }

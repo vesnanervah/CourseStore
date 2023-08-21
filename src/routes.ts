@@ -6,4 +6,5 @@ export const routes = {
   cart: () => '/cart',
   about: () => '/about',
   notFound: () => '/not-found',
+  customer: () => '/customer',
 };

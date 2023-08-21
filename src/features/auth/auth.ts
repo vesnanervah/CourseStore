@@ -1,10 +1,11 @@
 import EcommerceClient from '../commerce/BuildClient';
-import { LocaleData } from '../../types/auth';
+import { LocaleData, AuthListener } from '../../types/auth';
 
 export default class Auth {
   private static isLoggedIn: boolean;
   private static password: string;
   private static mail: string;
+  private static subscribers: AuthListener[] = [];
   private constructor() {
     //
   }
@@ -28,6 +29,8 @@ export default class Auth {
       Auth.mail = mail;
       Auth.isLoggedIn = true;
       Auth.updateStorage();
+      Auth.notifyLogin();
+      console.log('successfully loged in');
       return resp;
     } catch {
       Auth.loggout();
@@ -47,11 +50,12 @@ export default class Auth {
     }
   }
 
-  public static loggout(): void {
+  public static loggout() {
     Auth.password = '';
     Auth.mail = '';
     Auth.isLoggedIn = false;
     Auth.updateStorage();
+    Auth.notifyLogout();
     EcommerceClient.stockRootPrepare();
     console.log('logout');
   }
@@ -67,5 +71,30 @@ export default class Auth {
       mail: isLoggedIn ? window.localStorage.getItem('coursestore_mail') : undefined,
       password: isLoggedIn ? window.localStorage.getItem('coursestore_password') : undefined,
     };
+  }
+
+  public static subscribe(elem: AuthListener) {
+    Auth.prepareToSubscribe(elem);
+    Auth.subscribers.push(elem); // щас будет mediator на минималках
+  }
+
+  private static notifyLogout() {
+    Auth.subscribers.forEach((listener) => {
+      listener.listenLogout();
+    });
+  }
+
+  private static notifyLogin() {
+    Auth.subscribers.forEach((listener) => {
+      listener.listenLogin();
+    });
+  }
+
+  private static prepareToSubscribe(elem: AuthListener) {
+    if (Auth.isLoggedIn) {
+      elem.listenLogin();
+    } else {
+      elem.listenLogout();
+    }
   }
 }
