@@ -13,7 +13,7 @@ class DummyView extends RegView {
   async handleLoginClickTest(example: RegisterBody) {
     try {
       const clientBody: RegisterBody = example;
-      await EcommerceClient.stockRootPrepare();
+      EcommerceClient.stockRootPrepare();
       await EcommerceClient.registerUser(clientBody).then((res) => res.statusCode);
     } catch (e) {
       return 'error';
