@@ -10,6 +10,7 @@ import { IconButton } from '../icon-button';
 import { Icon } from '../icon';
 import cartIcon from '../../../assets/images/icons/cart.svg';
 import profileIcon from '../../../assets/images/icons/user.svg';
+//import logoutIcon from '../../../assets/images/icons/logout.svg';
 
 export class AppHeaderView extends BaseView {
   private router: AppRouter = AppRouter.getInstance();
@@ -105,5 +106,9 @@ export class AppHeaderView extends BaseView {
     });
 
     return buttonElement;
+  }
+
+  private createLogoutButton() {
+    //TODO: Implement logout
   }
 }
