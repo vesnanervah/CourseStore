@@ -9,6 +9,7 @@ import BaseRegAddress from '../../features/ui/base-reg-formAddress/base-reg-addr
 import { BaseAddress } from '@commercetools/platform-sdk';
 import { AppRouter } from '../../features/router';
 import { routes } from '../../routes';
+import Auth from '../../features/auth/auth';
 
 export default class RegView extends BaseView {
   mailField = new BaseRegInp();
@@ -112,10 +113,11 @@ export default class RegView extends BaseView {
         defaultShippingAddress: 1,
         defaultBillingAddress: 0,
       };
-      await EcommerceClient.stockRootPrepare();
+      EcommerceClient.stockRootPrepare();
       await EcommerceClient.registerUser(clientBody).then(() => {
         this.validationMsg.textContent = '';
         this.resetValidationError();
+        Auth.loggin(clientBody.email, clientBody.password);
         this.router.navigate(routes.main());
       });
     } catch {
