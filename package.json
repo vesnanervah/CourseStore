@@ -47,7 +47,7 @@
     "start": "webpack serve",
     "build": "webpack",
     "test": "jest",
-    "coverage": "jest --coverage",
+    "coverage": "jest --coverage --collectCoverageFrom=\"./src/**\"",
     "lint": "eslint src/",
     "lint:write": "eslint src/ --fix",
     "prettier:format": "npx prettier . --write",
