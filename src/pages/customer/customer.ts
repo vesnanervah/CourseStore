@@ -1,5 +1,4 @@
-import { BaseView } from '../../features/ui';
-import './login-inform.scss';
+import { BaseView, Wrapper } from '../../features/ui';
 import { routes } from '../../routes';
 import { AppRouter } from '../../features/router';
 import { AuthListener } from '../../types/auth';
@@ -15,11 +14,16 @@ export default class Customer extends BaseView implements AuthListener {
   private init() {
     this.htmlElement = document.createElement('div');
     this.htmlElement.className = 'customer-page';
+
+    const wrapper = new Wrapper();
+    const wrapperElement = wrapper.getHtmlElement();
+    this.htmlElement.append(wrapperElement);
+
     const content = document.createElement('div');
     content.className = 'customer__content';
     content.textContent =
       'Так как вы успешно залогинены, здесь должен быть личный кабинет, но ещё только спринт 2...';
-    this.htmlElement.appendChild(content);
+    wrapperElement.append(content);
   }
 
   listenLogout(): void {
