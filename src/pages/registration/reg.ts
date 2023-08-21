@@ -96,8 +96,8 @@ export default class RegView extends BaseView {
       const mail = this.mailField.getHtmlElement().querySelector('input')?.value || '';
       const passw = this.passwordField.getHtmlElement().querySelector('input')?.value || '';
       const arrayName = this.nameField.getHtmlElement().querySelector('input')?.value.split(' ');
-      const name = arrayName?.slice(0, 1).join('');
-      const surname = arrayName?.slice(1, 2).join('');
+      const surname = arrayName?.slice(0, 1).join('');
+      const name = arrayName?.slice(1, 2).join('');
       const middlename = arrayName?.slice(2).join('');
       const date = this.dateField.getHtmlElement().querySelector('input')?.value || '';
       this.getArrayAddresses();
