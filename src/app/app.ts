@@ -1,7 +1,8 @@
 import './app.scss';
 import { routes } from '../routes';
 import { AppRouter } from '../features/router';
-import { MainPage, LoginPage, SignupPage, NotFoundPage } from '../pages';
+import { MainPage, LoginPage, SignupPage, CustomerPage, NotFoundPage } from '../pages';
+import Auth from '../features/auth/auth';
 
 export class App {
   private appContainer: HTMLElement;
@@ -9,6 +10,8 @@ export class App {
 
   constructor(root: HTMLElement) {
     this.appContainer = this.createAppContainer();
+
+    Auth.init();
 
     root.append(this.appContainer);
   }
@@ -19,6 +22,7 @@ export class App {
         { location: routes.main(), callback: this.renderMainPage.bind(this) },
         { location: routes.login(), callback: this.renderLoginPage.bind(this) },
         { location: routes.signup(), callback: this.renderSignupPage.bind(this) },
+        { location: routes.customer(), callback: this.renderCustomerPage.bind(this) },
       ],
       {
         location: routes.notFound(),
@@ -53,6 +57,13 @@ export class App {
     this.appContainer.innerHTML = '';
 
     const page = new SignupPage();
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderCustomerPage(): void {
+    this.appContainer.innerHTML = '';
+
+    const page = new CustomerPage();
     this.appContainer.append(page.getHtmlElement());
   }
 

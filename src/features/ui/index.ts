@@ -3,3 +3,4 @@ export * from './app-header';
 export * from './icon';
 export * from './icon-button';
 export * from './text-field';
+export * from './wrapper';
