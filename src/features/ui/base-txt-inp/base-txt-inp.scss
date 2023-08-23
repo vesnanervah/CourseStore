@@ -1,0 +1,60 @@
+.login__textarea-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-family: 'Inter', sans-serif;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  .login__textarea {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-radius: 24px;
+    padding: 0 17px;
+    width: 382px;
+    height: 48px;
+    border-radius: 24px;
+  }
+  .login__textarea-label {
+    font-size: 20px;
+    font-weight: 500;
+  }
+  .login__textarea-input {
+    border: none;
+    outline: none;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .login__textarea-msg {
+    color: #c11668;
+    font-style: italic;
+    font-size: 11px;
+    font-weight: 100;
+    width: 270px;
+    opacity: 1;
+    transition: opacity 0.3s;
+    &.hidden {
+      opacity: 0;
+    }
+  }
+  .login__textarea-valid {
+    display: flex;
+    height: 24px;
+    width: 24px;
+    background-color: #45a173;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+    &.validation-failed {
+      background-color: #c11668;
+    }
+  }
+  @media (max-width: 980px) {
+    flex-direction: column;
+    .login__textarea-msg {
+      order: 2;
+    }
+  }
+}

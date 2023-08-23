@@ -1,0 +1,24 @@
+.text-field {
+  position: relative;
+}
+
+.text-field .input {
+  padding: 0.125rem 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  line-height: 1;
+
+  &::placeholder {
+    color: var(--text-secondary);
+  }
+}
+
+.text-field__icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+}

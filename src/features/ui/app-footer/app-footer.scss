@@ -1,0 +1,37 @@
+.app-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  min-height: 12.5rem;
+  color: var(--color-white);
+  background-color: var(--color-dark);
+}
+
+.app-footer__links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.app-footer__rsschool-logo {
+  width: 104px;
+  height: 46px;
+  background-color: #faea68;
+
+  svg {
+    fill: var(--color-dark);
+  }
+}
+
+.app-footer__team-logo {
+  width: 153px;
+  height: 29px;
+}
+
+.app-footer__copyright {
+  font-family: var(--ff-inter);
+  font-size: 1.25rem;
+  letter-spacing: 0.2rem;
+}

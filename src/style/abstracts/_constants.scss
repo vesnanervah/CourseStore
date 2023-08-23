@@ -1,0 +1,33 @@
+//font
+$font-roboto: 'Roboto', sans-serif;
+$font-interl: 'Inter', sans-serif;
+
+//color
+$color-primary: #45a173;
+$color-button-text: #ffffff;
+$color-dark: #000000;
+$color-error: #c11668;
+$color-yellow: #f9ba1a;
+$color-text-primary: #1e1e1e;
+$color-background: #f3f3f3;
+$color-input-search: #d9d9d9;
+$color-text-secondary: #777777;
+$color-inactive: #cdcdcd;
+$color-bg-secondary: #d9d9d9;
+$color-white: #ffffff;
+
+//shadows
+$shadow-primary: 2px 4px 10px 0 rgb(0 0 0 / 15%);
+
+//width
+$content-width: 1440px;
+$tablet-width: 768px;
+$mobile-width: 390px;
+
+//breakpoints
+$bp-up-sm: 390px;
+$bp-down-sm: 389.98px;
+$bp-up-md: 768px;
+$bp-down-md: 767.98px;
+$bp-up-lg: 1440px;
+$bp-down-lg: 1439.98px;
