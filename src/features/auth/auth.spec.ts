@@ -3,12 +3,12 @@ import Auth from './auth';
 
 describe('Auth model', () => {
   describe.skip('Loggin when valid mail and password', () => {
-    it('should return OK status', async () => {
+    it('should return access token', async () => {
       // Arrange
       const resp = await Auth.loggin('c.zwerew2012@yandex.ru', '12345678');
-      const status = resp.statusCode;
+      const token = resp.access_token;
       // Assert
-      expect(status).toBe(200);
+      expect(token).toBeDefined();
     });
   });
   describe('Loggin when invalid mail and password', () => {
@@ -23,11 +23,16 @@ describe('Auth model', () => {
   });
   describe.skip('Locale storage login data after success login', () => {
     it('should equal to provided data', async () => {
-      await Auth.loggin('c.zwerew2012@yandex.ru', '12345678');
-      const data = Auth.getDataFromLocale();
-      expect(data.isLoggedIn).toBe(true);
-      expect(data.mail).toBe('c.zwerew2012@yandex.ru');
-      expect(data.password).toBe('12345678');
+      // Arrange
+      const email = 'c.zwerew2012@yandex.ru';
+      const password = '12345678';
+
+      // Act
+      await Auth.loggin(email, password);
+      const data = Auth.getDataFromStorage();
+
+      // Assert
+      expect(data.token).toBeDefined();
     });
   });
   describe('Locale storage login data after unsuccess login', () => {
@@ -35,10 +40,8 @@ describe('Auth model', () => {
       try {
         await Auth.loggin('c.zwerew2012@yandex.ru', 'wrongpassword');
       } catch {
-        const data = Auth.getDataFromLocale();
-        expect(data.isLoggedIn).toBe(false);
-        expect(data.mail).toBe(undefined);
-        expect(data.password).toBe(undefined);
+        const data = Auth.getDataFromStorage();
+        expect(data.token).toBe(null);
       }
     });
   });
