@@ -1,15 +1,25 @@
 import fetch from 'node-fetch';
-import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { createApiBuilderFromCtpClient, ApiRoot, Category } from '@commercetools/platform-sdk';
+
+import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 
 import {
   ClientBuilder,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
-  type PasswordAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 
 import { RegisterBody, ProductCategory } from '../../types';
+import Auth from '../auth/auth';
+import { AuthToken } from '../../types/auth';
+
+type ExistingTokenMiddlewareOptions = {
+  force?: boolean;
+};
+
+const existingTokenMiddlewareOptions: ExistingTokenMiddlewareOptions = {
+  force: true,
+};
 
 const LOCALE = 'ru';
 
@@ -41,19 +51,11 @@ export default class EcommerceClient {
     this.apiRoot = createApiBuilderFromCtpClient(builder);
   }
 
-  public static passwordRootPrepare(email: string, password: string) {
-    const passwordAuthOptions: PasswordAuthMiddlewareOptions = {
-      ...this.authOptions,
-      credentials: {
-        ...this.authOptions.credentials,
-        user: {
-          username: email,
-          password: password,
-        },
-      },
-    };
+  public static tokenRootPrepare() {
+    const accessToken = Auth.getAccessToken();
+
     const builded = this.clientBuilder
-      .withPasswordFlow(passwordAuthOptions)
+      .withExistingTokenFlow(accessToken, existingTokenMiddlewareOptions)
       .withHttpMiddleware(this.httpMiddlewareOptions)
       .withLoggerMiddleware()
       .build();
@@ -85,7 +87,17 @@ export default class EcommerceClient {
   }
 
   public static async login(email: string, password: string) {
-    return this.apiRoot
+    const token: AuthToken = await Auth.loggin(email, password);
+    const accessToken = `Bearer ${token.access_token}`;
+
+    const client = this.clientBuilder
+      .withExistingTokenFlow(accessToken, existingTokenMiddlewareOptions)
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+    const apiRoot = createApiBuilderFromCtpClient(client);
+
+    return apiRoot
       .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
       .me()
       .login()
