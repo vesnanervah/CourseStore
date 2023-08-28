@@ -33,7 +33,6 @@ export default class Auth {
       Auth.isLoggedIn = true;
       Auth.accessToken = token.access_token;
       Auth.notifyLogin();
-
       return token;
     } catch {
       Auth.loggout();

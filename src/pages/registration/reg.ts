@@ -10,6 +10,8 @@ import { BaseAddress } from '@commercetools/platform-sdk';
 import { AppRouter } from '../../features/router';
 import { routes } from '../../routes';
 import Auth from '../../features/auth/auth';
+import { State } from '../../../src/state';
+import { StateKeys } from '../../types';
 
 export default class RegView extends BaseView {
   mailField = new BaseRegInp();
@@ -22,6 +24,7 @@ export default class RegView extends BaseView {
   validationMsg: HTMLElement = document.createElement('div');
   arr: Array<BaseAddress> = [];
   private router: AppRouter = AppRouter.getInstance();
+  private state = State.getInstance();
   constructor() {
     super();
     this.init();
@@ -114,11 +117,12 @@ export default class RegView extends BaseView {
         defaultBillingAddress: 0,
       };
       EcommerceClient.stockRootPrepare();
-      await EcommerceClient.registerUser(clientBody).then(() => {
+      await EcommerceClient.registerUser(clientBody).then((res) => {
         this.validationMsg.textContent = '';
         this.resetValidationError();
         Auth.loggin(clientBody.email, clientBody.password);
         this.router.navigate(routes.main());
+        this.state.setValue(StateKeys.CUSTOMER, res.body.customer);
       });
     } catch {
       this.validationMsg.textContent =

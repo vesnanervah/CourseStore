@@ -1,3 +1,4 @@
+/* eslint-disable*/
 import fetch from 'node-fetch';
 import { createApiBuilderFromCtpClient, ApiRoot, Category } from '@commercetools/platform-sdk';
 
@@ -12,6 +13,7 @@ import {
 import { RegisterBody, ProductCategory } from '../../types';
 import Auth from '../auth/auth';
 import { AuthToken } from '../../types/auth';
+import Customer from '../../pages/customer/customer';
 
 type ExistingTokenMiddlewareOptions = {
   force?: boolean;
@@ -55,7 +57,7 @@ export default class EcommerceClient {
     const accessToken = Auth.getAccessToken();
 
     const builded = this.clientBuilder
-      .withExistingTokenFlow(accessToken, existingTokenMiddlewareOptions)
+      .withExistingTokenFlow(`Bearer ${accessToken}`, existingTokenMiddlewareOptions) //(accessToken, existingTokenMiddlewareOptions)
       .withHttpMiddleware(this.httpMiddlewareOptions)
       .withLoggerMiddleware()
       .build();
@@ -115,6 +117,14 @@ export default class EcommerceClient {
       .post({
         body,
       })
+      .execute();
+  }
+
+  public static async getCustomer() {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .get()
       .execute();
   }
 

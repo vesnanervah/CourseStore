@@ -1,4 +1,5 @@
 import './login.scss';
+import { State } from '../../../src/state';
 import { BaseView } from '../../features/ui';
 import BaseLogBtn from '../../features/ui/base-log-btn/base-log-btn';
 import BaseTxtInp from '../../features/ui/base-txt-inp/base-txt-inp';
@@ -6,6 +7,8 @@ import Auth from '../../features/auth/auth';
 import LoginErrorMessage from '../../features/ui/login-error-message/login-error-msg';
 import { AppRouter } from '../../features/router';
 import { routes } from '../../routes';
+import EcommerceClient from '../../features/commerce/BuildClient';
+import { StateKeys } from '../../types';
 
 export default class LoginView extends BaseView {
   private router: AppRouter = AppRouter.getInstance();
@@ -14,6 +17,7 @@ export default class LoginView extends BaseView {
   loginBtn = new BaseLogBtn();
   regBtn = new BaseLogBtn();
   validationMsg = new LoginErrorMessage();
+  private state = State.getInstance();
 
   constructor() {
     super();
@@ -79,8 +83,14 @@ export default class LoginView extends BaseView {
       await Auth.loggin(this.mailField.getTypedValue(), this.passwordField.getTypedValue());
       this.resetValidationError();
       this.router.navigate(routes.main());
+      EcommerceClient.tokenRootPrepare();
+      const customer = await EcommerceClient.getCustomer();
+      this.state.setValue(StateKeys.CUSTOMER, customer.body);
+      console.log('login');
+      console.log(this.state.getValue(StateKeys.CUSTOMER));
     } catch {
       this.throwValidationError();
+      console.log('catch');
     }
   }
 
