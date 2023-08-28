@@ -127,6 +127,21 @@ export default class EcommerceClient {
       .get()
       .execute();
   }
+  public static async getCustomerByToken() {
+    const token = window.localStorage.getItem('coursestore_token');
+    let refresh_token: string = '';
+    if (token) refresh_token += JSON.parse(token).refresh_token;
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .get({
+        headers: {
+          Authorization: `Baerar ${refresh_token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .execute();
+  }
 
   private static getApiClient() {
     const builder = this.clientBuilder

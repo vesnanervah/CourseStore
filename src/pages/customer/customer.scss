@@ -4,3 +4,8 @@
   align-items: center;
   padding: 200px 0px;
 }
+.customer__content {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
