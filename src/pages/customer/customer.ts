@@ -24,12 +24,12 @@ export default class Customer extends BaseView implements AuthListener {
   private state = State.getInstance();
   profileLeftBlock = new BaseProfileBlock();
   customerInfo: string[] | null = [];
-  id = '';
-  firstName = '';
-  lastName = '';
-  middleName = '';
-  dateOfBirth = '';
-  email = '';
+  id: string | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  middleName: string | undefined;
+  dateOfBirth: string | undefined;
+  email: string | undefined;
 
   constructor() {
     super();
@@ -50,6 +50,8 @@ export default class Customer extends BaseView implements AuthListener {
     wrapperElement.append(leftBlock);
     this.htmlElement.append(wrapperElement);
     await this.listenLogin().then(() => this.addValueInput());
+    this.handleClickButtonSave();
+    this.handleClickButtonRemove();
   }
 
   listenLogout(): void {
@@ -59,12 +61,12 @@ export default class Customer extends BaseView implements AuthListener {
   async listenLogin(): Promise<void> {
     EcommerceClient.tokenRootPrepare();
     await EcommerceClient.getCustomerByToken().then((res) => {
-      this.id += res.body.id;
-      this.firstName += res.body.firstName;
-      this.lastName += res.body.lastName;
-      this.middleName += res.body.middleName;
-      this.dateOfBirth += res.body.dateOfBirth;
-      this.email += res.body.email;
+      this.id = res.body.id;
+      this.firstName = res.body.firstName;
+      this.lastName = res.body.lastName;
+      this.middleName = res.body.middleName;
+      this.dateOfBirth = res.body.dateOfBirth;
+      this.email = res.body.email;
     });
   }
 
@@ -77,23 +79,79 @@ export default class Customer extends BaseView implements AuthListener {
     }
   }
 
-  private addValueInput() {
+  private getInputs(): NodeListOf<HTMLInputElement> | undefined {
     const parent = document.querySelector('.profile__block_main');
     const inputs = parent?.querySelectorAll('input');
+    return inputs;
+  }
+  private getSpansGear(): NodeListOf<Element> | undefined {
+    const parent = document.querySelector('.profile__block_main');
+    const spans = parent?.querySelectorAll('.profile__edit_button');
+    return spans;
+  }
+  private addValueInput() {
+    const inputs = this.getInputs();
     inputs?.forEach((item) => {
-      if (item.getAttribute('data-set') == 'firstName') item.value = this.firstName;
-      if (item.getAttribute('data-set') == 'lastName') item.value = this.lastName;
-      if (item.getAttribute('data-set') == 'middleName') item.value = this.middleName;
-      if (item.getAttribute('data-set') == 'dateOfBirth') item.value = this.dateOfBirth;
-      if (item.getAttribute('data-set') == 'email') item.value = this.email;
+      if (item.getAttribute('data-set') == 'firstName') item.value = this.firstName || '';
+      if (item.getAttribute('data-set') == 'lastName') item.value = this.lastName || '';
+      if (item.getAttribute('data-set') == 'middleName') item.value = this.middleName || '';
+      if (item.getAttribute('data-set') == 'dateOfBirth') item.value = this.dateOfBirth || '';
+      if (item.getAttribute('data-set') == 'email') item.value = this.email || '';
     });
   }
 
-  getValue(inpElem: HTMLInputElement): string {
-    return inpElem.value;
+  private handleClickButtonSave(): void {
+    const buttonSave = document.querySelector('#profile__save');
+    buttonSave?.addEventListener('click', () => {
+      console.log(this.editMode);
+      this.removeBorder();
+      this.saveUpdate();
+    });
   }
 
-  checkValid(): boolean {
-    return this.editMode;
+  saveUpdate() {
+    this.getDisabled();
+    if (!this.editMode) return;
+    else {
+      this.editMode = false;
+      const inputs = this.getInputs();
+      inputs?.forEach((input) => {
+        if (!this.checkValueInput(input)) {
+          console.log(input.value); //TODO send fetch and new value save
+        }
+      });
+    }
+  }
+  private removeBorder() {
+    const fields = document.querySelectorAll('.profil_field');
+    fields.forEach((item) => {
+      item.classList.remove('border__active');
+      item.classList.remove('border__wrong');
+    });
+  }
+  private getDisabled() {
+    const inputs = this.getInputs();
+    inputs?.forEach((input) => {
+      input.disabled = true;
+    });
+  }
+  checkValueInput(input: HTMLInputElement): boolean | undefined {
+    if (input.getAttribute('data-set') == 'firstName') return input.value.trim() === this.firstName;
+    else if (input.getAttribute('data-set') == 'lastName') {
+      return input.value.trim() === this.lastName;
+    } else if (input.getAttribute('data-set') == 'middleName') {
+      return input.value.trim() === this.middleName;
+    } else if (input.getAttribute('data-set') == 'dateOfBirth') {
+      return input.value.trim() === this.dateOfBirth;
+    } else if (input.getAttribute('data-set') == 'email') return input.value.trim() === this.email;
+  }
+
+  private handleClickButtonRemove() {
+    const buttonReset = document.querySelector('#profile__reset');
+    buttonReset?.addEventListener('click', () => {
+      this.removeBorder();
+      this.addValueInput();
+      this.getDisabled();
+    });
   }
 }
