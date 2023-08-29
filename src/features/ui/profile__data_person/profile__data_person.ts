@@ -1,8 +1,6 @@
 import { BaseView } from '../base-view';
 
 export default class BaseProfileBlock extends BaseView {
-  private editMode = false;
-
   constructor() {
     super();
     this.htmlElement = document.createElement('div');
@@ -49,12 +47,5 @@ export default class BaseProfileBlock extends BaseView {
     button1.id = 'profile__reset';
     div.append(button, button1);
     return div;
-  }
-  getValueValue(inpElem: HTMLInputElement): string {
-    return inpElem.value;
-  }
-
-  checkValid(): boolean {
-    return this.editMode;
   }
 }
