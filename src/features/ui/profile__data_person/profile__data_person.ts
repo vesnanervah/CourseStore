@@ -7,13 +7,17 @@ export default class BaseProfileBlock extends BaseView {
     super();
     this.htmlElement = document.createElement('div');
     this.htmlElement.className = 'profile__block_main';
+    const title = document.createElement('h1');
     const nameCustomer = this.addField('Имя:', 'firstName');
     const surname = this.addField('Фамилия:', 'lastName');
     const middlename = this.addField('Отчество:', 'middleName');
     const dateBirth = this.addField('Дата рождения:', 'dateOfBirth');
+    (dateBirth.querySelector('input') as HTMLInputElement).type = 'date';
     const email = this.addField('Почта:', 'email');
     const buttons = this.addButtons('button__main');
-    this.htmlElement.append(nameCustomer, surname, middlename, dateBirth, email, buttons);
+    title.textContent = 'Ваши данные:';
+    title.classList.add('profile__title');
+    this.htmlElement.append(title, nameCustomer, surname, middlename, dateBirth, email, buttons);
   }
 
   addField(text: string, data: string): HTMLDivElement {

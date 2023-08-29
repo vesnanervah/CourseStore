@@ -4,8 +4,77 @@
   align-items: center;
   padding: 200px 0px;
 }
-.customer__content {
+.profile__wrapper {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+}
+.profile__title {
+  color: #000;
+  font-family: 'Roboto', sans-serif;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.profil_field {
+  display: flex;
+  width: 382px;
+  height: 37px;
+  border-radius: 24px;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-radius: 24px;
+  padding: 7px 17px;
+  margin-bottom: 25px;
+}
+.profile__libel {
+  font-size: 16px;
+  font-weight: 600;
+  width: 100px;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  line-height: normal;
+}
+.profile__input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  color: #000;
+  background-color: white;
+}
+.profile__edit_button {
+  display: flex;
+  height: 24px;
+  width: 24px;
+  border-radius: 50%;
+  background: url(../../assets/gear.png) 95% / 81% no-repeat #fff;
+}
+.button__main {
+  display: flex;
+  justify-content: space-around;
+}
+.button__round_profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 166px;
+  height: 48px;
+  border-radius: 24px;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  color: white;
+  background-color: #373636;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  &:hover {
+    transform: scale(1.05);
+  }
 }
