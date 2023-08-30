@@ -89,13 +89,38 @@ export default class Customer extends BaseView implements AuthListener {
         target.getAttribute('data-set') === 'lastName' ||
         target.getAttribute('data-set') === 'middleName')
     ) {
+      const value = (target as HTMLInputElement).value;
       const parent = target.parentElement as HTMLDivElement;
-      console.log('text');
-      parent?.classList.add('border__wrong');
-    } else if (target.closest('input') && target.getAttribute('data-set') === 'dateOfBirth') {
+      const paragraph = parent.nextElementSibling as HTMLParagraphElement;
+      const text = value.toLowerCase();
+      const specSymbol = /[$%^&!@#*()_+\-=[\]{};':"\\|,.<>/?]+/;
+      if (/[0-9]/g.test(text) || specSymbol.test(text) || text.length == 0) {
+        this.addErrorValue(parent);
+        paragraph.textContent = 'Сведения не должны содержать специальных символов или цифр';
+      } else {
+        this.removeErrorValue(parent);
+        paragraph.textContent = '';
+      }
+    }
+  }
+
+  private validateInputDate(e: Event): void {
+    const target = e.target as HTMLElement;
+    if (target.closest('input') && target.getAttribute('data-set') === 'dateOfBirth') {
+      const value = (target as HTMLInputElement).value;
+      console.log(value);
       const parent = target.parentElement as HTMLDivElement;
-      console.log('date');
-      parent?.classList.add('border__wrong');
+      const paragraph = parent.nextElementSibling as HTMLParagraphElement;
+      const userDate = +new Date(value);
+      const age: number = (Date.now() - userDate) / 1000 / 3600 / 24 / 30 / 12;
+      console.log(age + ' age');
+      if (age > 100 || age < 7 || !isNaN(+value)) {
+        this.addErrorValue(parent);
+        paragraph.textContent = 'Допустимый возраст от 7 до 100 лет';
+      } else {
+        this.removeErrorValue(parent);
+        paragraph.textContent = '';
+      }
     }
   }
 
@@ -106,23 +131,29 @@ export default class Customer extends BaseView implements AuthListener {
       const parent = target.parentElement as HTMLDivElement;
       const paragraph = parent.nextElementSibling as HTMLParagraphElement;
       if (this.checkMail(value)) {
-        parent?.classList.remove('border__wrong');
-        parent?.classList.add('border__active');
+        this.removeErrorValue(parent);
         paragraph.textContent = '';
         const mailsOfCustomers = await this.checkUniqueMail();
-        if (mailsOfCustomers.includes(value)) {
+        if (mailsOfCustomers.includes(value) && value !== this.email) {
           paragraph.textContent =
             'Укажите другой адрес электронной почты. Пользователь с данными сведениями уже зарегистрирован';
-          parent?.classList.add('border__wrong');
-          parent?.classList.remove('border__active');
+          this.addErrorValue(parent);
         }
       } else {
-        parent?.classList.add('border__wrong');
-        parent?.classList.remove('border__active');
+        this.addErrorValue(parent);
         paragraph.textContent =
           'Неправильный адрес электронной почты. Корректный формат: example@email.com';
       }
     }
+  }
+
+  private removeErrorValue(elem: HTMLElement) {
+    elem?.classList.remove('border__wrong');
+    elem?.classList.add('border__active');
+  }
+  private addErrorValue(elem: HTMLElement) {
+    elem?.classList.add('border__wrong');
+    elem?.classList.remove('border__active');
   }
 
   private async checkUniqueMail(): Promise<string[]> {
@@ -134,22 +165,20 @@ export default class Customer extends BaseView implements AuthListener {
       /[a-zа-я0-9_-]+@[a-zA-Z0-9]+\.[a-z]{2,3}/.test(value) &&
       value.indexOf('@') != 0 &&
       value.trim().indexOf(' ') == -1 &&
-      value.split('.')[1].length < 3
+      value.split('.')[1].length < 4
     ) {
       return true;
     } else return false;
   }
 
-  private getInputs(): NodeListOf<HTMLInputElement> | undefined {
-    const parent = document.querySelector('.profile__block_main');
-    const inputs = parent?.querySelectorAll('input');
-    return inputs;
-  }
   private listenerInputWrite() {
     const inputs = this.getInputs();
-    inputs?.forEach((input) => {
-      input.addEventListener('keyup', this.validateInputText.bind(this));
-      input.addEventListener('keyup', this.validateInputEmail.bind(this));
+    inputs?.[3].addEventListener('blur', this.validateInputDate.bind(this));
+    inputs?.[4].addEventListener('keyup', this.validateInputEmail.bind(this));
+    inputs?.forEach((input: HTMLElement, index: number) => {
+      if (index >= 0 && index <= 2) {
+        input.addEventListener('keyup', this.validateInputText.bind(this));
+      }
     });
   }
   //get full input fields of profile
@@ -194,11 +223,16 @@ export default class Customer extends BaseView implements AuthListener {
       const inputs = this.getInputs();
       inputs?.forEach((input) => {
         if (!this.checkValueInput(input)) {
-          //check valid
-          const nextVersion = Number(version) + 1;
-          console.log(version); //TODO send fetch and new value save
-          console.log(nextVersion); //TODO send fetch and new value save
+          const property = input.getAttribute('data-set');
+          if (property === 'email') this.customerdata.email = input.value;
+          if (property === 'dateOfBirth') this.customerdata.dateOfBirth = input.value;
+          if (property === 'firstName') this.customerdata.firstName = input.value;
+          if (property === 'lastName') this.customerdata.lastName = input.value;
+          if (property === 'middleName') this.customerdata.middleName = input.value;
         }
+        console.log(this.customerdata); //TODO clear this objeck after update
+        const nextVersion = Number(version) + 1;
+        console.log(nextVersion); //TODO send fetch and new value save
       });
     }
   }
@@ -248,5 +282,11 @@ export default class Customer extends BaseView implements AuthListener {
     } catch (err) {
       throw new Error(`${err} customer error`);
     }
+  }
+
+  private getInputs(): NodeListOf<HTMLInputElement> | undefined {
+    const parent = document.querySelector('.profile__block_main');
+    const inputs = parent?.querySelectorAll('input');
+    return inputs;
   }
 }
