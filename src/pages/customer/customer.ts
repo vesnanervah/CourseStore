@@ -8,22 +8,13 @@ import { State } from '../../../src/state';
 // import { StateKeys } from '../../types';
 import BaseProfileBlock from '../../features/ui/profile__data_person/profile__data_person';
 import './customer.scss';
-
-//type for changed values
-type ProfileItem = {
-  firstName?: string;
-  lastName?: string;
-  middleName?: string;
-  dateOfBirth?: string;
-  email?: string;
-};
+import { CustomerUpdate } from '@commercetools/platform-sdk';
 
 export default class Customer extends BaseView implements AuthListener {
   private editMode = false;
   private router = AppRouter.getInstance();
   private state = State.getInstance();
   profileLeftBlock = new BaseProfileBlock();
-  customerdata: ProfileItem = {};
   id: string;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -215,35 +206,52 @@ export default class Customer extends BaseView implements AuthListener {
   }
 
   //save updates of customer
+  /* eslint-disable*/
   private async saveUpdate() {
     this.getDisabled();
     if (!this.editMode) return;
     else {
       const version = await this.getCustomerVersion();
-      let nextVersion = Number(version); // + 1;
+      const nextVersion = Number(version) + 1;
+      const data: CustomerUpdate = {
+        version: nextVersion,
+        actions: [],
+      };
       this.editMode = false;
       const inputs = this.getInputs();
       inputs?.forEach((input) => {
         if (!this.checkValueInput(input)) {
           const property = input.getAttribute('data-set');
           if (property === 'email') {
-            this.customerdata.email = input.value;
-            EcommerceClient.updateCustomerById(this.id, input.value, nextVersion)
-              .then((mes) => console.log('mes' + mes))
-              .catch((err) => console.log(err + 'err update'));
-            ++nextVersion;
+            data.actions.push({
+              action: 'changeEmail',
+              email: input.value,
+            });
+          } else if (property === 'dateOfBirth') {
+            data.actions.push({
+              action: 'setDateOfBirth',
+              dateOfBirth: input.value,
+            });
+          } else if (property === 'firstName') {
+            data.actions.push({
+              action: 'setFirstName',
+              firstName: input.value,
+            });
+          } else if (property === 'lastName') {
+            data.actions.push({
+              action: 'setLastName',
+              lastName: input.value,
+            });
+          } else if (property === 'middleName') {
+            data.actions.push({
+              action: 'setMiddleName',
+              middleName: input.value,
+            });
           }
-          if (property === 'dateOfBirth') this.customerdata.dateOfBirth = input.value;
-          if (property === 'firstName') {
-            this.customerdata.firstName = input.value;
-            EcommerceClient.updateCustomerNameById(this.id, input.value, nextVersion)
-              .then((res) => console.log(res))
-              .catch((err) => console.log(err));
-          }
-          ++nextVersion;
-          if (property === 'lastName') this.customerdata.lastName = input.value;
-          if (property === 'middleName') this.customerdata.middleName = input.value;
         }
+        EcommerceClient.updateCustomerById(this.id, data)
+          .then((mes) => console.log('mes' + mes))
+          .catch((err) => console.log(err + 'err update'));
       });
     }
   }
