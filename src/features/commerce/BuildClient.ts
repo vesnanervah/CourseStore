@@ -19,6 +19,15 @@ type ExistingTokenMiddlewareOptions = {
   force?: boolean;
 };
 
+type ections = {
+  action: string;
+  email?: string;
+};
+type bodyCustomerInfo = {
+  version: string;
+  actions: Array<ections>;
+};
+
 const existingTokenMiddlewareOptions: ExistingTokenMiddlewareOptions = {
   force: true,
 };
@@ -172,16 +181,44 @@ export default class EcommerceClient {
     return arr;
   }
 
-  // public static async updateCustomerById(ID: string) {
-  //   return this.apiRoot
-  //     .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
-  //     .customers()
-  //     .withId({ ID })
-  //     .post({
+  public static async updateCustomerById(ID: string, property: string, version: number) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .customers()
+      .withId({ ID })
+      .post({
+        body: {
+          version: version,
+          actions: [
+            {
+              action: 'changeEmail',
+              email: property,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
 
-  //     })
-  //     .execute();
-  // }
+  public static async updateCustomerNameById(ID: string, property: string, version: number) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .customers()
+      .withId({ ID })
+      .post({
+        body: {
+          version: version,
+          actions: [
+            {
+              action: 'setFirstName',
+              firstName: property,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+
   public static async getCustomerByToken() {
     const token = window.localStorage.getItem('coursestore_token');
     let refresh_token: string = '';

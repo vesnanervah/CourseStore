@@ -24,7 +24,7 @@ export default class Customer extends BaseView implements AuthListener {
   private state = State.getInstance();
   profileLeftBlock = new BaseProfileBlock();
   customerdata: ProfileItem = {};
-  id: string | undefined;
+  id: string;
   firstName: string | undefined;
   lastName: string | undefined;
   middleName: string | undefined;
@@ -33,6 +33,7 @@ export default class Customer extends BaseView implements AuthListener {
 
   constructor() {
     super();
+    this.id = '';
     this.init();
     Auth.subscribe(this);
   }
@@ -219,20 +220,30 @@ export default class Customer extends BaseView implements AuthListener {
     if (!this.editMode) return;
     else {
       const version = await this.getCustomerVersion();
+      let nextVersion = Number(version); // + 1;
       this.editMode = false;
       const inputs = this.getInputs();
       inputs?.forEach((input) => {
         if (!this.checkValueInput(input)) {
           const property = input.getAttribute('data-set');
-          if (property === 'email') this.customerdata.email = input.value;
+          if (property === 'email') {
+            this.customerdata.email = input.value;
+            EcommerceClient.updateCustomerById(this.id, input.value, nextVersion)
+              .then((mes) => console.log('mes' + mes))
+              .catch((err) => console.log(err + 'err update'));
+            ++nextVersion;
+          }
           if (property === 'dateOfBirth') this.customerdata.dateOfBirth = input.value;
-          if (property === 'firstName') this.customerdata.firstName = input.value;
+          if (property === 'firstName') {
+            this.customerdata.firstName = input.value;
+            EcommerceClient.updateCustomerNameById(this.id, input.value, nextVersion)
+              .then((res) => console.log(res))
+              .catch((err) => console.log(err));
+          }
+          ++nextVersion;
           if (property === 'lastName') this.customerdata.lastName = input.value;
           if (property === 'middleName') this.customerdata.middleName = input.value;
         }
-        console.log(this.customerdata); //TODO clear this objeck after update
-        const nextVersion = Number(version) + 1;
-        console.log(nextVersion); //TODO send fetch and new value save
       });
     }
   }
