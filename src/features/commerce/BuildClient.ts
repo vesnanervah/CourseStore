@@ -127,6 +127,61 @@ export default class EcommerceClient {
       .get()
       .execute();
   }
+  public static async getCustomerById(ID: string) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .customers()
+      .withId({ ID })
+      .get()
+      .execute();
+  }
+
+  public static async getUsersEmail() {
+    const Customers = () => {
+      return this.apiRoot
+        .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+        .customers()
+        .get()
+        .execute();
+    };
+    const customers = await Customers();
+    const length = Number(customers.body.total);
+    console.log('length' + length);
+    const emails = (length: number) => {
+      return this.apiRoot
+        .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+        .customers()
+        .get({
+          queryArgs: {
+            limit: length,
+          },
+        })
+        .execute();
+    };
+    const arr: string[] = [];
+    const data = await emails(length);
+    const objectCustomers = data.body.results;
+    console.log(objectCustomers);
+    for (let customer of objectCustomers) {
+      for (let key in customer) {
+        if (key === 'email') {
+          arr.push(customer[key]);
+        }
+      }
+    }
+    return arr;
+  }
+
+  // public static async updateCustomerById(ID: string) {
+  //   return this.apiRoot
+  //     .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+  //     .customers()
+  //     .withId({ ID })
+  //     .post({
+
+  //     })
+  //     .execute();
+  // }
   public static async getCustomerByToken() {
     const token = window.localStorage.getItem('coursestore_token');
     let refresh_token: string = '';

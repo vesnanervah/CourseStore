@@ -20,10 +20,13 @@ export default class BaseProfileBlock extends BaseView {
 
   addField(text: string, data: string): HTMLDivElement {
     const div = document.createElement('div');
+    const div1 = document.createElement('div');
     const labelElem = document.createElement('span') as HTMLSpanElement;
     const inpElem = document.createElement('input') as HTMLInputElement;
     const validElem = document.createElement('span') as HTMLSpanElement;
-    div.className = 'profil_field';
+    const message = document.createElement('p');
+    div.className = 'profile';
+    div1.className = 'profil_field';
     inpElem.setAttribute('type', 'text');
     inpElem.disabled = true;
     inpElem.setAttribute('data-set', data);
@@ -31,7 +34,10 @@ export default class BaseProfileBlock extends BaseView {
     labelElem.className = 'profile__libel';
     inpElem.className = 'profile__input';
     validElem.className = 'profile__edit_button';
-    div.append(labelElem, inpElem, validElem);
+    message.className = 'profile__msg';
+    message.textContent = '';
+    div1.append(labelElem, inpElem, validElem);
+    div.append(div1, message);
     return div;
   }
   addButtons(value: string): HTMLDivElement {
