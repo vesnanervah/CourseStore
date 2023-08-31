@@ -5,6 +5,7 @@ import {
   ApiRoot,
   Category,
   CustomerUpdate,
+  CustomerChangePassword,
 } from '@commercetools/platform-sdk';
 
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
@@ -181,6 +182,16 @@ export default class EcommerceClient {
       .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
       .customers()
       .withId({ ID })
+      .post({
+        body: data,
+      })
+      .execute();
+  }
+  public static async updateCustomerPasswordById(data: CustomerChangePassword) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .customers()
+      .password()
       .post({
         body: data,
       })
