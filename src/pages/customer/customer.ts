@@ -251,7 +251,8 @@ export default class Customer extends BaseView implements AuthListener {
       newPassword: newPassword,
     };
     try {
-      await EcommerceClient.updateCustomerPassword(data);
+      const res = await EcommerceClient.updateCustomerPassword(data);
+      if (res.statusCode != 200) console.log(res.statusCode);
       const modal = document.querySelector('.passw_block');
       modal?.classList.remove('fullscreen');
       const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
@@ -415,6 +416,12 @@ export default class Customer extends BaseView implements AuthListener {
         return await EcommerceClient.getCustomerById(this.id).then((res) => res.body.version);
       }
     } catch (err) {
+      const modal = document.querySelector('.passw_block');
+      modal?.classList.remove('fullscreen');
+      const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
+      p.textContent = 'Данные не обновлены.';
+      document.querySelector('.message_block')?.classList.add('fullscreen');
+      this.removeCheck();
       throw new Error(`${err} customer error`);
     }
   }
