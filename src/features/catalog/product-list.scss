@@ -1,0 +1,19 @@
+@use '../../style/abstracts/constants' as vars;
+
+.product-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  @media (max-width: vars.$bp-down-sm) {
+    & > .product-item:not(:last-child) {
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  @media (min-width: vars.$bp-up-sm) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+  }
+}
