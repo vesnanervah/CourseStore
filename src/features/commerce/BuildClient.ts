@@ -137,4 +137,8 @@ export default class EcommerceClient {
       slug: slug[LOCALE],
     }));
   }
+
+  public static async getProductById(ID: string) {
+    return this.getApiClient().products().withId({ ID }).get().execute();
+  }
 }
