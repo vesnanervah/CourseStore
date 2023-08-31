@@ -19,6 +19,16 @@
   --color-white: #{vars.$color-white};
   // shadows
   --shadow-primary: #{vars.$shadow-primary};
+  --shadow-hover: #{vars.$shadow-hover};
+  // border radius
+  --br-primary: #{vars.$br-primary};
+  // breakpoints
+  --bp-up-sm: #{vars.$bp-up-sm};
+  --bp-down-sm: #{vars.$bp-down-sm};
+  --bp-up-md: #{vars.$bp-up-md};
+  --bp-down-md: #{vars.$bp-down-md};
+  --bp-up-lg: #{vars.$bp-up-lg};
+  --bp-down-lg: #{vars.$bp-down-lg};
 }
 
 html,
