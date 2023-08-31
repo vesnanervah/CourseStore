@@ -97,6 +97,153 @@
   text-align: center;
   width: 380px;
 }
-.hidden {
-  display: none;
+.checkbox__change_password {
+  padding-top: 25px;
+  display: flex;
+  align-items: center;
+}
+#checkbox_passw {
+  width: 25px;
+  height: 25px;
+  background-color: white;
+  border-radius: 50%;
+  vertical-align: middle;
+  border: 1px solid black;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  cursor: pointer;
+  &:checked {
+    background-color: #45a173;
+    border-color: #45a173;
+  }
+}
+.check__label_password {
+  color: #000;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+.passw_block {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.5);
+  transform: scale(0); //TODO 1
+  transition:
+    transform 0.3s ease-in-out,
+    border-radius 0.3s ease-in-out;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .modal {
+    background-color: #f3f3f3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px;
+    input {
+      display: block;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      font-style: italic;
+      font-weight: 400;
+      color: #000;
+      background-color: white;
+      width: 382px;
+      height: 37px;
+      border-radius: 24px;
+      padding: 7px 17px;
+      margin-bottom: 25px;
+    }
+    .buttons__control {
+      display: flex;
+      justify-content: space-between;
+      button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 166px;
+        height: 48px;
+        border-radius: 24px;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        color: white;
+        background-color: #373636;
+        border: none;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        margin-left: 20px;
+      }
+    }
+  }
+  .passw_mes {
+    color: #777777;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 400;
+  }
+}
+.message_block {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: transparent;
+  background-color: rgba(0, 0, 0, 0.5);
+  transform: scale(0); //TODO 1
+  transition:
+    transform 0.3s ease-in-out,
+    border-radius 0.3s ease-in-out;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .mess__profile_modal {
+    background-color: #f3f3f3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 50px;
+    width: 500px;
+    .button__close {
+      width: 100px;
+    }
+    .button__close:hover .mes__cansel_btn,
+    .button__close:focus .mes__cansel_btn,
+    .button__close:hover .cross::before,
+    .button__close:focus .cross::before {
+      color: #777777;
+    }
+    .button__close:active .cross::before,
+    .button__close:active .mes__cansel_btn {
+      color: #666666;
+    }
+    .mes__cansel_btn {
+      margin-left: 25px;
+      text-decoration: none;
+      color: #aaaaaa;
+      cursor: pointer;
+    }
+    .cross {
+      display: inline-block;
+      &::before {
+        content: '\00D7';
+        color: #aaaaaa;
+      }
+    }
+  }
 }
