@@ -2,9 +2,10 @@ import { State } from '../../../state';
 import { AppHeaderView } from './app-header-view';
 import EcommerceClient from '../../commerce/BuildClient';
 
-import { LoadingStatus, StateKeys } from '../../../types';
+import { LoadingStatus, StateKeys, DataProvider } from '../../../types';
 
 export class AppHeader {
+  private dataProvider: DataProvider = EcommerceClient.getDataProvider();
   private state = State.getInstance();
   private view: AppHeaderView;
   private loadingStatus: LoadingStatus = LoadingStatus.Idle;
@@ -28,7 +29,8 @@ export class AppHeader {
       return;
     }
     this.loadingStatus = LoadingStatus.Loading;
-    EcommerceClient.getCategories()
+    this.dataProvider.products
+      .getCategories()
       .then((categories) => {
         this.state.setValue(StateKeys.NAV_CATEGORIES, categories);
         this.loadingStatus = LoadingStatus.Idle;
