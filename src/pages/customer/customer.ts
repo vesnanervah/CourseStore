@@ -8,7 +8,7 @@ import { State } from '../../../src/state';
 // import { StateKeys } from '../../types';
 import BaseProfileBlock from '../../features/ui/profile__data_person/profile__data_person';
 import './customer.scss';
-import { CustomerUpdate } from '@commercetools/platform-sdk';
+import { MyCustomerUpdate, MyCustomerChangePassword } from '@commercetools/platform-sdk';
 
 export default class Customer extends BaseView implements AuthListener {
   private editMode = false;
@@ -45,6 +45,7 @@ export default class Customer extends BaseView implements AuthListener {
     this.listenerInputWrite();
     this.handleClickButtonSave();
     this.handleClickButtonRemove();
+    this.listenerButtonsModalWindowPassword();
   }
 
   listenLogout(): void {
@@ -138,7 +139,33 @@ export default class Customer extends BaseView implements AuthListener {
       }
     }
   }
-
+  private validateInputPassw(e: Event): void {
+    const target = e.target as HTMLElement;
+    if (target.closest('.new__password')) {
+      const value = (target as HTMLInputElement).value;
+      if (
+        value.length > 7 &&
+        /[0-9]/.test(value) &&
+        /[A-ZА-Я]/.test(value) &&
+        /[a-zа-я]/.test(value)
+      ) {
+        this.removeErrorValue(target);
+        this.getPasswordMessage('Пароль корректный');
+      } else {
+        this.addErrorValue(target);
+        this.getPasswordMessage(
+          'Пароль должен содержать минимум 8 символов, 1 заглавную букву, 1 строчную буква и 1 цифру',
+        );
+      }
+    }
+  }
+  private openModalWindowPassword() {
+    this.getPasswordMessage(
+      'Пароль должен содержать минимум 8 символов, 1 заглавную букву, 1 строчную буква и 1 цифру',
+    );
+    const modal = document.querySelector('.passw_block');
+    modal?.classList.add('fullscreen');
+  }
   private removeErrorValue(elem: HTMLElement) {
     elem?.classList.remove('border__wrong');
     elem?.classList.add('border__active');
@@ -172,6 +199,73 @@ export default class Customer extends BaseView implements AuthListener {
         input.addEventListener('keyup', this.validateInputText.bind(this));
       }
     });
+    const checkbox = document.querySelector('#checkbox_passw') as HTMLInputElement;
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) {
+        const window = document.querySelector('.passw_block');
+        const inputs = window?.querySelectorAll('input');
+        inputs?.forEach((input) => {
+          input.value = '';
+        });
+        this.openModalWindowPassword();
+      }
+    });
+    const passwInput = document.querySelector('.new__password');
+    passwInput?.addEventListener('keyup', this.validateInputPassw.bind(this));
+  }
+
+  private listenerButtonsModalWindowPassword() {
+    const buttonReset = document.querySelector('.passw__reset');
+    buttonReset?.addEventListener('click', () => {
+      console.log('click');
+      this.removeCheck();
+      const passwInput = document.querySelector('.new__password');
+      passwInput?.classList.remove('border__active');
+      passwInput?.classList.remove('border__wrong');
+      document.querySelector('.passw_block')?.classList.remove('fullscreen');
+    });
+    const buttonSave = document.querySelector('.passw__save');
+    buttonSave?.addEventListener('click', () => {
+      const inputs = document.querySelectorAll(
+        'input[type=password]',
+      ) as NodeListOf<HTMLInputElement>;
+      if (inputs[0].value === inputs[1].value) {
+        this.getPasswordMessage('Вы ввели одинаковые пароли');
+      } else if (inputs[1].classList.contains('border__wrong')) {
+        this.getPasswordMessage(
+          'Пароль должен содержать минимум 8 символов, 1 заглавную букву, 1 строчную буква и 1 цифру',
+        );
+      } else {
+        this.getUpdatePassw(inputs);
+      }
+    });
+  }
+
+  private async getUpdatePassw(inputs: NodeListOf<HTMLInputElement>) {
+    const version = await this.getCustomerVersion();
+    const currentPassword = inputs[0].value;
+    const newPassword = inputs[1].value;
+    const data: MyCustomerChangePassword = {
+      version: Number(version),
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    };
+    try {
+      await EcommerceClient.updateCustomerPassword(data);
+      const modal = document.querySelector('.passw_block');
+      modal?.classList.remove('fullscreen');
+      const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
+      p.textContent = 'Данные успешно обновлены';
+      document.querySelector('.message_block')?.classList.add('fullscreen');
+      this.removeCheck();
+    } catch (err) {
+      const modal = document.querySelector('.passw_block');
+      modal?.classList.remove('fullscreen');
+      const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
+      p.textContent = 'Данные не обновлены. Попробуйте позже.';
+      document.querySelector('.message_block')?.classList.add('fullscreen');
+      this.removeCheck();
+    }
   }
   //get full input fields of profile
   private addValueInput() {
@@ -193,11 +287,16 @@ export default class Customer extends BaseView implements AuthListener {
       let flag = true;
       messages.forEach((mes) => {
         if (mes.classList.contains('border__wrong')) {
-          alert('введите корректные данные'); //TODO modal window
           flag = false;
           return;
         }
       });
+      if (!flag) {
+        const message = document.querySelector('.message_block');
+        const p = message?.querySelector('p') as HTMLParagraphElement;
+        p.textContent = 'Введите корректные данные';
+        message?.classList.add('fullscreen');
+      }
       if (flag) {
         this.removeBorder();
         this.saveUpdate();
@@ -212,8 +311,8 @@ export default class Customer extends BaseView implements AuthListener {
     if (!this.editMode) return;
     else {
       const version = await this.getCustomerVersion();
-      const nextVersion = Number(version) + 1;
-      const data: CustomerUpdate = {
+      const nextVersion = Number(version);
+      const data: MyCustomerUpdate = {
         version: nextVersion,
         actions: [],
       };
@@ -249,13 +348,25 @@ export default class Customer extends BaseView implements AuthListener {
             });
           }
         }
-        EcommerceClient.updateCustomerById(this.id, data)
-          .then((mes) => console.log('mes' + mes))
-          .catch((err) => console.log(err + 'err update'));
       });
+      this.getUpdate(data);
     }
   }
-
+  private async getUpdate(data: MyCustomerUpdate) {
+    const message = document.querySelector('.message_block');
+    const a = data;
+    try {
+      const res = await EcommerceClient.updateCustomer(a);
+      const p = message?.querySelector('p') as HTMLParagraphElement;
+      p.textContent = 'Данные успешно обновлены';
+      message?.classList.add('fullscreen');
+      await this.listenLogin(); //.then(() => this.addValueInput());
+    } catch (err) {
+      const p = message?.querySelector('p') as HTMLParagraphElement;
+      p.textContent = 'Данные не обновлены. Попробуйте позже.';
+      message?.classList.add('fullscreen');
+    }
+  }
   private removeBorder() {
     const fields = document.querySelectorAll('.profil_field');
     fields.forEach((item) => {
@@ -291,6 +402,11 @@ export default class Customer extends BaseView implements AuthListener {
       this.addValueInput();
       this.getDisabled();
     });
+    const buttonResetModal = document.querySelector('.button__close');
+    buttonResetModal?.addEventListener('click', () => {
+      const modal = document.querySelector('.message_block');
+      modal?.classList.remove('fullscreen');
+    });
   }
 
   async getCustomerVersion(): Promise<string | number | undefined> {
@@ -305,7 +421,15 @@ export default class Customer extends BaseView implements AuthListener {
 
   private getInputs(): NodeListOf<HTMLInputElement> | undefined {
     const parent = document.querySelector('.profile__block_main');
-    const inputs = parent?.querySelectorAll('input');
+    const inputs = parent?.querySelectorAll('input.profile__input') as NodeListOf<HTMLInputElement>;
     return inputs;
+  }
+  private getPasswordMessage(text: string) {
+    const p = document.querySelector('.passw_mes') as HTMLParagraphElement;
+    p.textContent = text;
+  }
+  private removeCheck() {
+    const check = document.querySelector('#checkbox_passw') as HTMLInputElement;
+    check.checked = false;
   }
 }

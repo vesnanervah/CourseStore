@@ -95,7 +95,7 @@ export default class BaseProfileBlock extends BaseView {
     const input1 = document.createElement('input');
     input1.type = 'password';
     input1.placeholder = 'Новый пароль';
-    input1.id = 'new__password';
+    input1.className = 'new__password';
     div2.append(input, input1);
     const p = document.createElement('p');
     p.className = 'passw_mes';

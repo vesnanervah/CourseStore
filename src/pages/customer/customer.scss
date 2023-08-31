@@ -78,12 +78,7 @@
     transform: scale(1.05);
   }
 }
-.border__active {
-  border: 1px solid #45a173;
-}
-.border__wrong {
-  border: 1px solid #c11668;
-}
+
 .profile__msg {
   color: #c11668;
   font-size: 14px;
@@ -137,7 +132,7 @@
   bottom: 0;
   background-color: transparent;
   background-color: rgba(0, 0, 0, 0.5);
-  transform: scale(0); //TODO 1
+  transform: scale(0);
   transition:
     transform 0.3s ease-in-out,
     border-radius 0.3s ease-in-out;
@@ -153,7 +148,6 @@
     padding: 50px;
     input {
       display: block;
-      border: none;
       outline: none;
       font-size: 16px;
       font-style: italic;
@@ -194,6 +188,7 @@
     font-size: 16px;
     font-style: italic;
     font-weight: 400;
+    width: 382px;
   }
 }
 .message_block {
@@ -246,4 +241,13 @@
       }
     }
   }
+}
+.fullscreen {
+  transform: scale(1);
+}
+.border__active {
+  border: 1px solid #45a173;
+}
+.border__wrong {
+  border: 1px solid #c11668;
 }

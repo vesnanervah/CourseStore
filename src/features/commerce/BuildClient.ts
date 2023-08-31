@@ -4,8 +4,8 @@ import {
   createApiBuilderFromCtpClient,
   ApiRoot,
   Category,
-  CustomerUpdate,
-  CustomerChangePassword,
+  MyCustomerUpdate,
+  MyCustomerChangePassword,
 } from '@commercetools/platform-sdk';
 
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
@@ -177,20 +177,19 @@ export default class EcommerceClient {
     return arr;
   }
 
-  public static async updateCustomerById(ID: string, data: CustomerUpdate) {
+  public static async updateCustomer(data: MyCustomerUpdate) {
     return this.apiRoot
       .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
-      .customers()
-      .withId({ ID })
+      .me()
       .post({
         body: data,
       })
       .execute();
   }
-  public static async updateCustomerPasswordById(data: CustomerChangePassword) {
+  public static async updateCustomerPassword(data: MyCustomerChangePassword) {
     return this.apiRoot
       .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
-      .customers()
+      .me()
       .password()
       .post({
         body: data,
