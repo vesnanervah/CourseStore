@@ -30,7 +30,7 @@ export class Icon extends BaseView<HTMLElement> {
     container.classList.add('icon');
 
     const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    icon.classList.add('car__icon');
+    icon.classList.add('icon');
     icon.innerHTML = `<use xlink:href="#${id}" />`;
     icon.setAttribute('viewBox', viewBox);
     icon.setAttribute('fill', color);
