@@ -2,6 +2,7 @@
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  gap: 0.625rem;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -9,6 +10,7 @@
   appearance: none;
   box-shadow: var(--shadow-primary);
   transition: box-shadow 0.1s ease-in-out;
+  cursor: pointer;
 
   &:hover {
     box-shadow: var(--shadow-hover);
@@ -34,6 +36,10 @@
 .btn--size {
   &--medium {
     padding: 0.625rem 2rem;
+
+    .btn__text {
+      font-size: 1rem;
+    }
   }
 
   &--small {
@@ -59,6 +65,7 @@
 .btn__text {
   font-family: var(--ff-roboto);
   font-weight: 500;
+  line-height: 1;
   text-align: center;
   text-transform: uppercase;
 }

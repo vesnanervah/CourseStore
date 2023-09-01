@@ -53,6 +53,11 @@ export class Button extends BaseView<HTMLButtonElement | HTMLAnchorElement> {
     btnText.classList.add('btn__text');
     btn.append(btnText);
 
+    if (btnProps.icon) {
+      btnProps.icon.classList.add('btn__icon');
+      btn.append(btnProps.icon);
+    }
+
     this.htmlElement = btn;
   }
 }
