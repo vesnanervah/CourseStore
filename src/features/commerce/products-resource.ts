@@ -51,12 +51,13 @@ export const getProductsResource = (client: ApiClient): ProductsResource => ({
       .then(({ body }) => normalizeApiProducts('', body.results));
   },
   async getProductsByType({ id, typeName }, queryArgs) {
+    const filter = queryArgs?.filter ? ` and ${queryArgs.filter}` : '';
     return client
       .products()
       .get({
         queryArgs: {
-          where: `productType(id="${id}")`,
-          ...queryArgs,
+          where: `productType(id="${id}")${filter}`,
+          limit: queryArgs?.limit,
         },
       })
       .execute()
