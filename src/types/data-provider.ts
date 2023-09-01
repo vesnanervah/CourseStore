@@ -6,6 +6,7 @@ import type { ProductCategory } from './product-category';
 
 type QueryArgs = {
   limit?: number;
+  filter?: string;
 };
 
 export type ApiClient = ByProjectKeyRequestBuilder;

@@ -15,7 +15,7 @@ export class AppHeader {
   }
 
   public init(): void {
-    const categories = this.state.getValue(StateKeys.NAV_CATEGORIES);
+    const categories = this.state.getValue(StateKeys.Categories);
     if (!categories.length) {
       this.fetchCategories();
     }
@@ -32,7 +32,7 @@ export class AppHeader {
     this.dataProvider.products
       .getCategories()
       .then((categories) => {
-        this.state.setValue(StateKeys.NAV_CATEGORIES, categories);
+        this.state.setValue(StateKeys.Categories, categories);
         this.loadingStatus = LoadingStatus.Idle;
       })
       .catch((err: Error) => {
