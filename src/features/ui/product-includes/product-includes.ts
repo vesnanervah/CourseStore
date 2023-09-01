@@ -6,19 +6,18 @@ export default class ProductIncludes extends BaseView {
 
   constructor() {
     super();
+    this.list = document.createElement('div');
     this.createView();
   }
 
   private createView(): void {
     const wrapper = document.createElement('div');
     const head = document.createElement('div');
-    const list = document.createElement('div');
-    list.className = 'product__includes-head';
+    this.list.className = 'product__includes-head';
     head.className = 'product__includes-list';
     wrapper.className = 'product__includes';
     head.textContent = 'Включает в себя:';
-    wrapper.append(head, list);
-    this.list = list;
+    wrapper.append(head, this.list);
     this.htmlElement = wrapper;
   }
 

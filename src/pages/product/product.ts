@@ -1,5 +1,5 @@
 import { BaseView } from '../../features/ui';
-//import EcommerceClient from '../../features/commerce/BuildClient';
+import EcommerceClient from '../../features/commerce/BuildClient';
 import './product.scss';
 import ProductTitle from '../../features/ui/product-title/product-title';
 import ProductPrice from '../../features/ui/product-price/product-price';
@@ -47,7 +47,8 @@ export default class ProductView extends BaseView {
     this.htmlElement = wrapper;
   }
 
-  /*public async updateProductPage(ID: string) {
+  public async updateProductPage(ID: string) {
     const newData = await EcommerceClient.getProductById(ID);
-  }*/
+    console.log(newData);
+  }
 }

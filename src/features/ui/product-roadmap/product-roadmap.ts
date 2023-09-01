@@ -7,19 +7,17 @@ export default class ProductRoadmap extends BaseView {
 
   constructor() {
     super();
+    this.head = document.createElement('div');
+    this.list = document.createElement('div');
     this.createView();
   }
 
   private createView(): void {
     const wrapper = document.createElement('div');
-    const head = document.createElement('div');
-    const list = document.createElement('div');
     wrapper.className = 'product__roadmap';
-    head.className = 'product__roadmap-head';
-    list.className = 'product__roadmap-list';
-    this.head = head;
-    this.list = list;
-    wrapper.append(head, list);
+    this.head.className = 'product__roadmap-head';
+    this.list.className = 'product__roadmap-list';
+    wrapper.append(this.head, this.list);
     this.htmlElement = wrapper;
   }
 

@@ -6,19 +6,18 @@ export default class ProductCategories extends BaseView {
 
   constructor() {
     super();
+    this.categoriesList = document.createElement('div');
     this.createView();
   }
 
   private createView(): void {
     const wrapper = document.createElement('div');
     const label = document.createElement('div');
-    const list = document.createElement('div');
     wrapper.className = 'product__categories';
     label.className = 'product__categories-label';
-    list.className = 'product__categories-list';
+    this.categoriesList.className = 'product__categories-list';
     label.textContent = 'Категории:';
-    this.categoriesList = list;
-    wrapper.append(label, list);
+    wrapper.append(label, this.categoriesList);
     this.htmlElement = wrapper;
   }
 
