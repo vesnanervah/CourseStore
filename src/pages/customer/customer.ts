@@ -7,14 +7,20 @@ import Auth from '../../features/auth/auth';
 import { State } from '../../../src/state';
 // import { StateKeys } from '../../types';
 import BaseProfileBlock from '../../features/ui/profile__data_person/profile__data_person';
+import BaseProfileAddress from '../../features/ui/profile__data_addresses/profile__data_address';
 import './customer.scss';
-import { MyCustomerUpdate, MyCustomerChangePassword } from '@commercetools/platform-sdk';
+import {
+  MyCustomerUpdate,
+  MyCustomerChangePassword,
+  BaseAddress,
+} from '@commercetools/platform-sdk';
 
 export default class Customer extends BaseView implements AuthListener {
   private editMode = false;
   private router = AppRouter.getInstance();
   private state = State.getInstance();
   profileLeftBlock = new BaseProfileBlock();
+  profileRightBlock = new BaseProfileAddress();
   id: string;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -38,8 +44,9 @@ export default class Customer extends BaseView implements AuthListener {
     //   // console.log(data);
     //   // console.log(data?.email);
     const leftBlock = this.profileLeftBlock.getHtmlElement();
+    const rightBlock = this.profileRightBlock.getHtmlElement();
     leftBlock.addEventListener('click', this.handleClick.bind(this));
-    wrapperElement.append(leftBlock);
+    wrapperElement.append(leftBlock, rightBlock);
     this.htmlElement.append(wrapperElement);
     await this.listenLogin().then(() => this.addValueInput());
     this.listenerInputWrite();
@@ -56,6 +63,14 @@ export default class Customer extends BaseView implements AuthListener {
   async listenLogin(): Promise<void> {
     EcommerceClient.tokenRootPrepare();
     await EcommerceClient.getCustomerByToken().then((res) => {
+      console.log(res);
+      let addresses: Array<BaseAddress> = [];
+      addresses = res.body.addresses;
+      console.log(addresses);
+      const defultBilling = res.body.defaultBillingAddressId;
+      const defultShipping = res.body.defaultShippingAddressId;
+      console.log(defultBilling);
+      console.log(defultShipping);
       this.id = res.body.id;
       this.firstName = res.body.firstName;
       this.lastName = res.body.lastName;
@@ -251,8 +266,9 @@ export default class Customer extends BaseView implements AuthListener {
       newPassword: newPassword,
     };
     try {
-      const res = await EcommerceClient.updateCustomerPassword(data);
-      if (res.statusCode != 200) console.log(res.statusCode);
+      await EcommerceClient.updateCustomerPassword(data);
+      // await Auth.loggin(this.email, newPassword); //логиню пользователя с новым паролем
+      // await this.listenLogin();
       const modal = document.querySelector('.passw_block');
       modal?.classList.remove('fullscreen');
       const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
@@ -416,12 +432,12 @@ export default class Customer extends BaseView implements AuthListener {
         return await EcommerceClient.getCustomerById(this.id).then((res) => res.body.version);
       }
     } catch (err) {
-      const modal = document.querySelector('.passw_block');
-      modal?.classList.remove('fullscreen');
-      const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
-      p.textContent = 'Данные не обновлены.';
-      document.querySelector('.message_block')?.classList.add('fullscreen');
-      this.removeCheck();
+      // const modal = document.querySelector('.passw_block');
+      // modal?.classList.remove('fullscreen');
+      // const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
+      // p.textContent = 'Данные не обновлены.';
+      // document.querySelector('.message_block')?.classList.add('fullscreen');
+      // this.removeCheck();
       throw new Error(`${err} customer error`);
     }
   }
