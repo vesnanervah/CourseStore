@@ -1,7 +1,8 @@
 import fetch from 'node-fetch';
-import { createApiBuilderFromCtpClient, ApiRoot, Category } from '@commercetools/platform-sdk';
+import { createApiBuilderFromCtpClient, ApiRoot } from '@commercetools/platform-sdk';
 
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
+import { getProductsResource } from './products-resource';
 
 import {
   ClientBuilder,
@@ -9,9 +10,10 @@ import {
   type HttpMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 
-import { RegisterBody, ProductCategory } from '../../types';
+import { RegisterBody } from '../../types';
 import Auth from '../auth/auth';
 import { AuthToken } from '../../types/auth';
+import { DataProvider } from '../../types/data-provider';
 
 type ExistingTokenMiddlewareOptions = {
   force?: boolean;
@@ -20,8 +22,6 @@ type ExistingTokenMiddlewareOptions = {
 const existingTokenMiddlewareOptions: ExistingTokenMiddlewareOptions = {
   force: true,
 };
-
-const LOCALE = 'ru';
 
 export default class EcommerceClient {
   private static clientBuilder = new ClientBuilder();
@@ -55,19 +55,11 @@ export default class EcommerceClient {
     const accessToken = Auth.getAccessToken();
 
     const builded = this.clientBuilder
-      .withExistingTokenFlow(accessToken, existingTokenMiddlewareOptions)
+      .withExistingTokenFlow(`Bearer ${accessToken}`, existingTokenMiddlewareOptions)
       .withHttpMiddleware(this.httpMiddlewareOptions)
       .withLoggerMiddleware()
       .build();
     this.apiRoot = createApiBuilderFromCtpClient(builded);
-  }
-
-  public static async getCategories(): Promise<ProductCategory[]> {
-    return this.apiClient
-      .categories()
-      .get()
-      .execute()
-      .then((data) => EcommerceClient.normalizeCategories(data.body.results));
   }
 
   public static async getProducts() {
@@ -130,11 +122,11 @@ export default class EcommerceClient {
     });
   }
 
-  private static normalizeCategories(categories: Category[]): ProductCategory[] {
-    return categories.map(({ id, name, slug }) => ({
-      id,
-      name: name[LOCALE],
-      slug: slug[LOCALE],
-    }));
+  public static getDataProvider(): DataProvider {
+    const productsResource = getProductsResource(this.apiClient);
+
+    return {
+      products: productsResource,
+    };
   }
 }
