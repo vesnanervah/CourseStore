@@ -267,7 +267,8 @@ export default class Customer extends BaseView implements AuthListener {
     };
     try {
       await EcommerceClient.updateCustomerPassword(data);
-      // await Auth.loggin(this.email, newPassword); //логиню пользователя с новым паролем
+      Auth.clearToken();
+      await Auth.loggin(this.email as string, newPassword); //логиню пользователя с новым паролем
       // await this.listenLogin();
       const modal = document.querySelector('.passw_block');
       modal?.classList.remove('fullscreen');
