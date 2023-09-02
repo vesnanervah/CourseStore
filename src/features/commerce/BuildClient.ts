@@ -129,4 +129,12 @@ export default class EcommerceClient {
       products: productsResource,
     };
   }
+
+  public static async getProductById(ID: string) {
+    return this.getApiClient().products().withId({ ID }).get().execute();
+  }
+
+  public static async getCategoryById(ID: string) {
+    return this.getApiClient().categories().withId({ ID }).get().execute();
+  }
 }
