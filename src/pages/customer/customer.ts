@@ -9,6 +9,7 @@ import { State } from '../../../src/state';
 import BaseProfileBlock from '../../features/ui/profile__data_person/profile__data_person';
 import BaseProfileAddress from '../../features/ui/profile__data_addresses/profile__data_address';
 import './customer.scss';
+import '../registration/reg.scss';
 import {
   MyCustomerUpdate,
   MyCustomerChangePassword,
@@ -27,7 +28,11 @@ export default class Customer extends BaseView implements AuthListener {
   middleName: string | undefined;
   dateOfBirth: string | undefined;
   email: string | undefined;
-
+  addresses: Array<BaseAddress> = [];
+  defultBilling: string | undefined = '';
+  defultShipping: string | undefined = '';
+  billingAddressIds: string[] | undefined = [];
+  shippingAddressIds: string[] | undefined = [];
   constructor() {
     super();
     this.id = '';
@@ -48,7 +53,10 @@ export default class Customer extends BaseView implements AuthListener {
     leftBlock.addEventListener('click', this.handleClick.bind(this));
     wrapperElement.append(leftBlock, rightBlock);
     this.htmlElement.append(wrapperElement);
-    await this.listenLogin().then(() => this.addValueInput());
+    await this.listenLogin().then(() => {
+      this.addValueInput();
+      this.addValueInputAddresses();
+    });
     this.listenerInputWrite();
     this.handleClickButtonSave();
     this.handleClickButtonRemove();
@@ -63,14 +71,16 @@ export default class Customer extends BaseView implements AuthListener {
   async listenLogin(): Promise<void> {
     EcommerceClient.tokenRootPrepare();
     await EcommerceClient.getCustomerByToken().then((res) => {
-      console.log(res);
-      let addresses: Array<BaseAddress> = [];
-      addresses = res.body.addresses;
-      console.log(addresses);
-      const defultBilling = res.body.defaultBillingAddressId;
-      const defultShipping = res.body.defaultShippingAddressId;
-      console.log(defultBilling);
-      console.log(defultShipping);
+      this.addresses = res.body.addresses;
+      console.log(this.addresses);
+      this.defultBilling = res.body.defaultBillingAddressId;
+      this.defultShipping = res.body.defaultShippingAddressId;
+      this.billingAddressIds = res.body.billingAddressIds;
+      this.shippingAddressIds = res.body.shippingAddressIds;
+      console.log(this.defultBilling);
+      console.log(this.defultShipping);
+      console.log(this.billingAddressIds + 'billing');
+      console.log(this.shippingAddressIds + 'shipping');
       this.id = res.body.id;
       this.firstName = res.body.firstName;
       this.lastName = res.body.lastName;
@@ -79,14 +89,48 @@ export default class Customer extends BaseView implements AuthListener {
       this.email = res.body.email;
     });
   }
-
-  //listener for edit buttons - get change info about customer in inputs
-  private handleClick(e: Event): void {
-    const target = e.target as HTMLElement;
-    if (target.closest('.profile__edit_button')) {
-      (target.previousElementSibling as HTMLInputElement).disabled = false;
-      target.parentElement?.classList.add('border__active');
-      this.editMode = true;
+  //get full input fields of profile
+  private addValueInput() {
+    const inputs = this.getInputs();
+    inputs?.forEach((item) => {
+      if (item.getAttribute('data-set') == 'firstName') item.value = this.firstName || '';
+      if (item.getAttribute('data-set') == 'lastName') item.value = this.lastName || '';
+      if (item.getAttribute('data-set') == 'middleName') item.value = this.middleName || '';
+      if (item.getAttribute('data-set') == 'dateOfBirth') item.value = this.dateOfBirth || '';
+      if (item.getAttribute('data-set') == 'email') item.value = this.email || '';
+    });
+  }
+  //get full input fields of addresses
+  private addValueInputAddresses() {
+    const div = document.querySelector('.form__address');
+    for (let i = 0; i < this.addresses.length; i++) {
+      const id = this.addresses[i].id || '';
+      const country = this.addresses[i].country || '';
+      const city = this.addresses[i].city || '';
+      const street = this.addresses[i].streetName || '';
+      const house = this.addresses[i].building || '';
+      const office = this.addresses[i].apartment || '';
+      const postalcode = this.addresses[i].postalCode || '';
+      if (this.shippingAddressIds?.includes(id)) {
+        const div1 = new BaseProfileAddress().getBlockAddress('Адрес доставки');
+        const inputs = this.getInputsAddress(div1);
+        div?.append(div1);
+        if (inputs) {
+          this.addInfoAddresses(inputs, country, city, street, house, office, postalcode);
+        }
+      } else {
+        const div2 = new BaseProfileAddress().getBlockAddress('Платежный адрес');
+        const inputs = this.getInputsAddress(div2);
+        div?.append(div2);
+        if (inputs) {
+          this.addInfoAddresses(inputs, country, city, street, house, office, postalcode);
+        }
+      }
+    }
+  }
+  private addInfoAddresses(inputs: NodeListOf<HTMLInputElement>, ...arr: string[]) {
+    for (let i = 0; i < 6; i++) {
+      inputs[i].value = arr[i];
     }
   }
   private validateInputText(e: Event): void {
@@ -174,21 +218,6 @@ export default class Customer extends BaseView implements AuthListener {
       }
     }
   }
-  private openModalWindowPassword() {
-    this.getPasswordMessage(
-      'Пароль должен содержать минимум 8 символов, 1 заглавную букву, 1 строчную буква и 1 цифру',
-    );
-    const modal = document.querySelector('.passw_block');
-    modal?.classList.add('fullscreen');
-  }
-  private removeErrorValue(elem: HTMLElement) {
-    elem?.classList.remove('border__wrong');
-    elem?.classList.add('border__active');
-  }
-  private addErrorValue(elem: HTMLElement) {
-    elem?.classList.add('border__wrong');
-    elem?.classList.remove('border__active');
-  }
 
   private async checkUniqueMail(): Promise<string[]> {
     const usersMails = await EcommerceClient.getUsersEmail();
@@ -203,6 +232,175 @@ export default class Customer extends BaseView implements AuthListener {
     ) {
       return true;
     } else return false;
+  }
+
+  private async getUpdatePassw(inputs: NodeListOf<HTMLInputElement>) {
+    const currentPassword = inputs[0].value;
+    const newPassword = inputs[1].value;
+    try {
+      const version = await this.getCustomerVersion();
+      const data: MyCustomerChangePassword = {
+        version: Number(version),
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+      };
+      await EcommerceClient.updateCustomerPassword(data);
+      Auth.clearToken();
+      await Auth.loggin(this.email as string, newPassword);
+      const modal = document.querySelector('.passw_block');
+      modal?.classList.remove('fullscreen');
+      const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
+      p.textContent = 'Данные успешно обновлены';
+      document.querySelector('.message_block')?.classList.add('fullscreen');
+      this.removeCheck();
+    } catch (err) {
+      const modal = document.querySelector('.passw_block');
+      modal?.classList.remove('fullscreen');
+      const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
+      p.textContent = 'Данные не обновлены. Попробуйте позже.';
+      document.querySelector('.message_block')?.classList.add('fullscreen');
+      this.removeCheck();
+    }
+  }
+
+  //save updates of customer
+  /* eslint-disable*/
+  private async saveUpdate() {
+    this.getDisabled();
+    if (!this.editMode) return;
+    else {
+      const version = await this.getCustomerVersion();
+      const nextVersion = Number(version);
+      const data: MyCustomerUpdate = {
+        version: nextVersion,
+        actions: [],
+      };
+      this.editMode = false;
+      const inputs = this.getInputs();
+      inputs?.forEach((input) => {
+        if (!this.checkValueInput(input)) {
+          const property = input.getAttribute('data-set');
+          if (property === 'email') {
+            data.actions.push({
+              action: 'changeEmail',
+              email: input.value || '',
+            });
+          } else if (property === 'dateOfBirth') {
+            data.actions.push({
+              action: 'setDateOfBirth',
+              dateOfBirth: input.value || '',
+            });
+          } else if (property === 'firstName') {
+            data.actions.push({
+              action: 'setFirstName',
+              firstName: input.value || '',
+            });
+          } else if (property === 'lastName') {
+            data.actions.push({
+              action: 'setLastName',
+              lastName: input.value || '',
+            });
+          } else if (property === 'middleName') {
+            data.actions.push({
+              action: 'setMiddleName',
+              middleName: input.value || '',
+            });
+          }
+        }
+      });
+      this.getUpdate(data);
+    }
+  }
+  private async getUpdate(data: MyCustomerUpdate) {
+    const message = document.querySelector('.message_block');
+    const a = data;
+    try {
+      const res = await EcommerceClient.updateCustomer(a);
+      const p = message?.querySelector('p') as HTMLParagraphElement;
+      p.textContent = 'Данные успешно обновлены';
+      message?.classList.add('fullscreen');
+      await this.listenLogin(); //.then(() => this.addValueInput());
+    } catch (err) {
+      const p = message?.querySelector('p') as HTMLParagraphElement;
+      p.textContent = 'Данные не обновлены. Попробуйте позже.';
+      message?.classList.add('fullscreen');
+    }
+  }
+
+  async getCustomerVersion(): Promise<string | number | undefined> {
+    try {
+      if (this.id) {
+        return await EcommerceClient.getCustomerById(this.id).then((res) => res.body.version);
+      }
+    } catch (err) {
+      // const modal = document.querySelector('.passw_block');
+      // modal?.classList.remove('fullscreen');
+      // const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
+      // p.textContent = 'Данные не обновлены.';
+      // document.querySelector('.message_block')?.classList.add('fullscreen');
+      // this.removeCheck();
+      throw new Error(`${err} customer error`);
+    }
+  }
+
+  //check info in fieldes - which was changed
+  private checkValueInput(input: HTMLInputElement): boolean | undefined {
+    if (input.getAttribute('data-set') == 'firstName') return input.value.trim() === this.firstName;
+    else if (input.getAttribute('data-set') == 'lastName') {
+      return input.value.trim() === this.lastName;
+    } else if (input.getAttribute('data-set') == 'middleName') {
+      return input.value.trim() === this.middleName;
+    } else if (input.getAttribute('data-set') == 'dateOfBirth') {
+      return input.value.trim() === this.dateOfBirth;
+    } else if (input.getAttribute('data-set') == 'email') return input.value.trim() === this.email;
+  }
+
+  //listener to button remove of left block
+  private handleClickButtonRemove() {
+    const buttonReset = document.querySelector('#profile__reset');
+    buttonReset?.addEventListener('click', () => {
+      this.removeBorder();
+      this.addValueInput();
+      this.getDisabled();
+    });
+    const buttonResetModal = document.querySelector('.button__close');
+    buttonResetModal?.addEventListener('click', () => {
+      const modal = document.querySelector('.message_block');
+      modal?.classList.remove('fullscreen');
+    });
+  }
+  //listener to save button of left block
+  private handleClickButtonSave(): void {
+    const buttonSave = document.querySelector('#profile__save');
+    buttonSave?.addEventListener('click', () => {
+      const messages = document.querySelectorAll('.profil_field');
+      let flag = true;
+      messages.forEach((mes) => {
+        if (mes.classList.contains('border__wrong')) {
+          flag = false;
+          return;
+        }
+      });
+      if (!flag) {
+        const message = document.querySelector('.message_block');
+        const p = message?.querySelector('p') as HTMLParagraphElement;
+        p.textContent = 'Введите корректные данные';
+        message?.classList.add('fullscreen');
+      }
+      if (flag) {
+        this.removeBorder();
+        this.saveUpdate();
+      }
+    });
+  }
+  //listener for edit buttons - get change info about customer in inputs
+  private handleClick(e: Event): void {
+    const target = e.target as HTMLElement;
+    if (target.closest('.profile__edit_button')) {
+      (target.previousElementSibling as HTMLInputElement).disabled = false;
+      target.parentElement?.classList.add('border__active');
+      this.editMode = true;
+    }
   }
 
   private listenerInputWrite() {
@@ -256,133 +454,22 @@ export default class Customer extends BaseView implements AuthListener {
     });
   }
 
-  private async getUpdatePassw(inputs: NodeListOf<HTMLInputElement>) {
-    const version = await this.getCustomerVersion();
-    const currentPassword = inputs[0].value;
-    const newPassword = inputs[1].value;
-    const data: MyCustomerChangePassword = {
-      version: Number(version),
-      currentPassword: currentPassword,
-      newPassword: newPassword,
-    };
-    try {
-      await EcommerceClient.updateCustomerPassword(data);
-      // await Auth.loggin(this.email, newPassword); //логиню пользователя с новым паролем
-      // await this.listenLogin();
-      const modal = document.querySelector('.passw_block');
-      modal?.classList.remove('fullscreen');
-      const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
-      p.textContent = 'Данные успешно обновлены';
-      document.querySelector('.message_block')?.classList.add('fullscreen');
-      this.removeCheck();
-    } catch (err) {
-      const modal = document.querySelector('.passw_block');
-      modal?.classList.remove('fullscreen');
-      const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
-      p.textContent = 'Данные не обновлены. Попробуйте позже.';
-      document.querySelector('.message_block')?.classList.add('fullscreen');
-      this.removeCheck();
-    }
+  private getInputs(): NodeListOf<HTMLInputElement> | undefined {
+    const parent = document.querySelector('.profile__block_main');
+    const inputs = parent?.querySelectorAll('input.profile__input') as NodeListOf<HTMLInputElement>;
+    return inputs;
   }
-  //get full input fields of profile
-  private addValueInput() {
-    const inputs = this.getInputs();
-    inputs?.forEach((item) => {
-      if (item.getAttribute('data-set') == 'firstName') item.value = this.firstName || '';
-      if (item.getAttribute('data-set') == 'lastName') item.value = this.lastName || '';
-      if (item.getAttribute('data-set') == 'middleName') item.value = this.middleName || '';
-      if (item.getAttribute('data-set') == 'dateOfBirth') item.value = this.dateOfBirth || '';
-      if (item.getAttribute('data-set') == 'email') item.value = this.email || '';
-    });
+  private getInputsAddress(parent: HTMLDivElement): NodeListOf<HTMLInputElement> | undefined {
+    const inputs = parent?.querySelectorAll('input.field__input') as NodeListOf<HTMLInputElement>;
+    return inputs;
   }
-
-  //listener to save button of left block
-  private handleClickButtonSave(): void {
-    const buttonSave = document.querySelector('#profile__save');
-    buttonSave?.addEventListener('click', () => {
-      const messages = document.querySelectorAll('.profil_field');
-      let flag = true;
-      messages.forEach((mes) => {
-        if (mes.classList.contains('border__wrong')) {
-          flag = false;
-          return;
-        }
-      });
-      if (!flag) {
-        const message = document.querySelector('.message_block');
-        const p = message?.querySelector('p') as HTMLParagraphElement;
-        p.textContent = 'Введите корректные данные';
-        message?.classList.add('fullscreen');
-      }
-      if (flag) {
-        this.removeBorder();
-        this.saveUpdate();
-      }
-    });
+  private getPasswordMessage(text: string) {
+    const p = document.querySelector('.passw_mes') as HTMLParagraphElement;
+    p.textContent = text;
   }
-
-  //save updates of customer
-  /* eslint-disable*/
-  private async saveUpdate() {
-    this.getDisabled();
-    if (!this.editMode) return;
-    else {
-      const version = await this.getCustomerVersion();
-      const nextVersion = Number(version);
-      const data: MyCustomerUpdate = {
-        version: nextVersion,
-        actions: [],
-      };
-      this.editMode = false;
-      const inputs = this.getInputs();
-      inputs?.forEach((input) => {
-        if (!this.checkValueInput(input)) {
-          const property = input.getAttribute('data-set');
-          if (property === 'email') {
-            data.actions.push({
-              action: 'changeEmail',
-              email: input.value,
-            });
-          } else if (property === 'dateOfBirth') {
-            data.actions.push({
-              action: 'setDateOfBirth',
-              dateOfBirth: input.value,
-            });
-          } else if (property === 'firstName') {
-            data.actions.push({
-              action: 'setFirstName',
-              firstName: input.value,
-            });
-          } else if (property === 'lastName') {
-            data.actions.push({
-              action: 'setLastName',
-              lastName: input.value,
-            });
-          } else if (property === 'middleName') {
-            data.actions.push({
-              action: 'setMiddleName',
-              middleName: input.value,
-            });
-          }
-        }
-      });
-      this.getUpdate(data);
-    }
-  }
-  private async getUpdate(data: MyCustomerUpdate) {
-    const message = document.querySelector('.message_block');
-    const a = data;
-    try {
-      const res = await EcommerceClient.updateCustomer(a);
-      const p = message?.querySelector('p') as HTMLParagraphElement;
-      p.textContent = 'Данные успешно обновлены';
-      message?.classList.add('fullscreen');
-      await this.listenLogin(); //.then(() => this.addValueInput());
-    } catch (err) {
-      const p = message?.querySelector('p') as HTMLParagraphElement;
-      p.textContent = 'Данные не обновлены. Попробуйте позже.';
-      message?.classList.add('fullscreen');
-    }
+  private removeCheck() {
+    const check = document.querySelector('#checkbox_passw') as HTMLInputElement;
+    check.checked = false;
   }
   private removeBorder() {
     const fields = document.querySelectorAll('.profil_field');
@@ -400,59 +487,19 @@ export default class Customer extends BaseView implements AuthListener {
       input.disabled = true;
     });
   }
-  //check info in fieldes - which was changed
-  checkValueInput(input: HTMLInputElement): boolean | undefined {
-    if (input.getAttribute('data-set') == 'firstName') return input.value.trim() === this.firstName;
-    else if (input.getAttribute('data-set') == 'lastName') {
-      return input.value.trim() === this.lastName;
-    } else if (input.getAttribute('data-set') == 'middleName') {
-      return input.value.trim() === this.middleName;
-    } else if (input.getAttribute('data-set') == 'dateOfBirth') {
-      return input.value.trim() === this.dateOfBirth;
-    } else if (input.getAttribute('data-set') == 'email') return input.value.trim() === this.email;
+  private openModalWindowPassword() {
+    this.getPasswordMessage(
+      'Пароль должен содержать минимум 8 символов, 1 заглавную букву, 1 строчную буква и 1 цифру',
+    );
+    const modal = document.querySelector('.passw_block');
+    modal?.classList.add('fullscreen');
   }
-  //listener to button remove of left block
-  private handleClickButtonRemove() {
-    const buttonReset = document.querySelector('#profile__reset');
-    buttonReset?.addEventListener('click', () => {
-      this.removeBorder();
-      this.addValueInput();
-      this.getDisabled();
-    });
-    const buttonResetModal = document.querySelector('.button__close');
-    buttonResetModal?.addEventListener('click', () => {
-      const modal = document.querySelector('.message_block');
-      modal?.classList.remove('fullscreen');
-    });
+  private removeErrorValue(elem: HTMLElement) {
+    elem?.classList.remove('border__wrong');
+    elem?.classList.add('border__active');
   }
-
-  async getCustomerVersion(): Promise<string | number | undefined> {
-    try {
-      if (this.id) {
-        return await EcommerceClient.getCustomerById(this.id).then((res) => res.body.version);
-      }
-    } catch (err) {
-      // const modal = document.querySelector('.passw_block');
-      // modal?.classList.remove('fullscreen');
-      // const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
-      // p.textContent = 'Данные не обновлены.';
-      // document.querySelector('.message_block')?.classList.add('fullscreen');
-      // this.removeCheck();
-      throw new Error(`${err} customer error`);
-    }
-  }
-
-  private getInputs(): NodeListOf<HTMLInputElement> | undefined {
-    const parent = document.querySelector('.profile__block_main');
-    const inputs = parent?.querySelectorAll('input.profile__input') as NodeListOf<HTMLInputElement>;
-    return inputs;
-  }
-  private getPasswordMessage(text: string) {
-    const p = document.querySelector('.passw_mes') as HTMLParagraphElement;
-    p.textContent = text;
-  }
-  private removeCheck() {
-    const check = document.querySelector('#checkbox_passw') as HTMLInputElement;
-    check.checked = false;
+  private addErrorValue(elem: HTMLElement) {
+    elem?.classList.add('border__wrong');
+    elem?.classList.remove('border__active');
   }
 }

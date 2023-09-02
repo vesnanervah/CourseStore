@@ -169,11 +169,25 @@ export default class RegView extends BaseView {
 
   private getArrayAddresses() {
     this.arr.push(this.addressInfo('#addres__block_billing'));
-    if (document.querySelector('#addres__block_shipping')) {
+    const blockShipping = document.querySelector('#addres__block_shipping');
+    const inputs = blockShipping?.querySelectorAll('.field__input') as NodeListOf<HTMLInputElement>;
+    let flag = false;
+    for (const elem of inputs) {
+      if (elem.value.length !== 0) {
+        flag = true;
+      }
+    }
+    if (flag) {
       this.arr.push(this.addressInfo('#addres__block_shipping'));
     } else {
-      this.arr.push(this.addressInfo('#addres__block_billing')); //true
+      this.arr.push(this.addressInfo('#addres__block_billing'));
     }
+    // if (document.querySelector('#addres__block_shipping')) {
+    //   this.arr.push(this.addressInfo('#addres__block_shipping'));
+    // } else {
+    //   this.arr.push(this.addressInfo('#addres__block_billing')); //true
+    // }
+    console.log(this.arr + 'arr addresses');
   }
 
   private mailValidation(): void {

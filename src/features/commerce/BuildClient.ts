@@ -6,6 +6,10 @@ import {
   Category,
   MyCustomerUpdate,
   MyCustomerChangePassword,
+  MyCustomerResetPassword,
+  CustomerCreatePasswordResetToken,
+  CustomerUpdateAction,
+  MyCustomerAddAddressAction,
 } from '@commercetools/platform-sdk';
 
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
@@ -186,6 +190,7 @@ export default class EcommerceClient {
       })
       .execute();
   }
+
   public static async updateCustomerPassword(data: MyCustomerChangePassword) {
     return this.apiRoot
       .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })

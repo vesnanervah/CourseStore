@@ -125,4 +125,9 @@ export default class Auth {
       },
     ).then((resp) => resp.json() as unknown as AuthToken);
   }
+
+  public static clearToken(): void {
+    window.localStorage.removeItem(LS_AUTH_TOKEN_KEY);
+    Auth.accessToken = null;
+  }
 }

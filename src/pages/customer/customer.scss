@@ -199,7 +199,7 @@
   bottom: 0;
   background-color: transparent;
   background-color: rgba(0, 0, 0, 0.5);
-  transform: scale(0); //TODO 1
+  transform: scale(0);
   transition:
     transform 0.3s ease-in-out,
     border-radius 0.3s ease-in-out;
@@ -250,4 +250,41 @@
 }
 .border__wrong {
   border: 1px solid #c11668;
+}
+.form__address {
+  margin-left: 45px;
+  margin-bottom: 45px;
+  .addres__block_profile {
+    border: 1px solid #aaaaaa;
+    border-radius: 25px;
+    padding: 15px;
+  }
+  .addres__block_profile {
+    h3 {
+      margin-top: 5px;
+    }
+    li {
+      list-style: none;
+      width: 25px;
+      height: 25px;
+      &:hover {
+        transform: scale(1.1);
+      }
+    }
+    .button__edit {
+      background: url(../../assets/gear.png) 95% / 81% no-repeat #f3f3f3;
+    }
+    .button__delete {
+      background: url(../../assets/ico-delete.png) 40% / 79% no-repeat #f3f3f3;
+    }
+  }
+  .addres__block_label {
+    .field__span {
+      color: #aaaaaa;
+    }
+  }
+}
+.list__buttons {
+  display: flex;
+  margin: 5px;
 }
