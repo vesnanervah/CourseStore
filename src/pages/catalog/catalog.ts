@@ -1,8 +1,8 @@
-import { BaseView } from '../features/ui';
-import { MainLayout } from '../features/layouts';
-import { CatalogProducts } from '../features/catalog';
+import { BaseView } from '../../features/ui';
+import { MainLayout } from '../../features/layouts';
+import { CatalogProducts } from '../../features/catalog';
 
-export class MainPage extends BaseView {
+export class CatalogPage extends BaseView {
   constructor() {
     super();
     this.createElement();

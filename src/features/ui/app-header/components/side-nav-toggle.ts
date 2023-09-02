@@ -27,6 +27,6 @@ export class SideNavToggle extends BaseView {
   }
 
   private showSideNav(): void {
-    this.state.setValue(StateKeys.SIDE_NAV_STATUS, true);
+    this.state.setValue(StateKeys.SideNavStatus, true);
   }
 }

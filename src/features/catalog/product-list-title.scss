@@ -1,0 +1,22 @@
+.product-list-title {
+  margin: 1.25rem 0;
+  text-shadow: 0 4px 4px rgb(0 0 0 / 25%);
+}
+
+.product-list-title__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &:hover {
+    .product-list-title__icon {
+      transform: translateX(-4px);
+    }
+  }
+}
+
+.product-list-title__icon {
+  display: block;
+  width: 1rem;
+  transition: transform 0.1s ease-in-out;
+}

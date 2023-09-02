@@ -25,8 +25,8 @@ describe('State', () => {
       const state = State.getInstance();
 
       // Assert
-      const value = state.getValue(StateKeys.SIDE_NAV_STATUS);
-      expect(value).toBe(DEFAULT_STATE[StateKeys.SIDE_NAV_STATUS]);
+      const value = state.getValue(StateKeys.SideNavStatus);
+      expect(value).toBe(DEFAULT_STATE[StateKeys.SideNavStatus]);
     });
   });
 
@@ -46,10 +46,10 @@ describe('State', () => {
       const state = State.getInstance();
 
       // Act
-      state.setValue(StateKeys.SIDE_NAV_STATUS, true);
+      state.setValue(StateKeys.SideNavStatus, true);
 
       // Assert
-      const value = state.getValue(StateKeys.SIDE_NAV_STATUS);
+      const value = state.getValue(StateKeys.SideNavStatus);
       expect(value).toBe(true);
     });
   });
@@ -60,12 +60,12 @@ describe('State', () => {
       const state = State.getInstance();
       const cb1 = jest.fn();
       const cb2 = jest.fn();
-      state.subscribe(StateKeys.SIDE_NAV_STATUS, cb1);
-      state.subscribe(StateKeys.SIDE_NAV_STATUS, cb2);
+      state.subscribe(StateKeys.SideNavStatus, cb1);
+      state.subscribe(StateKeys.SideNavStatus, cb2);
 
       // Act
-      state.setValue(StateKeys.SIDE_NAV_STATUS, true);
-      state.setValue(StateKeys.SIDE_NAV_STATUS, false);
+      state.setValue(StateKeys.SideNavStatus, true);
+      state.setValue(StateKeys.SideNavStatus, false);
 
       // Assert
       expect(cb1).toBeCalledTimes(2);
