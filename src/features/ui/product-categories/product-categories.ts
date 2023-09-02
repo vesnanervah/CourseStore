@@ -1,4 +1,6 @@
 import './product-categories.scss';
+import { Categories, ProductName } from '../../../types/product';
+import EcommerceClient from '../../commerce/BuildClient';
 import { BaseView } from '../base-view';
 
 export default class ProductCategories extends BaseView {
@@ -21,12 +23,13 @@ export default class ProductCategories extends BaseView {
     this.htmlElement = wrapper;
   }
 
-  public setCategories(cats: string[]) {
+  public async setCategories(categories: Categories) {
     this.categoriesList.innerHTML = '';
-    cats.forEach((cat) => {
+    categories.forEach(async (cat) => {
+      const data = await EcommerceClient.getCategoryById(cat.id);
       const category = document.createElement('span');
       category.className = 'product__category';
-      category.textContent = cat;
+      category.textContent = (data.body.name as ProductName).ru;
       this.categoriesList.appendChild(category);
     });
   }

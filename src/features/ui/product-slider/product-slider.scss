@@ -1,0 +1,31 @@
+.product__slider {
+  overflow: hidden;
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  .product__images {
+    display: flex;
+    width: 9999px;
+  }
+  .product__image {
+    width: 80px;
+    height: 80px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .product__sliderbtns {
+    display: flex;
+    gap: 5px;
+    margin-left: 32px;
+  }
+  .product__sliderbtn {
+    width: 8px;
+    height: 8px;
+    display: flex;
+    border-radius: 50%;
+    background-color: #1e1e1e;
+    cursor: pointer;
+  }
+}

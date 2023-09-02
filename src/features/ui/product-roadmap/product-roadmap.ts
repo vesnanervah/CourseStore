@@ -32,4 +32,12 @@ export default class ProductRoadmap extends BaseView {
       this.list.appendChild(lineElem);
     });
   }
+
+  public hide(): void {
+    (this.htmlElement as HTMLElement).classList.add('hidden');
+  }
+
+  public reveal(): void {
+    (this.htmlElement as HTMLElement).classList.remove('hidden');
+  }
 }

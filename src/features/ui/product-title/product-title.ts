@@ -1,4 +1,5 @@
 import { BaseView } from '../base-view';
+import { ProductName } from '../../../types/product';
 import './product-title.scss';
 
 export default class ProductTitle extends BaseView {
@@ -13,7 +14,7 @@ export default class ProductTitle extends BaseView {
     return wrapper;
   }
 
-  public setTitle(title: string): void {
-    (this.htmlElement as HTMLElement).textContent = title;
+  public setTitle(productName: ProductName): void {
+    (this.htmlElement as HTMLElement).textContent = productName.ru;
   }
 }
