@@ -1,9 +1,11 @@
 .product__slider {
-  overflow: hidden;
-  width: 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  .slider-content {
+    overflow: hidden;
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
   .product__images {
     display: flex;
     width: 9999px;
@@ -32,5 +34,8 @@
   .inactive-btn {
     background-color: white;
     border: solid #1e1e1e 3px;
+  }
+  .hidden {
+    display: none;
   }
 }
