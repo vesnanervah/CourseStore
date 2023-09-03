@@ -1,9 +1,11 @@
 .product__slider {
-  overflow: hidden;
-  width: 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+  .slider-content {
+    overflow: hidden;
+    width: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
   .product__images {
     display: flex;
     width: 9999px;
@@ -18,14 +20,22 @@
   .product__sliderbtns {
     display: flex;
     gap: 5px;
-    margin-left: 32px;
+    margin-left: 26px;
   }
   .product__sliderbtn {
-    width: 8px;
-    height: 8px;
+    width: 12px;
+    height: 12px;
     display: flex;
     border-radius: 50%;
     background-color: #1e1e1e;
     cursor: pointer;
+    box-sizing: border-box;
+  }
+  .inactive-btn {
+    background-color: white;
+    border: solid #1e1e1e 3px;
+  }
+  .hidden {
+    display: none;
   }
 }
