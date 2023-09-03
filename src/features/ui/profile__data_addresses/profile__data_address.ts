@@ -9,7 +9,7 @@ export default class BaseProfileAddress extends BaseView {
     title.textContent = 'Ваши адреса:';
     title.classList.add('profile__title');
     this.div = document.createElement('div');
-    this.htmlElement.className = 'form__address';
+    this.htmlElement.className = 'form__address_prof';
     this.div.className = 'fields__form';
     this.htmlElement.append(title);
   }
@@ -20,8 +20,10 @@ export default class BaseProfileAddress extends BaseView {
     const li = document.createElement('li');
     li.className = 'button__edit';
     const li1 = document.createElement('li');
-    li1.className = 'button__delete';
-    ul.append(li, li1);
+    li1.className = 'button__save';
+    const li2 = document.createElement('li');
+    li2.className = 'button__delete';
+    ul.append(li, li1, li2);
     const div1: HTMLDivElement = document.createElement('div');
     ul.className = 'list__buttons';
     div.className = 'addres__block_profile';
@@ -48,7 +50,7 @@ export default class BaseProfileAddress extends BaseView {
     return div;
   }
 
-  getRadiobuttonBlock(): HTMLDivElement {
+  private getRadiobuttonBlock(): HTMLDivElement {
     const div: HTMLDivElement = document.createElement('div');
     div.className = 'radio__choice_block';
     const radio1 = this.getRadioButton('Установить как адрес по умолчанию');
@@ -56,7 +58,7 @@ export default class BaseProfileAddress extends BaseView {
     return div;
   }
 
-  getRadioButton(text: string): HTMLDivElement {
+  private getRadioButton(text: string): HTMLDivElement {
     const div: HTMLDivElement = document.createElement('div');
     div.className = 'radio__block';
     const check = document.createElement('input');
@@ -66,6 +68,21 @@ export default class BaseProfileAddress extends BaseView {
     label.className = 'radio__label';
     label.textContent = text;
     div.append(check, label);
+    return div;
+  }
+
+  getButtonsAddAddresses() {
+    const div = document.createElement('div');
+    div.className = 'form__address_buttons';
+    const button = document.createElement('button') as HTMLButtonElement;
+    button.textContent = 'добавить адрес доставки';
+    button.classList.add('btn__add_address');
+    button.id = 'profile__address_ship';
+    const button1 = document.createElement('button') as HTMLButtonElement;
+    button1.textContent = 'добавить платежный адрес';
+    button1.classList.add('btn__add_address');
+    button1.id = 'profile__address_bill';
+    div.append(button, button1);
     return div;
   }
 }

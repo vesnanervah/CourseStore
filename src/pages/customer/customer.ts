@@ -130,6 +130,7 @@ export default class Customer extends BaseView implements AuthListener {
         }
       }
     }
+    div?.append(this.profileRightBlock.getButtonsAddAddresses());
   }
   private addInfoAddresses(inputs: NodeListOf<HTMLInputElement>, ...arr: string[]) {
     for (let i = 0; i < 6; i++) {

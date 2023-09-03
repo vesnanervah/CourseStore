@@ -252,8 +252,8 @@
 .border__wrong {
   border: 1px solid #c11668;
 }
-.form__address {
-  margin-left: 45px;
+.form__address_prof {
+  margin-left: 150px;
   margin-bottom: 45px;
   .addres__block_profile {
     border: 1px solid #aaaaaa;
@@ -278,6 +278,9 @@
     .button__delete {
       background: url(../../assets/ico-delete.png) 40% / 79% no-repeat #f3f3f3;
     }
+    .button__save {
+      background: url(../../assets/save.png) 40% / 79% no-repeat #f3f3f3;
+    }
   }
   .addres__block_label {
     .field__span {
@@ -288,4 +291,26 @@
 .list__buttons {
   display: flex;
   margin: 5px;
+}
+.form__address_buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  .btn__add_address {
+    width: 180px;
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: black;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 20px;
+    background-color: #f3f3f3;
+    border: 5px solid black;
+    border-radius: 24px;
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
 }
