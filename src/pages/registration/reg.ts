@@ -155,7 +155,7 @@ export default class RegView extends BaseView {
     };
   }
 
-  private getKeyAddress(): string {
+  getKeyAddress(): string {
     const minLength = 2;
     const maxLength = 256;
     const randomLength = Math.floor(Math.random() * (maxLength - minLength + 1));

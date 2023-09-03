@@ -9,6 +9,7 @@ import { State } from '../../../src/state';
 import BaseProfileBlock from '../../features/ui/profile__data_person/profile__data_person';
 import BaseProfileAddress from '../../features/ui/profile__data_addresses/profile__data_address';
 import BaseProfileBlockBye from '../../features/ui/profile__buy/profile__buy';
+import RegView from '../registration/reg';
 import './customer.scss';
 import '../registration/reg.scss';
 import {
@@ -64,6 +65,7 @@ export default class Customer extends BaseView implements AuthListener {
     this.handleClickButtonSave();
     this.handleClickButtonRemove();
     this.listenerButtonsModalWindowPassword();
+    this.handleClickButtonAddAddress();
   }
 
   listenLogout(): void {
@@ -75,15 +77,10 @@ export default class Customer extends BaseView implements AuthListener {
     EcommerceClient.tokenRootPrepare();
     await EcommerceClient.getCustomerByToken().then((res) => {
       this.addresses = res.body.addresses;
-      console.log(this.addresses);
       this.defultBilling = res.body.defaultBillingAddressId;
       this.defultShipping = res.body.defaultShippingAddressId;
       this.billingAddressIds = res.body.billingAddressIds;
       this.shippingAddressIds = res.body.shippingAddressIds;
-      console.log(this.defultBilling);
-      console.log(this.defultShipping);
-      console.log(this.billingAddressIds + 'billing');
-      console.log(this.shippingAddressIds + 'shipping');
       this.id = res.body.id;
       this.firstName = res.body.firstName;
       this.lastName = res.body.lastName;
@@ -117,6 +114,10 @@ export default class Customer extends BaseView implements AuthListener {
       if (this.shippingAddressIds?.includes(id)) {
         const div1 = new BaseProfileAddress().getBlockAddress('Адрес доставки');
         const inputs = this.getInputsAddress(div1);
+        if (inputs) {
+          inputs[0].closest('.addres__block_profile')?.setAttribute('data-id', id);
+          inputs[0].closest('.addres__block_profile')?.setAttribute('data-type', 'shipping');
+        }
         div?.append(div1);
         if (inputs) {
           this.addInfoAddresses(inputs, country, city, street, house, office, postalcode);
@@ -124,6 +125,10 @@ export default class Customer extends BaseView implements AuthListener {
       } else {
         const div2 = new BaseProfileAddress().getBlockAddress('Платежный адрес');
         const inputs = this.getInputsAddress(div2);
+        if (inputs) {
+          inputs[0].closest('.addres__block_profile')?.setAttribute('data-id', id);
+          inputs[0].closest('.addres__block_profile')?.setAttribute('data-type', 'billing');
+        }
         div?.append(div2);
         if (inputs) {
           this.addInfoAddresses(inputs, country, city, street, house, office, postalcode);
@@ -338,16 +343,86 @@ export default class Customer extends BaseView implements AuthListener {
         return await EcommerceClient.getCustomerById(this.id).then((res) => res.body.version);
       }
     } catch (err) {
-      // const modal = document.querySelector('.passw_block');
-      // modal?.classList.remove('fullscreen');
-      // const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
-      // p.textContent = 'Данные не обновлены.';
-      // document.querySelector('.message_block')?.classList.add('fullscreen');
-      // this.removeCheck();
       throw new Error(`${err} customer error`);
     }
   }
 
+  private async addAddress(inputs: NodeListOf<HTMLInputElement>) {
+    const parent = inputs[0].closest('.addres__block_profile');
+    const addressType =
+      parent?.getAttribute('data-address') === 'shipping'
+        ? 'addShippingAddressId'
+        : 'addBillingAddressId';
+    const version = await this.getCustomerVersion();
+    const data = this.getDataAddress(inputs);
+    await EcommerceClient.addCustomerAddress(Number(version), data)
+      .then((res) => {
+        const addresses = res.body.addresses;
+        const id = addresses[addresses.length - 1].id;
+        parent?.setAttribute('data-id', id as string);
+        this.addIdAddresToBody(id as string, addressType);
+        this.openMessageWindow('Данные успешно обновлены');
+      })
+      .catch(() => {
+        this.openMessageWindow('Данные не обновлены, повторите позже');
+      });
+  }
+  private async updateAddress(inputs: NodeListOf<HTMLInputElement>) {
+    const parent = inputs[0].closest('.addres__block_profile');
+    const version = await this.getCustomerVersion();
+    const data = this.getDataAddress(inputs);
+    const id = parent?.getAttribute('data-id');
+    await EcommerceClient.updateCustomerAddress(Number(version), id as string, data)
+      .then(() => this.openMessageWindow('Данные успешно обновлены'))
+      .catch(() => this.openMessageWindow('Данные не обновлены, повторите позже'));
+  }
+  private async removeAddress(inputs: NodeListOf<HTMLInputElement>) {
+    const parent = inputs[0].closest('.addres__block_profile');
+    const id = parent?.getAttribute('data-id');
+    const version = await this.getCustomerVersion();
+    const addressType =
+      parent?.getAttribute('data-address') === 'shipping'
+        ? 'removeShippingAddressId'
+        : 'removeBillingAddressId';
+    await EcommerceClient.removeAddressg(Number(version), id as string)
+      .then(() => {
+        this.openMessageWindow('Данные успешно обновлены');
+      })
+      .catch(() => {
+        this.openMessageWindow('Данные не обновены, повторите позже');
+      });
+  }
+
+  async addIdAddresToBody(id: string, type: 'addBillingAddressId' | 'addShippingAddressId') {
+    const version = await this.getCustomerVersion();
+    await EcommerceClient.addAddressgId(Number(version), id, type);
+  }
+
+  getDataAddress(inputs: NodeListOf<HTMLInputElement>): BaseAddress {
+    const value = inputs[0].value.toLowerCase();
+    let country = '';
+    switch (value) {
+      case 'ru':
+      case 'russia':
+      case 'россия':
+      case 'рус':
+        country = 'RU';
+        break;
+      default:
+        country = 'US';
+    }
+    const key = new RegView().getKeyAddress();
+    const data = {
+      key: key,
+      country: country,
+      city: inputs[1].value,
+      streetName: inputs[2].value,
+      building: inputs[3].value,
+      apartment: inputs[4].value,
+      postalCode: inputs[5].value,
+    };
+    return data;
+  }
   //check info in fieldes - which was changed
   private checkValueInput(input: HTMLInputElement): boolean | undefined {
     if (input.getAttribute('data-set') == 'firstName') return input.value.trim() === this.firstName;
@@ -398,6 +473,59 @@ export default class Customer extends BaseView implements AuthListener {
       }
     });
   }
+  private handleClickButtonAddAddress(): void {
+    const blockAddresses = document.querySelector('.form__address_prof');
+    const blockButton = document.querySelector('.form__address_buttons');
+    const buttonShippind = document.querySelector('#profile__address_ship');
+    buttonShippind?.addEventListener('click', () => {
+      const newBlock = this.profileRightBlock.getBlockAddress('Адрес доставки');
+      blockButton?.before(newBlock);
+      blockButton?.previousElementSibling?.setAttribute('data-new', 'true');
+      blockButton?.previousElementSibling?.setAttribute('data-address', 'shipping');
+    });
+    const buttonBilling = document.querySelector('#profile__address_bill');
+    buttonBilling?.addEventListener('click', () => {
+      const newBlock = this.profileRightBlock.getBlockAddress('Платежный адрес');
+      blockButton?.before(newBlock);
+      blockButton?.previousElementSibling?.setAttribute('data-new', 'true');
+      blockButton?.previousElementSibling?.setAttribute('data-address', 'billing');
+    });
+    blockAddresses?.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLLinkElement;
+      if (target?.closest('.button__delete')) {
+        if (!(target.closest('.addres__block_profile')?.getAttribute('data-new') === 'true')) {
+          const parent = target.closest('.addres__block_profile');
+          const inputs = parent?.querySelectorAll('.field__input') as NodeListOf<HTMLInputElement>;
+          this.removeAddress(inputs);
+        }
+        target.closest('.addres__block_profile')?.remove();
+      } else if (target?.closest('.button__edit')) {
+        const parent = target.closest('.addres__block_profile');
+        const inputs = parent?.querySelectorAll('.field__input') as NodeListOf<HTMLInputElement>;
+        inputs?.forEach((input) => {
+          input.closest('.field')?.classList.add('border__active');
+          input.disabled = false;
+        });
+      } else if (target?.closest('.button__save')) {
+        const parent = target.closest('.addres__block_profile');
+        const mes = parent?.querySelector('.profile__msg_address') as HTMLParagraphElement;
+        const inputs = parent?.querySelectorAll('.field__input') as NodeListOf<HTMLInputElement>;
+        if (this.profileRightBlock.validateInput(inputs, mes)) {
+          inputs?.forEach((input) => {
+            input.closest('.field')?.classList.remove('border__active');
+            input.disabled = true;
+          });
+          if (parent?.getAttribute('data-new') === 'true') {
+            this.addAddress(inputs);
+            parent.removeAttribute('data-new');
+          } else {
+            this.updateAddress(inputs);
+          }
+        }
+      }
+    });
+  }
+
   //listener for edit buttons - get change info about customer in inputs
   private handleClick(e: Event): void {
     const target = e.target as HTMLElement;
@@ -506,5 +634,11 @@ export default class Customer extends BaseView implements AuthListener {
   private addErrorValue(elem: HTMLElement) {
     elem?.classList.add('border__wrong');
     elem?.classList.remove('border__active');
+  }
+  private openMessageWindow(text: string) {
+    const message = document.querySelector('.message_block');
+    const p = message?.querySelector('p') as HTMLParagraphElement;
+    p.textContent = text;
+    message?.classList.add('fullscreen');
   }
 }

@@ -6,10 +6,7 @@ import {
   Category,
   MyCustomerUpdate,
   MyCustomerChangePassword,
-  MyCustomerResetPassword,
-  CustomerCreatePasswordResetToken,
-  CustomerUpdateAction,
-  MyCustomerAddAddressAction,
+  _BaseAddress,
 } from '@commercetools/platform-sdk';
 // import { createApiBuilderFromCtpClient, ApiRoot } from '@commercetools/platform-sdk';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
@@ -179,6 +176,100 @@ export default class EcommerceClient {
       .me()
       .post({
         body: data,
+      })
+      .execute();
+  }
+  public static async addCustomerAddress(num: number, data: _BaseAddress) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: 'addAddress',
+              address: data,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+  public static async updateCustomerAddress(num: number, id: string, data: _BaseAddress) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: 'changeAddress',
+              addressId: id,
+              address: data,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+  public static async addAddressgId(
+    num: number,
+    id: string,
+    type: 'addBillingAddressId' | 'addShippingAddressId',
+  ) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: type,
+              addressId: id,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+  public static async removeAddressg(num: number, id: string) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: 'removeAddress',
+              addressId: id,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+  public static async setDefaultAddress(
+    num: number,
+    id: string,
+    type: 'setDefaultBillingAddress' | 'setDefaultShippingAddress',
+  ) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: type,
+              addressId: id,
+            },
+          ],
+        },
       })
       .execute();
   }

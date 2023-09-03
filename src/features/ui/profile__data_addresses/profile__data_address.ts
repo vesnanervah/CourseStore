@@ -1,16 +1,16 @@
 import { BaseView } from '../base-view';
 
 export default class BaseProfileAddress extends BaseView {
-  div: HTMLDivElement;
+  // div: HTMLDivElement;
   constructor() {
     super();
     this.htmlElement = document.createElement('div');
     const title = document.createElement('h1');
     title.textContent = 'Ваши адреса:';
     title.classList.add('profile__title');
-    this.div = document.createElement('div');
+    // this.div = document.createElement('div');
     this.htmlElement.className = 'form__address_prof';
-    this.div.className = 'fields__form';
+    // this.div.className = 'fields__form';
     this.htmlElement.append(title);
   }
 
@@ -30,6 +30,8 @@ export default class BaseProfileAddress extends BaseView {
     div1.className = 'addres__block_label';
     const h3 = document.createElement('h3');
     h3.textContent = text;
+    const p = document.createElement('p');
+    p.classList.add('profile__msg', 'profile__msg_address');
     for (let i = 0; i < 6; i++) {
       const label = document.createElement('label');
       const span = document.createElement('span');
@@ -46,7 +48,7 @@ export default class BaseProfileAddress extends BaseView {
       label.append(span, input);
       div1.append(label);
     }
-    div.append(ul, h3, div1);
+    div.append(ul, h3, p, div1);
     return div;
   }
 
@@ -84,5 +86,16 @@ export default class BaseProfileAddress extends BaseView {
     button1.id = 'profile__address_bill';
     div.append(button, button1);
     return div;
+  }
+
+  validateInput(elems: NodeListOf<HTMLInputElement>, message: HTMLParagraphElement): boolean {
+    for (const elem of elems) {
+      if (elem.value.length < 1) {
+        message.textContent = 'Заполните все поля формы';
+        return false;
+      }
+    }
+    message.textContent = '';
+    return true;
   }
 }
