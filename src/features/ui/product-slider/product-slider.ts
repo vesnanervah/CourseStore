@@ -33,6 +33,7 @@ export default class ProductSlider extends BaseView {
     this.btns.append(this.btnOne, this.btnTwo);
     this.btns.className = 'product__sliderbtns';
     this.content.append(this.images, this.btns);
+    this.popup.hide();
     this.htmlElement.append(this.content, this.popup.getHtmlElement());
     this.htmlElement.className = 'product__slider';
     this.btnOne.addEventListener('click', () => this.handleLeftClick());
