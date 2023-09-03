@@ -11,7 +11,6 @@ import {
   CustomerUpdateAction,
   MyCustomerAddAddressAction,
 } from '@commercetools/platform-sdk';
-import { createApiBuilderFromCtpClient, ApiRoot } from '@commercetools/platform-sdk';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { getProductsResource } from './products-resource';
 
