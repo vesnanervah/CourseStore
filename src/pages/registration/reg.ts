@@ -10,6 +10,8 @@ import { BaseAddress } from '@commercetools/platform-sdk';
 import { AppRouter } from '../../features/router';
 import { routes } from '../../routes';
 import Auth from '../../features/auth/auth';
+import { State } from '../../../src/state';
+import { StateKeys } from '../../types';
 
 export default class RegView extends BaseView {
   mailField = new BaseRegInp();
@@ -22,6 +24,7 @@ export default class RegView extends BaseView {
   validationMsg: HTMLElement = document.createElement('div');
   arr: Array<BaseAddress> = [];
   private router: AppRouter = AppRouter.getInstance();
+  private state = State.getInstance();
   constructor() {
     super();
     this.init();
@@ -114,11 +117,12 @@ export default class RegView extends BaseView {
         defaultBillingAddress: 0,
       };
       EcommerceClient.stockRootPrepare();
-      await EcommerceClient.registerUser(clientBody).then(() => {
+      await EcommerceClient.registerUser(clientBody).then((res) => {
         this.validationMsg.textContent = '';
         this.resetValidationError();
         Auth.loggin(clientBody.email, clientBody.password);
         this.router.navigate(routes.main());
+        this.state.setValue(StateKeys.CUSTOMER, res.body.customer);
       });
     } catch {
       this.validationMsg.textContent =
@@ -165,11 +169,25 @@ export default class RegView extends BaseView {
 
   private getArrayAddresses() {
     this.arr.push(this.addressInfo('#addres__block_billing'));
-    if (document.querySelector('#addres__block_shipping')) {
+    const blockShipping = document.querySelector('#addres__block_shipping');
+    const inputs = blockShipping?.querySelectorAll('.field__input') as NodeListOf<HTMLInputElement>;
+    let flag = false;
+    for (const elem of inputs) {
+      if (elem.value.length !== 0) {
+        flag = true;
+      }
+    }
+    if (flag) {
       this.arr.push(this.addressInfo('#addres__block_shipping'));
     } else {
-      this.arr.push(this.addressInfo('#addres__block_billing')); //true
+      this.arr.push(this.addressInfo('#addres__block_billing'));
     }
+    // if (document.querySelector('#addres__block_shipping')) {
+    //   this.arr.push(this.addressInfo('#addres__block_shipping'));
+    // } else {
+    //   this.arr.push(this.addressInfo('#addres__block_billing')); //true
+    // }
+    console.log(this.arr + 'arr addresses');
   }
 
   private mailValidation(): void {

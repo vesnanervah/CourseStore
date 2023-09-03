@@ -33,7 +33,6 @@ export default class Auth {
       Auth.isLoggedIn = true;
       Auth.accessToken = token.access_token;
       Auth.notifyLogin();
-
       return token;
     } catch {
       Auth.loggout();
@@ -125,5 +124,10 @@ export default class Auth {
         body: new URLSearchParams(reqBody),
       },
     ).then((resp) => resp.json() as unknown as AuthToken);
+  }
+
+  public static clearToken(): void {
+    window.localStorage.removeItem(LS_AUTH_TOKEN_KEY);
+    Auth.accessToken = null;
   }
 }

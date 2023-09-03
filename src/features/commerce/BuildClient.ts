@@ -1,6 +1,17 @@
+/* eslint-disable*/
 import fetch from 'node-fetch';
+import {
+  createApiBuilderFromCtpClient,
+  ApiRoot,
+  Category,
+  MyCustomerUpdate,
+  MyCustomerChangePassword,
+  MyCustomerResetPassword,
+  CustomerCreatePasswordResetToken,
+  CustomerUpdateAction,
+  MyCustomerAddAddressAction,
+} from '@commercetools/platform-sdk';
 import { createApiBuilderFromCtpClient, ApiRoot } from '@commercetools/platform-sdk';
-
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { getProductsResource } from './products-resource';
 
@@ -106,6 +117,95 @@ export default class EcommerceClient {
       .signup()
       .post({
         body,
+      })
+      .execute();
+  }
+
+  public static async getCustomer() {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .get()
+      .execute();
+  }
+  public static async getCustomerById(ID: string) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .customers()
+      .withId({ ID })
+      .get()
+      .execute();
+  }
+
+  public static async getUsersEmail() {
+    const Customers = () => {
+      return this.apiRoot
+        .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+        .customers()
+        .get()
+        .execute();
+    };
+    const customers = await Customers();
+    const length = Number(customers.body.total);
+    console.log('length' + length);
+    const emails = (length: number) => {
+      return this.apiRoot
+        .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+        .customers()
+        .get({
+          queryArgs: {
+            limit: length,
+          },
+        })
+        .execute();
+    };
+    const arr: string[] = [];
+    const data = await emails(length);
+    const objectCustomers = data.body.results;
+    console.log(objectCustomers);
+    for (let customer of objectCustomers) {
+      for (let key in customer) {
+        if (key === 'email') {
+          arr.push(customer[key]);
+        }
+      }
+    }
+    return arr;
+  }
+
+  public static async updateCustomer(data: MyCustomerUpdate) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: data,
+      })
+      .execute();
+  }
+
+  public static async updateCustomerPassword(data: MyCustomerChangePassword) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .password()
+      .post({
+        body: data,
+      })
+      .execute();
+  }
+
+  public static async getCustomerByToken() {
+    const token = window.localStorage.getItem('coursestore_token');
+    let refresh_token: string = '';
+    if (token) refresh_token += JSON.parse(token).refresh_token;
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .get({
+        headers: {
+          Authorization: `Baerar ${refresh_token}`,
+          'Content-Type': 'application/json',
+        },
       })
       .execute();
   }
