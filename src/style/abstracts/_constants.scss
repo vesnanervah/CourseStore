@@ -18,6 +18,7 @@ $color-white: #ffffff;
 
 //shadows
 $shadow-primary: 2px 4px 10px 0 rgb(0 0 0 / 15%);
+$shadow-hover: 1px 2px 4px 0 rgb(0 0 0 / 30%);
 
 //width
 $content-width: 1440px;
@@ -31,3 +32,6 @@ $bp-up-md: 768px;
 $bp-down-md: 767.98px;
 $bp-up-lg: 1440px;
 $bp-down-lg: 1439.98px;
+
+//border radius
+$br-primary: 0.5rem;

@@ -7,4 +7,7 @@ export const routes = {
   about: () => '/about',
   notFound: () => '/not-found',
   customer: () => '/customer',
+  catalog: () => '/catalog',
+  product: (slug: string = '') => `/products/${slug}`,
+  productType: (slug: string = '') => `/product-types/${slug}`,
 };

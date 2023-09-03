@@ -1,7 +1,7 @@
 import './app.scss';
 import { routes } from '../routes';
 import { AppRouter } from '../features/router';
-import { MainPage, LoginPage, SignupPage, CustomerPage, NotFoundPage } from '../pages';
+import { MainPage, LoginPage, SignupPage, CustomerPage, CatalogPage, NotFoundPage } from '../pages';
 import Auth from '../features/auth/auth';
 
 export class App {
@@ -23,6 +23,7 @@ export class App {
         { location: routes.login(), callback: this.renderLoginPage.bind(this) },
         { location: routes.signup(), callback: this.renderSignupPage.bind(this) },
         { location: routes.customer(), callback: this.renderCustomerPage.bind(this) },
+        { location: routes.catalog(), callback: this.renderCatalogPage.bind(this) },
       ],
       {
         location: routes.notFound(),
@@ -64,6 +65,13 @@ export class App {
     this.appContainer.innerHTML = '';
 
     const page = new CustomerPage();
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderCatalogPage(): void {
+    this.appContainer.innerHTML = '';
+
+    const page = new CatalogPage();
     this.appContainer.append(page.getHtmlElement());
   }
 
