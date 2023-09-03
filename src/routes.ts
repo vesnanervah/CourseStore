@@ -8,6 +8,6 @@ export const routes = {
   notFound: () => '/not-found',
   customer: () => '/customer',
   catalog: () => '/catalog',
-  product: (slug: string = '') => `/products/${slug}`,
+  product: (id: string = '') => `/products/${id}`,
   productType: (slug: string = '') => `/product-types/${slug}`,
 };

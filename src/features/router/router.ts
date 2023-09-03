@@ -1,6 +1,12 @@
+import matcherWitchCache from './matcher';
+
+export type UrlParams = {
+  [key: string]: string;
+} | null;
+
 type Route = {
-  location: string;
-  callback: () => void;
+  location?: string;
+  callback: (params?: UrlParams) => void;
 };
 
 type NavigateOptions = {
@@ -18,6 +24,7 @@ export class AppRouter {
   private routes: Route[] = [];
   private currentLocation: string | null = null;
   private fallback: Route | null = null;
+  private matcher = matcherWitchCache();
 
   private constructor() {
     // empty
@@ -43,18 +50,22 @@ export class AppRouter {
   }
 
   public getLocation(): string {
-    return window.location.hash.replace(/^#/, '') || '/';
+    return window.location.toString();
   }
 
   public navigate(to: string, options: NavigateOptions = DEFAULT_NAVIGATE_OPTIONS): void {
     if (to === this.currentLocation) {
       return;
     }
+    this.currentLocation = to;
 
-    const route = this.routes.find(({ location }) => location === to);
+    let urlParams = null;
+    const route = this.routes.find(({ location = '' }) => {
+      const [match, params] = this.matcher(location, to);
+      urlParams = params;
+      return match;
+    });
     if (route) {
-      this.currentLocation = to;
-
       if (options.pushState) {
         if (options.replace) {
           window.history.replaceState({}, '', `${window.location.origin}${to}`);
@@ -62,12 +73,11 @@ export class AppRouter {
           window.history.pushState({}, '', `${window.location.origin}${to}`);
         }
       }
-      route.callback();
+      route.callback(urlParams);
     } else if (this.fallback) {
-      const { location, callback } = this.fallback;
-      this.currentLocation = location;
-      callback();
-      window.history.pushState({}, '', `${window.location.origin}${location}`);
+      const { callback } = this.fallback;
+      window.history.pushState({}, '', `${window.location.origin}${to}`);
+      callback(urlParams);
     }
   }
 

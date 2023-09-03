@@ -17,6 +17,7 @@ module.exports = (env) => {
       new HtmlWebpackPlugin({
         template: path.join(__dirname, 'src', 'index.html'),
         filename: 'index.html',
+        publicPath: '/',
       }),
       new FaviconsWebpackPlugin(path.join(__dirname, './src/assets/favicon.svg')), //'src', 'assets',
     ],
