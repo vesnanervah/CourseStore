@@ -8,6 +8,7 @@ import { State } from '../../../src/state';
 // import { StateKeys } from '../../types';
 import BaseProfileBlock from '../../features/ui/profile__data_person/profile__data_person';
 import BaseProfileAddress from '../../features/ui/profile__data_addresses/profile__data_address';
+import BaseProfileBlockBye from '../../features/ui/profile__buy/profile__buy';
 import './customer.scss';
 import '../registration/reg.scss';
 import {
@@ -22,6 +23,7 @@ export default class Customer extends BaseView implements AuthListener {
   private state = State.getInstance();
   profileLeftBlock = new BaseProfileBlock();
   profileRightBlock = new BaseProfileAddress();
+  buyBlock = new BaseProfileBlockBye();
   id: string;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -52,7 +54,8 @@ export default class Customer extends BaseView implements AuthListener {
     const rightBlock = this.profileRightBlock.getHtmlElement();
     leftBlock.addEventListener('click', this.handleClick.bind(this));
     wrapperElement.append(leftBlock, rightBlock);
-    this.htmlElement.append(wrapperElement);
+    const blokBuy = this.buyBlock.getHtmlElement();
+    this.htmlElement.append(wrapperElement, blokBuy);
     await this.listenLogin().then(() => {
       this.addValueInput();
       this.addValueInputAddresses();

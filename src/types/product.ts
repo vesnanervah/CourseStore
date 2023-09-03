@@ -15,7 +15,7 @@ export type Product = {
   url: string;
   price: ProductPrice;
   image: string | null;
-}
+};
 type Categories = Category[];
 
 type Category = {
