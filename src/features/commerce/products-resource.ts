@@ -32,7 +32,7 @@ function normalizeApiProducts(typeName: string, apiProducts: ApiProduct[]): Prod
       id: p.id,
       type: typeName,
       name: p.masterData.current.name[LOCALE],
-      url: routes.product(p.masterData.current.slug[LOCALE]),
+      url: routes.product(p.id),
       image: images ? images[0].url : null,
       price: {
         value: priceValue,
