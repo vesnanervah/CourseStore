@@ -105,7 +105,7 @@ export default class Customer extends BaseView implements AuthListener {
   }
   //get full input fields of addresses
   private addValueInputAddresses() {
-    const div = document.querySelector('.form__address');
+    const div = document.querySelector('.form__address_prof');
     for (let i = 0; i < this.addresses.length; i++) {
       const id = this.addresses[i].id || '';
       const country = this.addresses[i].country || '';
@@ -135,6 +135,7 @@ export default class Customer extends BaseView implements AuthListener {
   private addInfoAddresses(inputs: NodeListOf<HTMLInputElement>, ...arr: string[]) {
     for (let i = 0; i < 6; i++) {
       inputs[i].value = arr[i];
+      inputs[i].disabled = true;
     }
   }
   private validateInputText(e: Event): void {

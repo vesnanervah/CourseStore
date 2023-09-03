@@ -255,6 +255,7 @@
 .form__address_prof {
   margin-left: 150px;
   margin-bottom: 45px;
+  width: 450px;
   .addres__block_profile {
     border: 1px solid #aaaaaa;
     border-radius: 25px;
@@ -268,6 +269,7 @@
       list-style: none;
       width: 25px;
       height: 25px;
+      margin-left: 10px;
       &:hover {
         transform: scale(1.1);
       }
@@ -291,10 +293,11 @@
 .list__buttons {
   display: flex;
   margin: 5px;
+  justify-content: flex-end;
 }
 .form__address_buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   margin-top: 15px;
   .btn__add_address {
     width: 180px;
@@ -312,5 +315,19 @@
     &:hover {
       transform: scale(1.05);
     }
+  }
+}
+@media (max-width: 1057px) {
+  .form__address_prof {
+    margin-left: 20px;
+  }
+}
+@media (max-width: 485px) {
+  .form__address_prof {
+    margin-left: 0;
+    width: 340px;
+  }
+  .profil_field {
+    width: 320px;
   }
 }
