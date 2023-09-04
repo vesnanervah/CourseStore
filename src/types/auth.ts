@@ -11,4 +11,9 @@ interface AuthListener {
   listenLogin(): void;
 }
 
-export { AuthToken, LocaleData, AuthListener };
+type InvalidTokenResp = {
+  statusCode: number;
+  message: string;
+};
+
+export { AuthToken, LocaleData, AuthListener, InvalidTokenResp };

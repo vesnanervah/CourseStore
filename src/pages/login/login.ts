@@ -85,7 +85,6 @@ export default class LoginView extends BaseView {
       EcommerceClient.tokenRootPrepare();
     } catch {
       this.throwValidationError();
-      console.log('catch');
     }
   }
 

@@ -644,7 +644,7 @@ export default class Customer extends BaseView implements AuthListener {
     const buttonSave = document.querySelector('.passw__save');
     buttonSave?.addEventListener('click', () => {
       const inputs = document.querySelectorAll(
-        'input#checkbox_passw',
+        'input[type=password]',
       ) as NodeListOf<HTMLInputElement>;
       if (inputs[0].value === inputs[1].value) {
         this.getPasswordMessage('Вы ввели одинаковые пароли');
