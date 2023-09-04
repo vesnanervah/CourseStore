@@ -9,6 +9,7 @@ import ProductDescr from '../../features/ui/product-descr/product-descr';
 import ProductIncludes from '../../features/ui/product-includes/product-includes';
 import ProductRoadmap from '../../features/ui/product-roadmap/product-roadmap';
 import { Attributes, Images, ProductName, VariantIncludes } from '../../types/product';
+import { Button } from '../../features/ui';
 
 export default class ProductView extends BaseView {
   private productTitle = new ProductTitle();
@@ -18,7 +19,7 @@ export default class ProductView extends BaseView {
   private productDescr = new ProductDescr();
   private productIncludes = new ProductIncludes();
   private productRoadmap = new ProductRoadmap();
-
+  private buyBtn = new Button({ text: 'Приобрести' });
   constructor() {
     super();
     this.createView();
@@ -45,6 +46,7 @@ export default class ProductView extends BaseView {
       this.productRoadmap.getHtmlElement(),
     );
     productMiddle.className = 'product__middle';
+    productBottom.appendChild(this.buyBtn.getHtmlElement());
     productBottom.className = 'product__bottom';
     content.append(productHead, productMiddle, productBottom);
     content.className = 'product__content';
