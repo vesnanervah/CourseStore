@@ -67,6 +67,19 @@ export const getProductsResource = (client: ApiClient): ProductsResource => ({
       .execute()
       .then(({ body }) => normalizeApiProducts(typeName, body.results));
   },
+  async getProductsByCategory(id, queryArgs) {
+    const filter = queryArgs?.filter ? ` and ${queryArgs.filter}` : '';
+    return client
+      .products()
+      .get({
+        queryArgs: {
+          where: `masterData(current(categories(id="${id}")))${filter}`,
+          limit: queryArgs?.limit || 100,
+        },
+      })
+      .execute()
+      .then(({ body }) => normalizeApiProducts('', body.results));
+  },
   async getProductTypes() {
     return client
       .productTypes()

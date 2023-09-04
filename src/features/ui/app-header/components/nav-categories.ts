@@ -91,11 +91,11 @@ export class NavCategories extends BaseView<HTMLElement> {
     }
 
     this.categoryListElement.innerHTML = '';
-    this.categories.forEach(({ id, name, slug }) => {
+    this.categories.forEach(({ id, name }) => {
       const navItem = this.createNavItem({
         id,
         label: name,
-        link: routes.category(slug),
+        link: routes.category(id),
       });
       this.categoryListElement.append(navItem);
     });

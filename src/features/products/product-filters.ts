@@ -10,8 +10,21 @@ export type Filter = {
   price: string;
 };
 
+type ActiveFilters = {
+  categories: boolean;
+  level: boolean;
+  price: boolean;
+};
+
 type ProductFiltersProps = {
+  activeFilters?: Partial<ActiveFilters>;
   onSubmit: (filter: Filter) => void;
+};
+
+const defaultFilters: ActiveFilters = {
+  categories: true,
+  level: true,
+  price: true,
 };
 
 export class ProductFilters extends BaseView<HTMLElement> {
@@ -19,6 +32,7 @@ export class ProductFilters extends BaseView<HTMLElement> {
   private categories: ProductCategory[] = [];
   private handleSubmit: ProductFiltersProps['onSubmit'];
   private categoryFieldContainer: HTMLElement | null = null;
+  private activeFilters: ActiveFilters;
   private filter: Filter = {
     categories: [],
     level: null,
@@ -29,6 +43,7 @@ export class ProductFilters extends BaseView<HTMLElement> {
     super();
 
     this.handleSubmit = props.onSubmit;
+    this.activeFilters = { ...defaultFilters, ...props.activeFilters };
     this.createElement();
     this.init();
     this.renderCategoryField();
@@ -51,12 +66,16 @@ export class ProductFilters extends BaseView<HTMLElement> {
     container.append(form);
 
     // Направление
-    const categoryField = this.createCategoryField();
-    form.append(categoryField);
+    if (this.activeFilters.categories) {
+      const categoryField = this.createCategoryField();
+      form.append(categoryField);
+    }
 
     // Уровень
-    const levelField = this.createLevelField();
-    form.append(levelField);
+    if (this.activeFilters.level) {
+      const levelField = this.createLevelField();
+      form.append(levelField);
+    }
 
     // Стоимость
     // TODO: add price filter
