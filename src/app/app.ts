@@ -8,6 +8,7 @@ import {
   CustomerPage,
   CatalogPage,
   ProductPage,
+  ProductTypePage,
   NotFoundPage,
 } from '../pages';
 import Auth from '../features/auth/auth';
@@ -33,6 +34,7 @@ export class App {
         { location: routes.customer(), callback: this.renderCustomerPage.bind(this) },
         { location: routes.catalog(), callback: this.renderCatalogPage.bind(this) },
         { location: routes.product(':id'), callback: this.renderProductPage.bind(this) },
+        { location: routes.productType(':id'), callback: this.renderProductTypePage.bind(this) },
       ],
       {
         callback: this.renderNotFoundPage.bind(this),
@@ -90,6 +92,16 @@ export class App {
     if (params) {
       page.init(params.id);
     }
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderProductTypePage(params?: UrlParams): void {
+    this.appContainer.innerHTML = '';
+
+    if (!params) {
+      return;
+    }
+    const page = new ProductTypePage({ typeId: params.id });
     this.appContainer.append(page.getHtmlElement());
   }
 

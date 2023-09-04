@@ -1,11 +1,9 @@
-import './catalog-products.scss';
 import { BaseView, Wrapper } from '../ui';
 import EcommerceClient from '../commerce/BuildClient';
-import { ProductList } from '../products/product-list';
+import { ProductList } from './product-list';
 
 import { routes } from '../../routes';
-import { ProductListTitle } from '../products/product-list-title';
-import { ProductFilters, type Filter } from '../products/product-filters';
+import { ProductFilters, type Filter } from './product-filters';
 import { ProductType, Product, DataProvider, LoadingStatus } from '../../types';
 
 type ProductTypeWithProducts = {
@@ -15,25 +13,29 @@ type ProductTypeWithProducts = {
   products: Product[];
 };
 
-export class CatalogProducts extends BaseView<HTMLElement> {
+type ProductsByTypeProps = {
+  typeId: string;
+};
+
+export class ProductsByType extends BaseView<HTMLElement> {
   private dataProvider: DataProvider = EcommerceClient.getDataProvider();
-  private productTypes: ProductType[] = [];
-  private productsByType: ProductTypeWithProducts[] = [];
+  private productType: ProductType | null = null;
+  private productsByType: ProductTypeWithProducts | null = null;
   private status: LoadingStatus = LoadingStatus.Idle;
   private error: string | null = null;
   private container: HTMLElement | null = null;
 
-  constructor() {
+  constructor(props: ProductsByTypeProps) {
     super();
     this.createElement();
-    this.init();
+    this.init(props);
     this.render();
   }
 
-  private async init(): Promise<void> {
+  private async init({ typeId }: ProductsByTypeProps): Promise<void> {
     try {
       this.status = LoadingStatus.Loading;
-      this.productTypes = await this.dataProvider.products.getProductTypes();
+      this.productType = await this.dataProvider.products.getProductType(typeId);
       this.productsByType = await this.fetchProducts();
       this.status = LoadingStatus.Idle;
     } catch (err: unknown) {
@@ -65,7 +67,7 @@ export class CatalogProducts extends BaseView<HTMLElement> {
   }
 
   private render(): void {
-    if (!this.container) {
+    if (!this.container || !this.productsByType) {
       return;
     }
 
@@ -88,16 +90,16 @@ export class CatalogProducts extends BaseView<HTMLElement> {
     container.innerHTML = '';
 
     // Product list
-    this.productsByType.forEach(({ name, url, products }) => {
-      const productTypeName = new ProductListTitle({ text: name, href: url }).getHtmlElement();
-      container.append(productTypeName);
-
-      const productList = new ProductList(products);
-      container.append(productList.getHtmlElement());
-    });
+    const productList = new ProductList(this.productsByType.products);
+    container.append(productList.getHtmlElement());
   }
 
-  private async fetchProducts(filter?: Filter): Promise<ProductTypeWithProducts[]> {
+  private async fetchProducts(filter?: Filter): Promise<ProductTypeWithProducts> {
+    if (!this.productType) {
+      return Promise.reject(new Error('Product type is undefined'));
+    }
+    const { id, name, key } = this.productType;
+
     const filters: string[] = [];
     if (filter?.categories && filter.categories.length) {
       filters.push(`categories(id in (${filter.categories.map((c) => `"${c}"`).join(', ')}))`);
@@ -109,18 +111,14 @@ export class CatalogProducts extends BaseView<HTMLElement> {
     }
     const filterStr = filters.length ? `masterData(current(${filters.join(' and ')}))` : '';
 
-    return Promise.all(
-      this.productTypes.map(({ id, name }) =>
-        this.dataProvider.products
-          .getProductsByType({ id, typeName: name }, { limit: 12, filter: filterStr })
-          .then((products) => ({
-            id,
-            name,
-            url: routes.productType(id),
-            products,
-          })),
-      ),
-    );
+    return this.dataProvider.products
+      .getProductsByType({ id, typeName: name }, { filter: filterStr })
+      .then((products) => ({
+        id,
+        name,
+        url: routes.productType(key),
+        products,
+      }));
   }
 
   private handleFilterChange(filter: Filter): void {

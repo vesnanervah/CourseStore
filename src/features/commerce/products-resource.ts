@@ -45,6 +45,7 @@ function normalizeApiProducts(typeName: string, apiProducts: ApiProduct[]): Prod
   });
 }
 
+// eslint-disable-next-line max-lines-per-function
 export const getProductsResource = (client: ApiClient): ProductsResource => ({
   async getProducts() {
     return client
@@ -60,7 +61,7 @@ export const getProductsResource = (client: ApiClient): ProductsResource => ({
       .get({
         queryArgs: {
           where: `productType(id="${id}")${filter}`,
-          limit: queryArgs?.limit,
+          limit: queryArgs?.limit || 100,
         },
       })
       .execute()
@@ -72,6 +73,17 @@ export const getProductsResource = (client: ApiClient): ProductsResource => ({
       .get()
       .execute()
       .then((data) => data.body.results);
+  },
+  async getProductType(id: string) {
+    return client
+      .productTypes()
+      .get({
+        queryArgs: {
+          where: `id="${id}"`,
+        },
+      })
+      .execute()
+      .then((data) => data.body.results[0]);
   },
   async getCategories() {
     return client
