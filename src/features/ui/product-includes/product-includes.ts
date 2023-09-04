@@ -39,7 +39,7 @@ export default class ProductIncludes extends BaseView {
 
   private async createLine(include: VariantIncludes) {
     const line = document.createElement('span');
-    const id = Array.isArray(include.value) ? include.value[0].id : include.value.id;
+    const id = Array.isArray(include) ? include[0].id : include.id;
     const related = await EcommerceClient.getProductById(id);
     line.textContent = (related.body.masterData.current.name as ProductName).ru;
     line.className = 'product__related';
