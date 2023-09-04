@@ -1,7 +1,15 @@
 import './app.scss';
 import { routes } from '../routes';
-import { AppRouter } from '../features/router';
-import { MainPage, LoginPage, SignupPage, CustomerPage, CatalogPage, NotFoundPage } from '../pages';
+import { AppRouter, type UrlParams } from '../features/router';
+import {
+  MainPage,
+  LoginPage,
+  SignupPage,
+  CustomerPage,
+  CatalogPage,
+  ProductPage,
+  NotFoundPage,
+} from '../pages';
 import Auth from '../features/auth/auth';
 
 export class App {
@@ -24,9 +32,9 @@ export class App {
         { location: routes.signup(), callback: this.renderSignupPage.bind(this) },
         { location: routes.customer(), callback: this.renderCustomerPage.bind(this) },
         { location: routes.catalog(), callback: this.renderCatalogPage.bind(this) },
+        { location: routes.product(':id'), callback: this.renderProductPage.bind(this) },
       ],
       {
-        location: routes.notFound(),
         callback: this.renderNotFoundPage.bind(this),
       },
     );
@@ -72,6 +80,16 @@ export class App {
     this.appContainer.innerHTML = '';
 
     const page = new CatalogPage();
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderProductPage(params?: UrlParams): void {
+    this.appContainer.innerHTML = '';
+
+    const page = new ProductPage();
+    if (params) {
+      page.init(params.id);
+    }
     this.appContainer.append(page.getHtmlElement());
   }
 

@@ -8,7 +8,6 @@ import LoginErrorMessage from '../../features/ui/login-error-message/login-error
 import { AppRouter } from '../../features/router';
 import { routes } from '../../routes';
 import EcommerceClient from '../../features/commerce/BuildClient';
-// import { StateKeys } from '../../types';
 
 export default class LoginView extends BaseView {
   private router: AppRouter = AppRouter.getInstance();
@@ -84,10 +83,6 @@ export default class LoginView extends BaseView {
       this.resetValidationError();
       this.router.navigate(routes.main());
       EcommerceClient.tokenRootPrepare();
-      // const customer = await EcommerceClient.getCustomer();
-      // this.state.setValue(StateKeys.CUSTOMER, customer.body);
-      console.log('login');
-      // console.log(this.state.getValue(StateKeys.CUSTOMER));
     } catch {
       this.throwValidationError();
       console.log('catch');
