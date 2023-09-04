@@ -1,5 +1,5 @@
 import { BaseView } from '../base-view';
-import { PriceValue } from '../../../types/product';
+import { type ProductPrice as Price } from '../../../types/product';
 import './product-price.scss';
 
 export default class ProductPrice extends BaseView {
@@ -12,7 +12,7 @@ export default class ProductPrice extends BaseView {
     this.defaultPrice.classList.add('product__default-price');
     this.discountPrice = document.createElement('span');
     this.discountPrice.classList.add('product__discount-price');
-    this.htmlElement.append(this.defaultPrice, this.discountPrice);
+    this.htmlElement.append(this.discountPrice, this.defaultPrice);
   }
   private createView(): HTMLElement {
     const wrapper = document.createElement('div');
@@ -20,15 +20,11 @@ export default class ProductPrice extends BaseView {
     return wrapper;
   }
 
-  public setPrice(price: PriceValue): void {
-    this.defaultPrice.textContent = `${price.centAmount / 10 ** price.fractionDigits} ${
-      price.currencyCode
-    }`;
-    /*if (discountPrice) {
-      (this.htmlElement as HTMLElement).classList.add('discounted');
-      this.discountPrice.textContent = discountPrice + '';
-    } else {
-      (this.htmlElement as HTMLElement).classList.remove('discounted');
-    }*/
+  public setPrice(price: Price): void {
+    this.defaultPrice.textContent = `${price.defaultValue} ${price.currency}`;
+    if (price.discountedValue) {
+      (this.htmlElement as HTMLElement).classList.add('product__prices--discounted');
+      this.discountPrice.textContent = `${price.discountedValue} ${price.currency}`;
+    }
   }
 }

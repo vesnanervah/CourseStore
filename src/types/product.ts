@@ -1,7 +1,7 @@
 import { ProductType as ApiProductType } from '@commercetools/platform-sdk';
 import { UniqueId } from './common';
 
-type ProductPrice = {
+export type ProductPrice = {
   defaultValue: number;
   currency: string;
   discountedValue: number;

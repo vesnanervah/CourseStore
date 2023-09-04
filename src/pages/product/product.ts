@@ -11,6 +11,7 @@ import ProductRoadmap from '../../features/ui/product-roadmap/product-roadmap';
 import {
   Attributes,
   Images,
+  ProductPrice as Price,
   ProductName,
   AttributesCourse,
   AttributesProfession,
@@ -66,6 +67,14 @@ export default class ProductView extends BaseView {
 
   public async updateProductPage(ID: string) {
     const newData = await EcommerceClient.getProductById(ID);
+    // TODO: refactor
+    const [rawPrice] = newData.body.masterData.current.masterVariant.prices || [];
+    const price: Price = {
+      currency: rawPrice.value.currencyCode === 'USD' ? '$' : '₽',
+      defaultValue: rawPrice.value.centAmount / 100,
+      discountedValue: (rawPrice.discounted?.value.centAmount || 0) / 100,
+    };
+    this.productPrice.setPrice(price);
     const attributes = this.defineAttributes(
       newData.body.masterData.current.masterVariant.attributes as Attributes,
     );
@@ -92,7 +101,7 @@ export default class ProductView extends BaseView {
   }
 
   private setCourseAttributes(attributes: AttributesCourse): void {
-    this.productPrice.setPrice(attributes['Course-Price']);
+    // this.productPrice.setPrice(attributes['Course-Price']);
     this.productDescr.setDescription(attributes['Course-Descr']);
     this.productRoadmap.setRoadmap(attributes['Course-Roadmap']);
     this.productRoadmap.reveal();
@@ -100,7 +109,7 @@ export default class ProductView extends BaseView {
   }
 
   private async setProfessionAttributes(attributes: AttributesProfession) {
-    this.productPrice.setPrice(attributes['Profession-Price']);
+    // this.productPrice.setPrice(attributes['Profession-Price']);
     this.productDescr.setDescription(attributes['Profession-Desc']);
     const includes: VariantIncludes[] = [];
     const includeKeys = [
