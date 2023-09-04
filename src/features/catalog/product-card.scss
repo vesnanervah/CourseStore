@@ -35,17 +35,36 @@
 
 .product-card__price {
   display: inline-block;
-  padding: 0.5rem 0.75rem;
-  font-size: 1.125rem;
   font-weight: 500;
-  border: 1px solid var(--color-primary);
   border-radius: 1.25rem;
+  border: 1px solid var(--color-text-secondary);
+}
+
+.product-card__price--type {
+  &--default,
+  &--discounted {
+    padding: 0.5rem 0.75rem;
+    font-size: 1.125rem;
+  }
+
+  &--normal {
+    padding: 0.25rem 0.5rem;
+    margin-left: 0.5rem;
+    text-decoration: line-through;
+    color: var(--color-text-secondary);
+    border-color: var(--color-text-secondary);
+  }
+
+  &--discounted {
+    border-color: var(--color-primary);
+  }
 }
 
 .product-card__image {
-  @media (max-width: vars.$bp-down-sm) {
-    display: none;
-  }
+  max-width: 110px;
+  width: 100%;
+  object-fit: contain;
+  object-position: top;
 }
 
 .product-card__btn {

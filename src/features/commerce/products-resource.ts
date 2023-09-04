@@ -16,15 +16,17 @@ function normalizeCategories(categories: Category[]): ProductCategory[] {
 
 function normalizeApiProducts(typeName: string, apiProducts: ApiProduct[]): Product[] {
   return apiProducts.map((p) => {
-    const { images, attributes } = p.masterData.current.masterVariant;
+    const { images, prices } = p.masterData.current.masterVariant;
 
-    let priceValue = 0;
     let priceCurrency = '';
-    if (attributes) {
-      const price = attributes.find((attr) => attr.name === 'Profession-Price');
+    let defaultPriceValue = 0;
+    let discountedPriceValue = 0;
+    if (prices) {
+      const [price] = prices;
       if (price) {
-        priceValue = price.value.centAmount / 100;
         priceCurrency = price.value.currencyCode === 'USD' ? '$' : '₽';
+        defaultPriceValue = price.value.centAmount / 100;
+        discountedPriceValue = (price.discounted?.value.centAmount || 0) / 100;
       }
     }
 
@@ -35,8 +37,9 @@ function normalizeApiProducts(typeName: string, apiProducts: ApiProduct[]): Prod
       url: routes.product(p.id),
       image: images ? images[0].url : null,
       price: {
-        value: priceValue,
         currency: priceCurrency,
+        defaultValue: defaultPriceValue,
+        discountedValue: discountedPriceValue,
       },
     };
   });

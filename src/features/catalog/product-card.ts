@@ -63,10 +63,19 @@ export class ProductCard extends BaseView<HTMLElement> {
     cardTitle.textContent = name;
     cardTextContent.append(cardTitle);
 
-    if (price.value) {
+    if (price.discountedValue) {
+      const discounted = document.createElement('span');
+      discounted.classList.add('product-card__price', 'product-card__price--type--discounted');
+      discounted.textContent = `${price.discountedValue} ${price.currency}`;
+      cardTextContent.append(discounted);
+      const normalPrice = document.createElement('span');
+      normalPrice.classList.add('product-card__price', 'product-card__price--type--normal');
+      normalPrice.textContent = `${price.defaultValue} ${price.currency}`;
+      cardTextContent.append(normalPrice);
+    } else if (price.defaultValue) {
       const productPrice = document.createElement('span');
-      productPrice.classList.add('product-card__price');
-      productPrice.textContent = `${price.value} ${price.currency}`;
+      productPrice.classList.add('product-card__price', 'product-card__price--type--default');
+      productPrice.textContent = `${price.defaultValue} ${price.currency}`;
       cardTextContent.append(productPrice);
     }
 

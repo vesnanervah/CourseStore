@@ -2,4 +2,13 @@
   color: #373636;
   font-size: 22px;
   font-weight: 400;
+
+  &--discounted {
+    .product__default-price {
+      margin-left: 0.5rem;
+      font-size: 0.75em;
+      text-decoration: line-through;
+      color: var(--color-text-secondary);
+    }
+  }
 }
