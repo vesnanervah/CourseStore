@@ -35,51 +35,51 @@ type image = {
 
 type Images = image[];
 
-type VariantName = {
-  name: string;
-  value: string;
+type PriceValue = {
+  currencyCode: string;
+  centAmount: number;
+  fractionDigits: number;
 };
 
-type VariantPrice = {
+type VariantAttribute = {
   name: string;
-  value: {
-    currencyCode: string;
-    centAmount: number;
-    fractionDigits: number;
-  };
+  value: AttributeValue;
 };
 
-type VariantDescription = {
-  name: string;
-  value: string;
+type VariantIncludes = Category[] | Category;
+
+type Attributes = VariantAttribute[];
+
+type AttributesDefined = {
+  [key: string]: AttributeValue;
 };
 
-type VariantRoadmap = {
-  name: string;
-  value: string;
+type AttributeValue = string | PriceValue | Category[] | Category;
+
+type AttributesCourse = {
+  'Course-Name': string;
+  'Course-Price': PriceValue;
+  'Course-Descr': string;
+  'Course-Roadmap': string;
 };
 
-type VariantIncludes = {
-  name: string;
-  value: Category[] | Category;
+type AttributesProfession = {
+  [index: string]: string | PriceValue | VariantIncludes;
+  'Profession-Name': string;
+  'Profession-Price': PriceValue;
+  'Profession-Desc': string;
+  'Profession-Includes1': VariantIncludes;
 };
-
-type Attributes = [
-  VariantName,
-  VariantPrice,
-  VariantDescription,
-  VariantRoadmap | VariantIncludes,
-  VariantIncludes?,
-  VariantIncludes?,
-  VariantIncludes?,
-];
 
 export {
   ProductName,
   Attributes,
-  VariantPrice,
-  VariantDescription,
-  VariantIncludes,
   Categories,
   Images,
+  AttributesProfession,
+  AttributesCourse,
+  VariantAttribute,
+  AttributesDefined,
+  PriceValue,
+  VariantIncludes,
 };

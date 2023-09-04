@@ -8,7 +8,15 @@ import ProductCategories from '../../features/ui/product-categories/product-cate
 import ProductDescr from '../../features/ui/product-descr/product-descr';
 import ProductIncludes from '../../features/ui/product-includes/product-includes';
 import ProductRoadmap from '../../features/ui/product-roadmap/product-roadmap';
-import { Attributes, Images, ProductName, VariantIncludes } from '../../types/product';
+import {
+  Attributes,
+  Images,
+  ProductName,
+  AttributesCourse,
+  AttributesProfession,
+  AttributesDefined,
+  VariantIncludes,
+} from '../../types/product';
 import { Button } from '../../features/ui';
 
 export default class ProductView extends BaseView {
@@ -20,6 +28,7 @@ export default class ProductView extends BaseView {
   private productIncludes = new ProductIncludes();
   private productRoadmap = new ProductRoadmap();
   private buyBtn = new Button({ text: 'Приобрести' });
+
   constructor() {
     super();
     this.createView();
@@ -57,21 +66,54 @@ export default class ProductView extends BaseView {
 
   public async updateProductPage(ID: string) {
     const newData = await EcommerceClient.getProductById(ID);
-    const attr = newData.body.masterData.current.masterVariant.attributes as Attributes;
+    const attributes = this.defineAttributes(
+      newData.body.masterData.current.masterVariant.attributes as Attributes,
+    );
+    console.log(attributes);
     this.productTitle.setTitle(newData.body.masterData.current.name as ProductName);
-    this.productPrice.setPrice(attr[1]);
     this.productCategories.setCategories(newData.body.masterData.current.categories);
-    this.productDescr.setDescription(attr[2].value);
     this.productSlider.setImages(newData.body.masterData.current.masterVariant.images as Images);
-    if (typeof attr[3].value === 'string') {
-      this.productRoadmap.setRoadmap(attr[3].value); //means this is course
-      this.productRoadmap.reveal();
-      this.productIncludes.hide();
+    if ((attributes as AttributesCourse)['Course-Name']) {
+      this.setCourseAttributes(attributes as AttributesCourse);
     } else {
-      //means this is profession
-      await this.productIncludes.setIncludes(attr.slice(3) as VariantIncludes[]);
-      this.productIncludes.reveal();
-      this.productRoadmap.hide();
+      this.setProfessionAttributes(attributes as AttributesProfession);
     }
+  }
+
+  private defineAttributes(arr: Attributes): AttributesDefined {
+    const defined = {};
+    arr.forEach((attr) => {
+      Object.defineProperty(defined, `${attr.name}`, {
+        value: attr.value,
+        enumerable: true,
+      });
+    });
+    return defined;
+  }
+
+  private setCourseAttributes(attributes: AttributesCourse): void {
+    this.productPrice.setPrice(attributes['Course-Price']);
+    this.productDescr.setDescription(attributes['Course-Descr']);
+    this.productRoadmap.setRoadmap(attributes['Course-Roadmap']);
+    this.productRoadmap.reveal();
+    this.productIncludes.hide();
+  }
+
+  private async setProfessionAttributes(attributes: AttributesProfession) {
+    this.productPrice.setPrice(attributes['Profession-Price']);
+    this.productDescr.setDescription(attributes['Profession-Desc']);
+    const includes: VariantIncludes[] = [];
+    const includeKeys = [
+      'Profession-Includes1',
+      'Profession-Includes2',
+      'Profession-Includes3',
+      'Profession-Includes4',
+    ];
+    for (const attribute in attributes) {
+      if (includeKeys.includes(attribute)) includes.push(attributes[attribute] as VariantIncludes);
+    }
+    await this.productIncludes.setIncludes(includes);
+    this.productIncludes.reveal();
+    this.productRoadmap.hide();
   }
 }

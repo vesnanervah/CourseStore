@@ -1,5 +1,5 @@
 import { BaseView } from '../base-view';
-import { VariantPrice } from '../../../types/product';
+import { PriceValue } from '../../../types/product';
 import './product-price.scss';
 
 export default class ProductPrice extends BaseView {
@@ -20,9 +20,9 @@ export default class ProductPrice extends BaseView {
     return wrapper;
   }
 
-  public setPrice(price: VariantPrice): void {
-    this.defaultPrice.textContent = `${price.value.centAmount / 10 ** price.value.fractionDigits} ${
-      price.value.currencyCode
+  public setPrice(price: PriceValue): void {
+    this.defaultPrice.textContent = `${price.centAmount / 10 ** price.fractionDigits} ${
+      price.currencyCode
     }`;
     /*if (discountPrice) {
       (this.htmlElement as HTMLElement).classList.add('discounted');
