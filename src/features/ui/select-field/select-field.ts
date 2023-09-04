@@ -23,6 +23,7 @@ export class SelectField extends BaseView<HTMLElement> {
   private open: boolean = false;
   private options: Option[] = [];
   private optionList: HTMLElement | null = null;
+  private multiselect: boolean = false;
 
   constructor(props: SelectFieldProps) {
     super();
@@ -46,7 +47,7 @@ export class SelectField extends BaseView<HTMLElement> {
     this.optionList = optionList;
 
     const btn = new Button({ text: label, variant: 'outlined', icon: btnIcon }).getHtmlElement();
-    btn.classList.add('filter');
+    btn.classList.add('select-filter__toggle');
     btn.addEventListener('click', () => {
       this.setOptionsState(!this.open);
     });
@@ -122,6 +123,11 @@ export class SelectField extends BaseView<HTMLElement> {
       return;
     }
 
+    if (!this.multiselect) {
+      this.options.forEach((o) => {
+        o.value = false;
+      });
+    }
     option.value = checked;
     onChange(
       name,

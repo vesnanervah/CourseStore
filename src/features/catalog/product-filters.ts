@@ -6,6 +6,7 @@ import { StateKeys, type ProductCategory } from '../../types';
 
 export type Filter = {
   categories: string[];
+  level: 'Beginner' | 'Experienced' | 'Any' | null;
   price: string;
 };
 
@@ -20,6 +21,7 @@ export class ProductFilters extends BaseView<HTMLElement> {
   private categoryFieldContainer: HTMLElement | null = null;
   private filter: Filter = {
     categories: [],
+    level: null,
     price: '',
   };
 
@@ -49,8 +51,21 @@ export class ProductFilters extends BaseView<HTMLElement> {
     container.append(form);
 
     // Направление
+    const categoryField = this.createCategoryField();
+    form.append(categoryField);
+
+    // Уровень
+    const levelField = this.createLevelField();
+    form.append(levelField);
+
+    // Стоимость
+    // TODO: add price filter
+
+    this.htmlElement = container;
+  }
+
+  private createCategoryField(): HTMLElement {
     const categoryFieldContainer = document.createElement('div');
-    form.append(categoryFieldContainer);
     this.categoryFieldContainer = categoryFieldContainer;
 
     const categoryField = new SelectField({
@@ -62,13 +77,25 @@ export class ProductFilters extends BaseView<HTMLElement> {
     }).getHtmlElement();
     categoryFieldContainer.append(categoryField);
 
-    // Уровень
-    // TODO: add level filter
+    return categoryFieldContainer;
+  }
 
-    // Стоимость
-    // TODO: add price filter
+  private createLevelField(): HTMLElement {
+    const levelFieldContainer = document.createElement('div');
 
-    this.htmlElement = container;
+    const levelField = new SelectField({
+      name: 'level',
+      label: 'Уровень',
+      options: [
+        { id: 'any', label: 'Любой', name: 'Any', value: true },
+        { id: 'beginner', label: 'Для начинающих', name: 'Beginner', value: false },
+        { id: 'experienced', label: 'С опытом', name: 'Experienced', value: false },
+      ],
+      onChange: this.handleSelectChange.bind(this),
+    }).getHtmlElement();
+    levelFieldContainer.append(levelField);
+
+    return levelFieldContainer;
   }
 
   private renderCategoryField(): void {
@@ -101,6 +128,10 @@ export class ProductFilters extends BaseView<HTMLElement> {
     if (name === 'categories') {
       this.filter.categories = options;
     }
+    if (name === 'level') {
+      this.filter.level = options[0] as Filter['level'];
+    }
+    console.log(name, options);
 
     // TODO: update url params
 
