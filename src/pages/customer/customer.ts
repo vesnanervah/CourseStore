@@ -288,9 +288,10 @@ export default class Customer extends BaseView implements AuthListener {
     } catch (err) {
       const modal = document.querySelector('.passw_block');
       modal?.classList.remove('fullscreen');
+      const block = document.querySelector('.message_block');
+      block?.classList.add('fullscreen');
       const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
       p.textContent = 'Данные не обновлены. Попробуйте позже.';
-      document.querySelector('.message_block')?.classList.add('fullscreen');
       this.removeCheck();
     }
   }
