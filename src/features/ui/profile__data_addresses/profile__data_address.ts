@@ -1,16 +1,13 @@
 import { BaseView } from '../base-view';
 
 export default class BaseProfileAddress extends BaseView {
-  // div: HTMLDivElement;
   constructor() {
     super();
     this.htmlElement = document.createElement('div');
     const title = document.createElement('h1');
     title.textContent = 'Ваши адреса:';
     title.classList.add('profile__title');
-    // this.div = document.createElement('div');
     this.htmlElement.className = 'form__address_prof';
-    // this.div.className = 'fields__form';
     this.htmlElement.append(title);
   }
 
@@ -23,7 +20,10 @@ export default class BaseProfileAddress extends BaseView {
     li1.className = 'button__save';
     const li2 = document.createElement('li');
     li2.className = 'button__delete';
-    ul.append(li, li1, li2);
+    const li3 = document.createElement('li');
+    li3.className = 'button__default';
+    li3.append(this.getRadioButton());
+    ul.append(li3, li, li1, li2);
     const div1: HTMLDivElement = document.createElement('div');
     ul.className = 'list__buttons';
     div.className = 'addres__block_profile';
@@ -52,24 +52,19 @@ export default class BaseProfileAddress extends BaseView {
     return div;
   }
 
-  private getRadiobuttonBlock(): HTMLDivElement {
-    const div: HTMLDivElement = document.createElement('div');
-    div.className = 'radio__choice_block';
-    const radio1 = this.getRadioButton('Установить как адрес по умолчанию');
-    div.append(radio1);
-    return div;
-  }
-
-  private getRadioButton(text: string): HTMLDivElement {
+  private getRadioButton(): HTMLDivElement {
     const div: HTMLDivElement = document.createElement('div');
     div.className = 'radio__block';
-    const check = document.createElement('input');
-    check.className = 'radio_button';
-    check.type = 'radio';
+    const radio = document.createElement('input');
+    radio.className = 'radio_button';
+    radio.type = 'checkbox';
     const label = document.createElement('label');
     label.className = 'radio__label';
-    label.textContent = text;
-    div.append(check, label);
+    label.textContent = 'адрес по умолчанию';
+    const span = document.createElement('span');
+    span.className = 'checkbox-round';
+    label.append(radio, span);
+    div.append(label);
     return div;
   }
 
