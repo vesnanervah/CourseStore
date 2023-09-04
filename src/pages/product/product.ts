@@ -69,11 +69,12 @@ export default class ProductView extends BaseView {
     const newData = await EcommerceClient.getProductById(ID);
     // TODO: refactor
     const [rawPrice] = newData.body.masterData.current.masterVariant.prices || [];
-    const price: Price = {
-      currency: rawPrice.value.currencyCode === 'USD' ? '$' : '₽',
-      defaultValue: rawPrice.value.centAmount / 100,
-      discountedValue: (rawPrice.discounted?.value.centAmount || 0) / 100,
-    };
+    const price: Price = { currency: '', defaultValue: 0, discountedValue: 0 };
+    if (rawPrice) {
+      price.currency = rawPrice.value.currencyCode === 'USD' ? '$' : '₽';
+      price.defaultValue = rawPrice.value.centAmount / 100;
+      price.discountedValue = (rawPrice.discounted?.value.centAmount || 0) / 100;
+    }
     this.productPrice.setPrice(price);
     const attributes = this.defineAttributes(
       newData.body.masterData.current.masterVariant.attributes as Attributes,
