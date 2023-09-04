@@ -98,16 +98,21 @@ export class CatalogProducts extends BaseView<HTMLElement> {
   }
 
   private async fetchProducts(filter?: Filter): Promise<ProductTypeWithProducts[]> {
-    let filterArg: string | undefined;
+    const filters: string[] = [];
     if (filter?.categories && filter.categories.length) {
-      const categories = filter.categories.map((c) => `"${c}"`).join(', ');
-      filterArg = `masterData(current(categories(id in (${categories}))))`;
+      filters.push(`categories(id in (${filter.categories.map((c) => `"${c}"`).join(', ')}))`);
     }
+    if (filter?.level && filter.level !== 'Any') {
+      const courseLevel = `attributes(name="Course-Level" and value(key="${filter.level}"))`;
+      const professionLevel = `attributes(name="Profession-Level" and value(key="${filter.level}"))`;
+      filters.push(`masterVariant(${courseLevel} or ${professionLevel})`);
+    }
+    const filterStr = filters.length ? `masterData(current(${filters.join(' and ')}))` : '';
 
     return Promise.all(
       this.productTypes.map(({ id, name, key }) =>
         this.dataProvider.products
-          .getProductsByType({ id, typeName: name }, { limit: 12, filter: filterArg })
+          .getProductsByType({ id, typeName: name }, { limit: 12, filter: filterStr })
           .then((products) => ({
             id,
             name,
