@@ -5,9 +5,10 @@ import EcommerceClient from '../../features/commerce/BuildClient';
 import { AuthListener } from '../../types/auth';
 import Auth from '../../features/auth/auth';
 import { State } from '../../../src/state';
-// import { StateKeys } from '../../types';
 import BaseProfileBlock from '../../features/ui/profile__data_person/profile__data_person';
 import BaseProfileAddress from '../../features/ui/profile__data_addresses/profile__data_address';
+import BaseProfileBlockBye from '../../features/ui/profile__buy/profile__buy';
+import RegView from '../registration/reg';
 import './customer.scss';
 import '../registration/reg.scss';
 import {
@@ -22,6 +23,7 @@ export default class Customer extends BaseView implements AuthListener {
   private state = State.getInstance();
   profileLeftBlock = new BaseProfileBlock();
   profileRightBlock = new BaseProfileAddress();
+  buyBlock = new BaseProfileBlockBye();
   id: string;
   firstName: string | undefined;
   lastName: string | undefined;
@@ -29,8 +31,8 @@ export default class Customer extends BaseView implements AuthListener {
   dateOfBirth: string | undefined;
   email: string | undefined;
   addresses: Array<BaseAddress> = [];
-  defultBilling: string | undefined = '';
-  defultShipping: string | undefined = '';
+  defaultBilling: string | undefined = '';
+  defaultShipping: string | undefined = '';
   billingAddressIds: string[] | undefined = [];
   shippingAddressIds: string[] | undefined = [];
   constructor() {
@@ -45,14 +47,12 @@ export default class Customer extends BaseView implements AuthListener {
     const wrapper = new Wrapper();
     const wrapperElement = wrapper.getHtmlElement();
     wrapperElement.classList.add('profile__wrapper');
-    //   // const data = this.state.getValue(StateKeys.CUSTOMER);
-    //   // console.log(data);
-    //   // console.log(data?.email);
     const leftBlock = this.profileLeftBlock.getHtmlElement();
     const rightBlock = this.profileRightBlock.getHtmlElement();
     leftBlock.addEventListener('click', this.handleClick.bind(this));
     wrapperElement.append(leftBlock, rightBlock);
-    this.htmlElement.append(wrapperElement);
+    const blokBuy = this.buyBlock.getHtmlElement();
+    this.htmlElement.append(wrapperElement, blokBuy);
     await this.listenLogin().then(() => {
       this.addValueInput();
       this.addValueInputAddresses();
@@ -61,6 +61,7 @@ export default class Customer extends BaseView implements AuthListener {
     this.handleClickButtonSave();
     this.handleClickButtonRemove();
     this.listenerButtonsModalWindowPassword();
+    this.handleClickButtonAddAddress();
   }
 
   listenLogout(): void {
@@ -72,15 +73,10 @@ export default class Customer extends BaseView implements AuthListener {
     EcommerceClient.tokenRootPrepare();
     await EcommerceClient.getCustomerByToken().then((res) => {
       this.addresses = res.body.addresses;
-      console.log(this.addresses);
-      this.defultBilling = res.body.defaultBillingAddressId;
-      this.defultShipping = res.body.defaultShippingAddressId;
+      this.defaultBilling = res.body.defaultBillingAddressId;
+      this.defaultShipping = res.body.defaultShippingAddressId;
       this.billingAddressIds = res.body.billingAddressIds;
       this.shippingAddressIds = res.body.shippingAddressIds;
-      console.log(this.defultBilling);
-      console.log(this.defultShipping);
-      console.log(this.billingAddressIds + 'billing');
-      console.log(this.shippingAddressIds + 'shipping');
       this.id = res.body.id;
       this.firstName = res.body.firstName;
       this.lastName = res.body.lastName;
@@ -102,7 +98,7 @@ export default class Customer extends BaseView implements AuthListener {
   }
   //get full input fields of addresses
   private addValueInputAddresses() {
-    const div = document.querySelector('.form__address');
+    const div = document.querySelector('.form__address_prof');
     for (let i = 0; i < this.addresses.length; i++) {
       const id = this.addresses[i].id || '';
       const country = this.addresses[i].country || '';
@@ -114,6 +110,10 @@ export default class Customer extends BaseView implements AuthListener {
       if (this.shippingAddressIds?.includes(id)) {
         const div1 = new BaseProfileAddress().getBlockAddress('Адрес доставки');
         const inputs = this.getInputsAddress(div1);
+        if (inputs) {
+          inputs[0].closest('.addres__block_profile')?.setAttribute('data-id', id);
+          inputs[0].closest('.addres__block_profile')?.setAttribute('data-type', 'shipping');
+        }
         div?.append(div1);
         if (inputs) {
           this.addInfoAddresses(inputs, country, city, street, house, office, postalcode);
@@ -121,18 +121,50 @@ export default class Customer extends BaseView implements AuthListener {
       } else {
         const div2 = new BaseProfileAddress().getBlockAddress('Платежный адрес');
         const inputs = this.getInputsAddress(div2);
+        if (inputs) {
+          inputs[0].closest('.addres__block_profile')?.setAttribute('data-id', id);
+          inputs[0].closest('.addres__block_profile')?.setAttribute('data-type', 'billing');
+        }
         div?.append(div2);
         if (inputs) {
           this.addInfoAddresses(inputs, country, city, street, house, office, postalcode);
         }
       }
     }
+    const divs = div?.querySelectorAll('.addres__block_profile') as NodeListOf<HTMLDivElement>;
+    this.markDefaultAddresses(this.defaultShipping as string, this.defaultBilling as string, divs);
+    div?.append(this.profileRightBlock.getButtonsAddAddresses());
   }
+
   private addInfoAddresses(inputs: NodeListOf<HTMLInputElement>, ...arr: string[]) {
     for (let i = 0; i < 6; i++) {
       inputs[i].value = arr[i];
+      inputs[i].disabled = true;
     }
   }
+  private markDefaultAddresses(id1: string, id2: string, parents: NodeListOf<HTMLDivElement>) {
+    parents.forEach((div) => {
+      const addressid = div.getAttribute('data-id');
+      if (addressid === id1 || addressid === id2) {
+        div.classList.add('colored');
+        const btn = div.querySelector('.radio_button') as HTMLInputElement;
+        btn.checked = true;
+        const btnDelete = div.querySelector('.button__delete');
+        btnDelete?.classList.add('nopointer');
+      }
+    });
+  }
+
+  private removeDefaultAddresses(parents: NodeListOf<HTMLDivElement>) {
+    parents.forEach((div) => {
+      div.classList.remove('colored');
+      const btn = div.querySelector('.radio_button') as HTMLInputElement;
+      btn.checked = false;
+      const btnDelete = div.querySelector('.button__delete');
+      btnDelete?.classList.remove('nopointer');
+    });
+  }
+
   private validateInputText(e: Event): void {
     const target = e.target as HTMLElement;
     if (
@@ -333,16 +365,102 @@ export default class Customer extends BaseView implements AuthListener {
         return await EcommerceClient.getCustomerById(this.id).then((res) => res.body.version);
       }
     } catch (err) {
-      // const modal = document.querySelector('.passw_block');
-      // modal?.classList.remove('fullscreen');
-      // const p = document?.querySelector('.profile_mes') as HTMLParagraphElement;
-      // p.textContent = 'Данные не обновлены.';
-      // document.querySelector('.message_block')?.classList.add('fullscreen');
-      // this.removeCheck();
       throw new Error(`${err} customer error`);
     }
   }
 
+  private async addAddress(inputs: NodeListOf<HTMLInputElement>) {
+    const parent = inputs[0].closest('.addres__block_profile');
+    const addressType =
+      parent?.getAttribute('data-address') === 'shipping'
+        ? 'addShippingAddressId'
+        : 'addBillingAddressId';
+    const version = await this.getCustomerVersion();
+    const data = this.getDataAddress(inputs);
+    await EcommerceClient.addCustomerAddress(Number(version), data)
+      .then((res) => {
+        const addresses = res.body.addresses;
+        const id = addresses[addresses.length - 1].id;
+        parent?.setAttribute('data-id', id as string);
+        this.addIdAddresToBody(id as string, addressType);
+        this.openMessageWindow('Данные успешно обновлены');
+      })
+      .catch(() => {
+        this.openMessageWindow('Данные не обновлены, повторите позже');
+      });
+  }
+  private async updateAddress(inputs: NodeListOf<HTMLInputElement>) {
+    const parent = inputs[0].closest('.addres__block_profile');
+    const version = await this.getCustomerVersion();
+    const data = this.getDataAddress(inputs);
+    const id = parent?.getAttribute('data-id');
+    await EcommerceClient.updateCustomerAddress(Number(version), id as string, data)
+      .then(() => this.openMessageWindow('Данные успешно обновлены'))
+      .catch(() => this.openMessageWindow('Данные не обновлены, повторите позже'));
+  }
+  private async removeAddress(inputs: NodeListOf<HTMLInputElement>) {
+    const parent = inputs[0].closest('.addres__block_profile');
+    const id = parent?.getAttribute('data-id');
+    const version = await this.getCustomerVersion();
+    const addressType =
+      parent?.getAttribute('data-address') === 'shipping'
+        ? 'removeShippingAddressId'
+        : 'removeBillingAddressId';
+    await EcommerceClient.removeAddressg(Number(version), id as string)
+      .then(() => {
+        this.openMessageWindow('Данные успешно обновлены');
+      })
+      .catch(() => {
+        this.openMessageWindow('Данные не обновены, повторите позже');
+      });
+  }
+
+  async addIdAddresToBody(id: string, type: 'addBillingAddressId' | 'addShippingAddressId') {
+    const version = await this.getCustomerVersion();
+    await EcommerceClient.addAddressgId(Number(version), id, type);
+  }
+
+  private async changeDefaultAddress(
+    id: string,
+    type: 'setDefaultBillingAddress' | 'setDefaultShippingAddress',
+  ) {
+    const version = await this.getCustomerVersion();
+    await EcommerceClient.setDefaultAddress(Number(version), id, type).then((res) => {
+      const defaultBilling = res.body.defaultBillingAddressId as string;
+      const defaultShipping = res.body.defaultShippingAddressId as string;
+      const blockAddress = document.querySelector('.form__address_prof');
+      const divs = blockAddress?.querySelectorAll(
+        '.addres__block_profile',
+      ) as NodeListOf<HTMLDivElement>;
+      this.markDefaultAddresses(defaultBilling, defaultShipping, divs);
+    });
+  }
+
+  getDataAddress(inputs: NodeListOf<HTMLInputElement>): BaseAddress {
+    const value = inputs[0].value.toLowerCase();
+    let country = '';
+    switch (value) {
+      case 'ru':
+      case 'russia':
+      case 'россия':
+      case 'рус':
+        country = 'RU';
+        break;
+      default:
+        country = 'US';
+    }
+    const key = new RegView().getKeyAddress();
+    const data = {
+      key: key,
+      country: country,
+      city: inputs[1].value,
+      streetName: inputs[2].value,
+      building: inputs[3].value,
+      apartment: inputs[4].value,
+      postalCode: inputs[5].value,
+    };
+    return data;
+  }
   //check info in fieldes - which was changed
   private checkValueInput(input: HTMLInputElement): boolean | undefined {
     if (input.getAttribute('data-set') == 'firstName') return input.value.trim() === this.firstName;
@@ -393,6 +511,93 @@ export default class Customer extends BaseView implements AuthListener {
       }
     });
   }
+  private handleClickButtonAddAddress(): void {
+    const blockAddresses = document.querySelector('.form__address_prof');
+    const blockButton = document.querySelector('.form__address_buttons');
+    const buttonShippind = document.querySelector('#profile__address_ship');
+    buttonShippind?.addEventListener('click', () => {
+      const newBlock = this.profileRightBlock.getBlockAddress('Адрес доставки');
+      newBlock.querySelector('.button__default')?.classList.add('remove');
+      blockButton?.before(newBlock);
+      blockButton?.previousElementSibling?.setAttribute('data-new', 'true');
+      blockButton?.previousElementSibling?.setAttribute('data-address', 'shipping');
+    });
+    const buttonBilling = document.querySelector('#profile__address_bill');
+    buttonBilling?.addEventListener('click', () => {
+      const newBlock = this.profileRightBlock.getBlockAddress('Платежный адрес');
+      newBlock.querySelector('.button__default')?.classList.add('remove');
+      blockButton?.before(newBlock);
+      blockButton?.previousElementSibling?.setAttribute('data-new', 'true');
+      blockButton?.previousElementSibling?.setAttribute('data-address', 'billing');
+    });
+    blockAddresses?.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLLinkElement;
+      if (target?.closest('.button__delete')) {
+        if (!(target.closest('.addres__block_profile')?.getAttribute('data-new') === 'true')) {
+          const parent = target.closest('.addres__block_profile');
+          const inputs = parent?.querySelectorAll('.field__input') as NodeListOf<HTMLInputElement>;
+          this.removeAddress(inputs);
+        }
+        target.closest('.addres__block_profile')?.remove();
+      } else if (target?.closest('.button__edit')) {
+        const parent = target.closest('.addres__block_profile');
+        const inputs = parent?.querySelectorAll('.field__input') as NodeListOf<HTMLInputElement>;
+        inputs?.forEach((input) => {
+          input.closest('.field')?.classList.add('border__active');
+          input.disabled = false;
+        });
+      } else if (target?.closest('.button__save')) {
+        const parent = target.closest('.addres__block_profile');
+        const mes = parent?.querySelector('.profile__msg_address') as HTMLParagraphElement;
+        const inputs = parent?.querySelectorAll('.field__input') as NodeListOf<HTMLInputElement>;
+        if (this.profileRightBlock.validateInput(inputs, mes)) {
+          inputs?.forEach((input) => {
+            input.closest('.field')?.classList.remove('border__active');
+            input.disabled = true;
+          });
+          if (parent?.getAttribute('data-new') === 'true') {
+            this.addAddress(inputs);
+            parent.removeAttribute('data-new');
+            parent.querySelector('.button__default')?.classList.remove('remove');
+          } else {
+            this.updateAddress(inputs);
+          }
+        }
+      }
+    });
+    const div = document.querySelector('.form__address_prof');
+    div?.addEventListener('click', (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      if (target?.closest('.radio_button')) {
+        this.changeDefaultValue(target);
+      }
+    });
+  }
+
+  private changeDefaultValue(elem: HTMLInputElement) {
+    if (elem.checked) {
+      const answer = confirm('Изменить адрес по умолчанию?');
+      if (answer) {
+        const divs = document.querySelectorAll(
+          '.addres__block_profile',
+        ) as NodeListOf<HTMLDivElement>;
+        this.removeDefaultAddresses(divs);
+        const parent = elem.closest('.addres__block_profile');
+        const id = parent?.getAttribute('data-id') as string;
+        const type =
+          parent?.getAttribute('data-type') === 'billing'
+            ? 'setDefaultBillingAddress'
+            : 'setDefaultShippingAddress';
+        this.changeDefaultAddress(id, type);
+      } else if (!answer) {
+        elem.checked = false;
+      }
+    } else {
+      elem.checked = true;
+      return;
+    }
+  }
+
   //listener for edit buttons - get change info about customer in inputs
   private handleClick(e: Event): void {
     const target = e.target as HTMLElement;
@@ -430,7 +635,6 @@ export default class Customer extends BaseView implements AuthListener {
   private listenerButtonsModalWindowPassword() {
     const buttonReset = document.querySelector('.passw__reset');
     buttonReset?.addEventListener('click', () => {
-      console.log('click');
       this.removeCheck();
       const passwInput = document.querySelector('.new__password');
       passwInput?.classList.remove('border__active');
@@ -440,7 +644,7 @@ export default class Customer extends BaseView implements AuthListener {
     const buttonSave = document.querySelector('.passw__save');
     buttonSave?.addEventListener('click', () => {
       const inputs = document.querySelectorAll(
-        'input[type=password]',
+        'input#checkbox_passw',
       ) as NodeListOf<HTMLInputElement>;
       if (inputs[0].value === inputs[1].value) {
         this.getPasswordMessage('Вы ввели одинаковые пароли');
@@ -501,5 +705,11 @@ export default class Customer extends BaseView implements AuthListener {
   private addErrorValue(elem: HTMLElement) {
     elem?.classList.add('border__wrong');
     elem?.classList.remove('border__active');
+  }
+  private openMessageWindow(text: string) {
+    const message = document.querySelector('.message_block') as HTMLDivElement;
+    const p = message?.querySelector('p') as HTMLParagraphElement;
+    p.textContent = text;
+    message?.classList.add('fullscreen');
   }
 }

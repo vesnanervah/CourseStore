@@ -121,7 +121,6 @@ export default class RegView extends BaseView {
         this.resetValidationError();
         Auth.loggin(clientBody.email, clientBody.password);
         this.router.navigate(routes.main());
-        //this.state.setValue(StateKeys.CUSTOMER, res.body.customer);
       });
     } catch {
       this.validationMsg.textContent =
@@ -154,7 +153,7 @@ export default class RegView extends BaseView {
     };
   }
 
-  private getKeyAddress(): string {
+  getKeyAddress(): string {
     const minLength = 2;
     const maxLength = 256;
     const randomLength = Math.floor(Math.random() * (maxLength - minLength + 1));

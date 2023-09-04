@@ -83,8 +83,6 @@ export default class LoginView extends BaseView {
       this.resetValidationError();
       this.router.navigate(routes.main());
       EcommerceClient.tokenRootPrepare();
-      //const customer = await EcommerceClient.getCustomer();
-      //this.state.setValue(StateKeys.CUSTOMER, customer.body);
     } catch {
       this.throwValidationError();
       console.log('catch');
