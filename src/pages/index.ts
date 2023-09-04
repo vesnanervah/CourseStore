@@ -6,3 +6,4 @@ export * from './customer';
 export * from './catalog';
 export * from './product';
 export * from './product-type';
+export * from './category';

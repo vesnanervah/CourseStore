@@ -19,6 +19,7 @@ export type ProductsResource = {
     { id, typeName }: { id: string; typeName: string },
     queryArgs?: QueryArgs,
   ) => Promise<Product[]>;
+  getProductsByCategory: (id: string, queryArgs?: QueryArgs) => Promise<Product[]>;
   getCategories: () => Promise<ProductCategory[]>;
 };
 
