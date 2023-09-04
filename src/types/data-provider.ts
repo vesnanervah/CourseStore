@@ -13,6 +13,7 @@ export type ApiClient = ByProjectKeyRequestBuilder;
 
 export type ProductsResource = {
   getProductTypes: () => Promise<ProductType[]>;
+  getProductType: (id: string) => Promise<ProductType>;
   getProducts: () => Promise<Product[]>;
   getProductsByType: (
     { id, typeName }: { id: string; typeName: string },
