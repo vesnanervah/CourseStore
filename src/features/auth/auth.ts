@@ -1,7 +1,6 @@
 import EcommerceClient from '../commerce/BuildClient';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
-
-import { AuthToken, LocaleData, AuthListener } from '../../types/auth';
+import { AuthToken, LocaleData, AuthListener, InvalidTokenResp } from '../../types/auth';
 
 const LS_AUTH_TOKEN_KEY = 'coursestore_token';
 
@@ -18,21 +17,24 @@ export default class Auth {
     if (storageData.token) {
       Auth.isLoggedIn = true;
       Auth.notifyLogin();
-      console.log('saved login found');
     } else {
-      console.log('there is no saved login');
       Auth.loggout();
     }
   }
 
   public static async loggin(email: string, password: string): Promise<AuthToken> {
     try {
+      const resp = await this.getToken({ email, password });
       const storageData = Auth.getDataFromStorage();
-      const token: AuthToken = storageData.token ?? (await this.getToken({ email, password }));
+      if ((resp as InvalidTokenResp).message) {
+        throw new Error((resp as InvalidTokenResp).message);
+      }
+      const token = storageData.token ?? (resp as AuthToken);
       Auth.saveTokenToStorage(token);
-      Auth.isLoggedIn = true;
+      EcommerceClient.tokenRootPrepare();
       Auth.accessToken = token.access_token;
       Auth.notifyLogin();
+      Auth.isLoggedIn = true;
       return token;
     } catch {
       Auth.loggout();
@@ -46,7 +48,6 @@ export default class Auth {
     Auth.accessToken = null;
     Auth.notifyLogout();
     EcommerceClient.stockRootPrepare();
-    console.log('logout');
   }
 
   public static checkLogin(): boolean {
@@ -104,7 +105,7 @@ export default class Auth {
   }: {
     email: string;
     password: string;
-  }): Promise<AuthToken> {
+  }): Promise<AuthToken | InvalidTokenResp> {
     const reqBody = {
       grant_type: 'password',
       username: email,
