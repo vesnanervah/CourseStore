@@ -31,7 +31,6 @@ export class SearchField extends BaseView<HTMLElement> {
     });
     const sfInput = searchField.getInputElem();
     sfInput.addEventListener('keyup', () => this.handleInput(searchField.getInputElem()));
-    sfInput.addEventListener('blur', () => this.handleBlur());
     const searchFieldElement = searchField.getHtmlElement();
     searchFieldElement.classList.add('search-field__input');
     container.append(searchFieldElement);
@@ -67,9 +66,5 @@ export class SearchField extends BaseView<HTMLElement> {
       (this.htmlElement as HTMLElement).getBoundingClientRect().y + 40
     }px`;
     this.searchResults.reveal();
-  }
-
-  private handleBlur() {
-    this.searchResults.hide();
   }
 }
