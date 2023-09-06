@@ -346,9 +346,8 @@ export default class Customer extends BaseView implements AuthListener {
   }
   private async getUpdate(data: MyCustomerUpdate) {
     const message = document.querySelector('.message_block');
-    const a = data;
     try {
-      const res = await EcommerceClient.updateCustomer(a);
+      await EcommerceClient.updateCustomer(data);
       const p = message?.querySelector('p') as HTMLParagraphElement;
       p.textContent = 'Данные успешно обновлены';
       message?.classList.add('fullscreen');
