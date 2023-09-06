@@ -327,4 +327,14 @@ export default class EcommerceClient {
   public static async getCategoryById(ID: string) {
     return this.getApiClient().categories().withId({ ID }).get().execute();
   }
+
+  public static async getProductByQuery(limit: number, query: string) {
+    return (
+      await this.getApiClient()
+        .productProjections()
+        .search()
+        .get({ queryArgs: { limit, 'text.ru': query } })
+        .execute()
+    ).body.results;
+  }
 }

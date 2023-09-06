@@ -20,6 +20,8 @@ const DEFAULT_PROPS: TextFieldProps = {
 };
 
 export class TextField extends BaseView<HTMLElement> {
+  private input = document.createElement('input');
+
   constructor(props: Partial<TextFieldProps> = {}) {
     super();
 
@@ -41,17 +43,20 @@ export class TextField extends BaseView<HTMLElement> {
       container.append(label);
     }
 
-    const input = document.createElement('input');
-    input.classList.add('text-field__input', 'input');
-    input.type = type;
-    input.placeholder = placeholder;
-    input.addEventListener('change', onChange);
-    container.append(input);
+    this.input.classList.add('text-field__input', 'input');
+    this.input.type = type;
+    this.input.placeholder = placeholder;
+    this.input.addEventListener('change', onChange);
+    container.append(this.input);
 
     if (icon) {
       container.append(icon);
     }
 
     this.htmlElement = container;
+  }
+
+  public getInputElem(): HTMLInputElement {
+    return this.input;
   }
 }
