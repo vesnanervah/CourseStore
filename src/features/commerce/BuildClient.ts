@@ -3,10 +3,10 @@ import fetch from 'node-fetch';
 import {
   createApiBuilderFromCtpClient,
   ApiRoot,
-  Category,
   MyCustomerUpdate,
   MyCustomerChangePassword,
   _BaseAddress,
+  MyCartUpdate,
 } from '@commercetools/platform-sdk';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { getProductsResource } from './products-resource';
@@ -336,5 +336,28 @@ export default class EcommerceClient {
         .get({ queryArgs: { limit, 'text.ru': query } })
         .execute()
     ).body.results;
+  }
+
+  public static async creatCart() {
+    return this.getApiClient()
+      .me()
+      .carts()
+      .post({
+        body: {
+          currency: 'USD',
+        },
+      });
+  }
+
+  public static async getCarts() {
+    return this.getApiClient().me().carts().get().execute();
+  }
+
+  public static async getRecentCart() {
+    return this.getApiClient().me().activeCart().get().execute();
+  }
+
+  public static async addProductToCart(cartId: string, update: MyCartUpdate) {
+    return this.getApiClient().me().carts().withId({ ID: cartId }).post({ body: update });
   }
 }
