@@ -4,7 +4,7 @@ export default class BaseRegInp extends BaseView {
   private labelElem: HTMLSpanElement;
   private inpElem: HTMLInputElement;
   private validElem: HTMLSpanElement;
-  private validStatus: boolean = false;
+  private validStatus = false;
 
   constructor() {
     super();

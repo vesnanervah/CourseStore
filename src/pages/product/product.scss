@@ -1,0 +1,37 @@
+.product__wrapper {
+  width: 100%;
+  padding: 5rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .hidden {
+    display: none;
+  }
+  .product__content {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    width: 720px;
+    box-sizing: border-box;
+    padding: 2% 4%;
+    gap: 20px;
+    border-radius: 1%;
+  }
+  .product__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .product__prices {
+    margin-top: 6px;
+  }
+  .product__middle {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .product__bottom {
+    display: flex;
+    justify-content: center;
+  }
+}

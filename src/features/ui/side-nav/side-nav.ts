@@ -31,16 +31,16 @@ export class SideNav extends BaseView<HTMLElement> {
   }
 
   public async init(): Promise<void> {
-    this.categories = this.state.getValue(StateKeys.NAV_CATEGORIES);
+    this.categories = this.state.getValue(StateKeys.Categories);
 
-    this.state.subscribe(StateKeys.SIDE_NAV_STATUS, this.renderSideNav.bind(this));
-    this.state.subscribe(StateKeys.NAV_CATEGORIES, this.setCategories.bind(this));
+    this.state.subscribe(StateKeys.SideNavStatus, this.renderSideNav.bind(this));
+    this.state.subscribe(StateKeys.Categories, this.setCategories.bind(this));
 
     this.overlayElement.addEventListener('click', () => {
-      this.state.setValue(StateKeys.SIDE_NAV_STATUS, false);
+      this.state.setValue(StateKeys.SideNavStatus, false);
     });
     this.closeButtonElement.addEventListener('click', () => {
-      this.state.setValue(StateKeys.SIDE_NAV_STATUS, false);
+      this.state.setValue(StateKeys.SideNavStatus, false);
     });
   }
 

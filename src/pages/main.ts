@@ -1,5 +1,6 @@
 import { BaseView } from '../features/ui';
 import { MainLayout } from '../features/layouts';
+import { CatalogProducts } from '../features/catalog';
 
 export class MainPage extends BaseView {
   constructor() {
@@ -10,10 +11,8 @@ export class MainPage extends BaseView {
   private createElement(): void {
     const fragment = document.createDocumentFragment();
 
-    const categories = document.createElement('div');
-    categories.classList.add('catalog-categories');
-    categories.textContent = 'Categories';
-    fragment.append(categories);
+    const catalogProducts = new CatalogProducts();
+    fragment.append(catalogProducts.getHtmlElement());
 
     const layout = new MainLayout(fragment);
 

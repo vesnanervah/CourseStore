@@ -1,7 +1,17 @@
 import './app.scss';
 import { routes } from '../routes';
-import { AppRouter } from '../features/router';
-import { MainPage, LoginPage, SignupPage, CustomerPage, NotFoundPage } from '../pages';
+import { AppRouter, type UrlParams } from '../features/router';
+import {
+  MainPage,
+  LoginPage,
+  SignupPage,
+  CustomerPage,
+  CatalogPage,
+  ProductPage,
+  ProductTypePage,
+  CategoryPage,
+  NotFoundPage,
+} from '../pages';
 import Auth from '../features/auth/auth';
 
 export class App {
@@ -23,9 +33,12 @@ export class App {
         { location: routes.login(), callback: this.renderLoginPage.bind(this) },
         { location: routes.signup(), callback: this.renderSignupPage.bind(this) },
         { location: routes.customer(), callback: this.renderCustomerPage.bind(this) },
+        { location: routes.catalog(), callback: this.renderCatalogPage.bind(this) },
+        { location: routes.product(':id'), callback: this.renderProductPage.bind(this) },
+        { location: routes.productType(':id'), callback: this.renderProductTypePage.bind(this) },
+        { location: routes.category(':id'), callback: this.renderCategoryPage.bind(this) },
       ],
       {
-        location: routes.notFound(),
         callback: this.renderNotFoundPage.bind(this),
       },
     );
@@ -64,6 +77,43 @@ export class App {
     this.appContainer.innerHTML = '';
 
     const page = new CustomerPage();
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderCatalogPage(): void {
+    this.appContainer.innerHTML = '';
+
+    const page = new CatalogPage();
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderProductPage(params?: UrlParams): void {
+    this.appContainer.innerHTML = '';
+
+    const page = new ProductPage();
+    if (params) {
+      page.init(params.id);
+    }
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderProductTypePage(params?: UrlParams): void {
+    this.appContainer.innerHTML = '';
+
+    if (!params) {
+      return;
+    }
+    const page = new ProductTypePage({ typeId: params.id });
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderCategoryPage(params?: UrlParams): void {
+    this.appContainer.innerHTML = '';
+
+    if (!params) {
+      return;
+    }
+    const page = new CategoryPage({ categoryId: params.id });
     this.appContainer.append(page.getHtmlElement());
   }
 

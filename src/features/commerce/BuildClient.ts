@@ -1,17 +1,34 @@
+/* eslint-disable*/
 import fetch from 'node-fetch';
+import {
+  createApiBuilderFromCtpClient,
+  ApiRoot,
+  Category,
+  MyCustomerUpdate,
+  MyCustomerChangePassword,
+  _BaseAddress,
+} from '@commercetools/platform-sdk';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
-import { createApiBuilderFromCtpClient, ApiRoot, Category } from '@commercetools/platform-sdk';
+import { getProductsResource } from './products-resource';
 
 import {
   ClientBuilder,
   type AuthMiddlewareOptions,
   type HttpMiddlewareOptions,
-  type PasswordAuthMiddlewareOptions,
 } from '@commercetools/sdk-client-v2';
 
-import { RegisterBody, ProductCategory } from '../../types';
+import { RegisterBody } from '../../types';
+import Auth from '../auth/auth';
+import { AuthToken } from '../../types/auth';
+import { DataProvider } from '../../types/data-provider';
 
-const LOCALE = 'ru';
+type ExistingTokenMiddlewareOptions = {
+  force?: boolean;
+};
+
+const existingTokenMiddlewareOptions: ExistingTokenMiddlewareOptions = {
+  force: true,
+};
 
 export default class EcommerceClient {
   private static clientBuilder = new ClientBuilder();
@@ -41,31 +58,15 @@ export default class EcommerceClient {
     this.apiRoot = createApiBuilderFromCtpClient(builder);
   }
 
-  public static passwordRootPrepare(email: string, password: string) {
-    const passwordAuthOptions: PasswordAuthMiddlewareOptions = {
-      ...this.authOptions,
-      credentials: {
-        ...this.authOptions.credentials,
-        user: {
-          username: email,
-          password: password,
-        },
-      },
-    };
+  public static tokenRootPrepare() {
+    const accessToken = Auth.getAccessToken();
+
     const builded = this.clientBuilder
-      .withPasswordFlow(passwordAuthOptions)
+      .withExistingTokenFlow(`Bearer ${accessToken}`, existingTokenMiddlewareOptions)
       .withHttpMiddleware(this.httpMiddlewareOptions)
       .withLoggerMiddleware()
       .build();
     this.apiRoot = createApiBuilderFromCtpClient(builded);
-  }
-
-  public static async getCategories(): Promise<ProductCategory[]> {
-    return this.apiClient
-      .categories()
-      .get()
-      .execute()
-      .then((data) => EcommerceClient.normalizeCategories(data.body.results));
   }
 
   public static async getProducts() {
@@ -85,7 +86,17 @@ export default class EcommerceClient {
   }
 
   public static async login(email: string, password: string) {
-    return this.apiRoot
+    const token: AuthToken = await Auth.loggin(email, password);
+    const accessToken = `Bearer ${token.access_token}`;
+
+    const client = this.clientBuilder
+      .withExistingTokenFlow(accessToken, existingTokenMiddlewareOptions)
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+    const apiRoot = createApiBuilderFromCtpClient(client);
+
+    return apiRoot
       .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
       .me()
       .login()
@@ -106,6 +117,189 @@ export default class EcommerceClient {
       .execute();
   }
 
+  public static async getCustomer() {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .get()
+      .execute();
+  }
+  public static async getCustomerById(ID: string) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .customers()
+      .withId({ ID })
+      .get()
+      .execute();
+  }
+
+  public static async getUsersEmail() {
+    const Customers = () => {
+      return this.apiRoot
+        .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+        .customers()
+        .get()
+        .execute();
+    };
+    const customers = await Customers();
+    const length = Number(customers.body.total);
+    console.log('length' + length);
+    const emails = (length: number) => {
+      return this.apiRoot
+        .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+        .customers()
+        .get({
+          queryArgs: {
+            limit: length,
+          },
+        })
+        .execute();
+    };
+    const arr: string[] = [];
+    const data = await emails(length);
+    const objectCustomers = data.body.results;
+    console.log(objectCustomers);
+    for (let customer of objectCustomers) {
+      for (let key in customer) {
+        if (key === 'email') {
+          arr.push(customer[key]);
+        }
+      }
+    }
+    return arr;
+  }
+
+  public static async updateCustomer(data: MyCustomerUpdate) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: data,
+      })
+      .execute();
+  }
+  public static async addCustomerAddress(num: number, data: _BaseAddress) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: 'addAddress',
+              address: data,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+  public static async updateCustomerAddress(num: number, id: string, data: _BaseAddress) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: 'changeAddress',
+              addressId: id,
+              address: data,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+  public static async addAddressgId(
+    num: number,
+    id: string,
+    type: 'addBillingAddressId' | 'addShippingAddressId',
+  ) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: type,
+              addressId: id,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+  public static async removeAddressg(num: number, id: string) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: 'removeAddress',
+              addressId: id,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+  public static async setDefaultAddress(
+    num: number,
+    id: string,
+    type: 'setDefaultBillingAddress' | 'setDefaultShippingAddress',
+  ) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .post({
+        body: {
+          version: num,
+          actions: [
+            {
+              action: type,
+              addressId: id,
+            },
+          ],
+        },
+      })
+      .execute();
+  }
+
+  public static async updateCustomerPassword(data: MyCustomerChangePassword) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .password()
+      .post({
+        body: data,
+      })
+      .execute();
+  }
+
+  public static async getCustomerByToken() {
+    const token = window.localStorage.getItem('coursestore_token');
+    let refresh_token: string = '';
+    if (token) refresh_token += JSON.parse(token).refresh_token;
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .get({
+        headers: {
+          Authorization: `Baerar ${refresh_token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .execute();
+  }
+
   private static getApiClient() {
     const builder = this.clientBuilder
       .withClientCredentialsFlow(this.authOptions)
@@ -118,11 +312,29 @@ export default class EcommerceClient {
     });
   }
 
-  private static normalizeCategories(categories: Category[]): ProductCategory[] {
-    return categories.map(({ id, name, slug }) => ({
-      id,
-      name: name[LOCALE],
-      slug: slug[LOCALE],
-    }));
+  public static getDataProvider(): DataProvider {
+    const productsResource = getProductsResource(this.apiClient);
+
+    return {
+      products: productsResource,
+    };
+  }
+
+  public static async getProductById(ID: string) {
+    return this.getApiClient().products().withId({ ID }).get().execute();
+  }
+
+  public static async getCategoryById(ID: string) {
+    return this.getApiClient().categories().withId({ ID }).get().execute();
+  }
+
+  public static async getProductByQuery(limit: number, query: string) {
+    return (
+      await this.getApiClient()
+        .productProjections()
+        .search()
+        .get({ queryArgs: { limit, 'text.ru': query } })
+        .execute()
+    ).body.results;
   }
 }

@@ -1,7 +1,9 @@
+import { TokenInfo } from '@commercetools/sdk-client-v2';
+
+type AuthToken = TokenInfo;
+
 type LocaleData = {
-  isLoggedIn: boolean;
-  mail?: string | undefined | null;
-  password?: string | undefined | null;
+  token: AuthToken | null;
 };
 
 interface AuthListener {
@@ -9,4 +11,9 @@ interface AuthListener {
   listenLogin(): void;
 }
 
-export { LocaleData, AuthListener };
+type InvalidTokenResp = {
+  statusCode: number;
+  message: string;
+};
+
+export { AuthToken, LocaleData, AuthListener, InvalidTokenResp };

@@ -26,8 +26,8 @@ export class NavCategories extends BaseView<HTMLElement> {
   }
 
   public init(): void {
-    this.categories = this.state.getValue(StateKeys.NAV_CATEGORIES);
-    this.state.subscribe(StateKeys.NAV_CATEGORIES, this.setCategories.bind(this));
+    this.categories = this.state.getValue(StateKeys.Categories);
+    this.state.subscribe(StateKeys.Categories, this.setCategories.bind(this));
 
     this.renderCategories();
     // TODO: show skeleton items on categories load
@@ -91,11 +91,11 @@ export class NavCategories extends BaseView<HTMLElement> {
     }
 
     this.categoryListElement.innerHTML = '';
-    this.categories.forEach(({ id, name, slug }) => {
+    this.categories.forEach(({ id, name }) => {
       const navItem = this.createNavItem({
         id,
         label: name,
-        link: routes.category(slug),
+        link: routes.category(id),
       });
       this.categoryListElement.append(navItem);
     });

@@ -1,0 +1,132 @@
+@use '../../../style/abstracts/constants' as vars;
+
+.select-field {
+  position: relative;
+}
+
+.select-filter__toggle {
+  @media (max-width: vars.$bp-down-sm) {
+    width: 100%;
+  }
+}
+
+.select-field__option-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  max-height: 210px;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+  margin: 0;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--br-primary);
+  list-style: none;
+  background-color: var(--color-white);
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: var(--shadow-primary);
+  transition: opacity 0.2s ease-in-out;
+
+  &--open {
+    pointer-events: all;
+    opacity: 1;
+
+    & ~ .btn .btn__icon {
+      border-color: var(--color-text-primary);
+      transform: translateY(2px) rotateZ(135deg);
+    }
+  }
+
+  @media (max-width: vars.$bp-down-sm) {
+    width: 100%;
+  }
+
+  @media (min-width: vars.$bp-up-sm) {
+    max-width: 16rem;
+  }
+}
+
+.select-field__option-item {
+  & > .select-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+  }
+
+  &:has(.select-input:hover) {
+    background-color: var(--color-background);
+  }
+}
+
+.select-field__icon {
+  display: block;
+  transform: translateY(-5px) rotateZ(-45deg);
+  width: 0.625rem;
+  height: 0.625rem;
+  border-left: 3px solid var(--color-text-secondary);
+  border-bottom: 3px solid var(--color-text-secondary);
+  transition: transform 0.15s ease-in-out;
+}
+
+.select-input {
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+}
+
+.select-input__input {
+  &:checked ~ .select-input__icon::after {
+    opacity: 1;
+  }
+}
+
+.select-input__icon {
+  flex-shrink: 0;
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--color-text-secondary);
+
+  &::after {
+    content: '';
+    position: absolute;
+    opacity: 0;
+  }
+}
+
+.select-input__icon--type {
+  &--checkbox {
+    border-radius: 0.25rem;
+
+    &::after {
+      width: 12px;
+      height: 6px;
+      border-left: 2px solid var(--color-text-primary);
+      border-bottom: 2px solid var(--color-text-primary);
+      transform: translate(1px, 2px) rotateZ(-45deg);
+    }
+  }
+
+  &--radio {
+    border-radius: 0.75rem;
+
+    &::after {
+      top: 3px;
+      left: 3px;
+      width: 10px;
+      height: 10px;
+      border-radius: 5px;
+      background-color: var(--color-text-primary);
+    }
+  }
+}
+
+.select-input__label-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}

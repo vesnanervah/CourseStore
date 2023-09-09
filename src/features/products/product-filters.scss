@@ -1,0 +1,15 @@
+@use '../../style/abstracts/constants' as vars;
+
+.product-filters__form {
+  display: flex;
+
+  @media (max-width: vars.$bp-down-sm) {
+    flex-direction: column-reverse;
+    gap: 0.5rem;
+  }
+
+  @media (min-width: vars.$bp-up-sm) {
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+}
