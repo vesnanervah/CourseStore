@@ -47,7 +47,7 @@ export default class Auth {
     Auth.isLoggedIn = false;
     Auth.accessToken = null;
     Auth.notifyLogout();
-    EcommerceClient.stockRootPrepare();
+    EcommerceClient.anonRootPrepare();
   }
 
   public static checkLogin(): boolean {

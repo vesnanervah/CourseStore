@@ -19,6 +19,7 @@ import {
   VariantIncludes,
 } from '../../types/product';
 import { Button } from '../../features/ui';
+import CartModel from '../../features/cart/cart-model';
 
 export default class ProductView extends BaseView {
   private productTitle = new ProductTitle();
@@ -79,7 +80,6 @@ export default class ProductView extends BaseView {
     const attributes = this.defineAttributes(
       newData.body.masterData.current.masterVariant.attributes as Attributes,
     );
-    console.log(attributes);
     this.productTitle.setTitle(newData.body.masterData.current.name as ProductName);
     this.productCategories.setCategories(newData.body.masterData.current.categories);
     this.productSlider.setImages(newData.body.masterData.current.masterVariant.images as Images);
@@ -88,6 +88,7 @@ export default class ProductView extends BaseView {
     } else {
       this.setProfessionAttributes(attributes as AttributesProfession);
     }
+    this.buyBtn.getHtmlElement().onclick = () => CartModel.addProduct(ID);
   }
 
   private defineAttributes(arr: Attributes): AttributesDefined {

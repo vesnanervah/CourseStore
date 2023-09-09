@@ -339,25 +339,66 @@ export default class EcommerceClient {
   }
 
   public static async creatCart() {
-    return this.getApiClient()
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
       .me()
       .carts()
       .post({
         body: {
           currency: 'USD',
         },
-      });
+      })
+      .execute();
   }
 
   public static async getCarts() {
-    return this.getApiClient().me().carts().get().execute();
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .carts()
+      .get()
+      .execute();
   }
 
   public static async getRecentCart() {
-    return this.getApiClient().me().activeCart().get().execute();
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .activeCart()
+      .get()
+      .execute();
   }
 
   public static async addProductToCart(cartId: string, update: MyCartUpdate) {
-    return this.getApiClient().me().carts().withId({ ID: cartId }).post({ body: update });
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .post({ body: update })
+      .execute();
+  }
+
+  public static async getCartById(cartId: string) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .get()
+      .execute();
+  }
+
+  public static async anonRootPrepare() {
+    const builder = this.clientBuilder
+      .withAnonymousSessionFlow({
+        host: this.authOptions.host,
+        projectKey: this.authOptions.projectKey,
+        credentials: this.authOptions.credentials,
+      })
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+    this.apiRoot = createApiBuilderFromCtpClient(builder);
   }
 }
