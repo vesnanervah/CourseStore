@@ -2,7 +2,6 @@ import { BaseView } from '../base-view';
 import { Icon } from '../icon';
 import rSSchoolLogo from '../../../assets/images/rs_school.svg';
 import githubLogo from '../../../assets/images/icon-github.svg';
-import teamLogo from '../../../assets/images/team_logo.svg';
 
 const RSSCHOOL_LINK = 'https://rs.school/';
 const contrib1 = [
@@ -16,7 +15,7 @@ const contrib1 = [
   'jest tests',
 ];
 const contrib2 = [
-  'registration pag',
+  'registration page',
   'user Profile page',
   'about Us page',
   'validation for required fields',
@@ -34,7 +33,7 @@ const contrib3 = [
   'basket page',
   'catalog Product page',
   'jest tests',
-  'groduct sorting, product on sale',
+  'product sorting, product on sale',
 ];
 
 export class AboutUsBlock extends BaseView<HTMLElement> {
@@ -56,14 +55,21 @@ export class AboutUsBlock extends BaseView<HTMLElement> {
     const firstMember = this.createDeveloperElement(
       'Кирилл',
       'https://github.com/vesnanervah',
+      '(генератор идей и работник медицинской организации)',
       contrib1,
     );
     const secondMember = this.createDeveloperElement(
       'Тамара',
       'https://github.com/toma-fedyanova',
+      '(эксперт - экономист, оптимист)',
       contrib2,
     );
-    const thirdMember = this.createDeveloperElement('Илья', 'https://github.com/f4hr', contrib3);
+    const thirdMember = this.createDeveloperElement(
+      'Илья',
+      'https://github.com/f4hr',
+      '(реaкт разработчик, успешно воплощаeт идеи в жизнь)',
+      contrib3,
+    );
     div.append(firstMember, secondMember, thirdMember);
     memberBlock.append(div);
     block.append(title1, titleBlock, title2, middleBlock, memberBlock);
@@ -74,13 +80,14 @@ export class AboutUsBlock extends BaseView<HTMLElement> {
     const block = document.createElement('div');
     block.classList.add('about_us__title');
     const p = this.createText(
-      'Проект был создан в качестве заключительного задания по разработке портала онлайн-покупок курса Rolling Scopes School',
+      'Проект был создан в качестве заключительного задания по разработке портала онлайн-покупок курса',
     );
     const p1 = this.createText(
-      'Проект включает в себя такие функции, как регистрация пользователя и вход в систему, поиск товаров, категоризация товаров и сортировка. Приложение работает на базе Commerce Tools. Взаимодействие разработчиков осуществлялось в Телеграмме',
+      'Проект включает в себя такие функции, как регистрация пользователя и вход в систему, поиск товаров, категоризация товаров и сортировка. Приложение работает на базе Commerce Tools.',
     );
     const rSSchoolLink = AboutUsBlock.createRSSchoolLink();
-    block.append(p, rSSchoolLink, p1);
+    p.append(rSSchoolLink);
+    block.append(p, p1);
     return block;
   }
 
@@ -88,13 +95,14 @@ export class AboutUsBlock extends BaseView<HTMLElement> {
     const block = document.createElement('div');
     block.classList.add('about_us__middle');
     const p = this.createText(
-      'Технологии, используемые для разработки портала онлайн-покупок курсов Coursestore, предоставляющего пользователям интерактивный и бесперебойный интерфейс',
+      'Технологии, используемые для разработки портала онлайн-покупок курсов Coursestore, предоставляющего пользователям интерактивный и бесперебойный интерфейс:',
     );
     const span = document.createElement('span');
     span.className = 'span__about_us';
     span.textContent =
-      'HTML, SCSS, TypeScript, ESLint, Prettier, Husky, Jest for testing, Webpack, project task board Trello';
-    block.append(p, span);
+      'HTML, SCSS, TypeScript, ESLint, Prettier, Husky, Jest for testing, Webpack, project task board Trello.';
+    p.append(span);
+    block.append(p);
     return block;
   }
 
@@ -102,14 +110,14 @@ export class AboutUsBlock extends BaseView<HTMLElement> {
     const block = document.createElement('div');
     block.classList.add('about_us__members');
     const title = this.createTitleText('Наша команда');
-    const teamLogo = AboutUsBlock.createTeamLogo();
-    block.append(title, teamLogo);
+    block.append(title);
     return block;
   }
 
   private createDeveloperElement(
     NameDeveloper: string,
     linkGithub: string,
+    text: string,
     arr: Array<string>,
   ): HTMLDivElement {
     const block = document.createElement('div');
@@ -119,15 +127,14 @@ export class AboutUsBlock extends BaseView<HTMLElement> {
     const div = document.createElement('div');
     const title = this.createTitleText(NameDeveloper);
     const githubLogo = AboutUsBlock.createGithublogo(linkGithub);
-    div.append(title, githubLogo);
+    const p = document.createElement('p');
+    p.textContent = text;
+    title.append(githubLogo);
+    div.append(title, p);
 
     // photo
     const div1 = document.createElement('div');
     div1.className = 'about_us__photo';
-    const img = document.createElement('img');
-    img.title = NameDeveloper;
-    // img.src = srcPhoto;
-    div1.append(img);
 
     // contributions to the project
     const ul = document.createElement('ul');
@@ -138,7 +145,7 @@ export class AboutUsBlock extends BaseView<HTMLElement> {
       ul.append(li);
     }
 
-    block.append(div, div1, ul);
+    block.append(div1, div, ul);
     return block;
   }
 
@@ -170,14 +177,6 @@ export class AboutUsBlock extends BaseView<HTMLElement> {
     link.append(iconElement);
 
     return link;
-  }
-
-  private static createTeamLogo(): HTMLElement {
-    const icon = new Icon(teamLogo);
-    const iconElement = icon.getHtmlElement();
-    iconElement.classList.add('about_us__team-logo');
-
-    return iconElement;
   }
 
   private createText(text: string): HTMLParagraphElement {
