@@ -12,13 +12,8 @@ export default class CartModel extends BaseView {
   public static async init() {
     try {
       this.cart = (await EcommerceClient.getRecentCart()).body;
-      console.log('fetching old cart');
     } catch {
-      //throws when recent cart cannot be found
-      this.cart = (await EcommerceClient.creatCart()).body;
-      console.log('creating new cart');
-    } finally {
-      console.log(this.cart);
+      this.cart = (await EcommerceClient.createCart([])).body;
     }
   }
 
@@ -37,18 +32,19 @@ export default class CartModel extends BaseView {
       actions: [action],
     };
     try {
-      await EcommerceClient.addProductToCart(this.cart.id, update);
+      this.cart = (await EcommerceClient.addProductToCart(this.cart.id, update)).body;
     } catch {
       //throws when versions of carts are not the same
       await this.pullCart();
-      await EcommerceClient.addProductToCart(this.cart.id, update);
-    } finally {
-      await this.pullCart();
+      this.cart = (await EcommerceClient.addProductToCart(this.cart.id, update)).body;
     }
   }
 
   public static async pullCart() {
     this.cart = (await EcommerceClient.getCartById(this.cart.id)).body;
-    console.log(this.cart);
+  }
+  //когда происходит логин или анлогин токен меняется и достать старую корзину уже невозможно.
+  public static async reuseCart() {
+    this.cart = (await EcommerceClient.createCart(this.cart.lineItems)).body;
   }
 }

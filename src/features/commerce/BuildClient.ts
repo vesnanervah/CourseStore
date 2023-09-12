@@ -7,6 +7,7 @@ import {
   MyCustomerChangePassword,
   _BaseAddress,
   MyCartUpdate,
+  LineItem,
 } from '@commercetools/platform-sdk';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { getProductsResource } from './products-resource';
@@ -338,7 +339,7 @@ export default class EcommerceClient {
     ).body.results;
   }
 
-  public static async creatCart() {
+  public static async createCart(products: LineItem[]) {
     return this.apiRoot
       .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
       .me()
@@ -346,6 +347,7 @@ export default class EcommerceClient {
       .post({
         body: {
           currency: 'USD',
+          lineItems: products,
         },
       })
       .execute();
