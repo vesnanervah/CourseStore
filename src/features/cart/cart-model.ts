@@ -4,6 +4,8 @@ import { Cart, MyCartUpdate, MyCartAddLineItemAction } from '@commercetools/plat
 
 export default class CartModel extends BaseView {
   private static cart: Cart;
+  private static loadStatus = false;
+  private static loadTimer: NodeJS.Timer;
 
   constructor() {
     super();
@@ -14,6 +16,8 @@ export default class CartModel extends BaseView {
       this.cart = (await EcommerceClient.getRecentCart()).body;
     } catch {
       this.cart = (await EcommerceClient.createCart([])).body;
+    } finally {
+      this.loadStatus = true;
     }
   }
 
@@ -22,6 +26,7 @@ export default class CartModel extends BaseView {
   }
 
   public static async addProduct(productID: string) {
+    this.loadStatus = false;
     const action: MyCartAddLineItemAction = {
       action: 'addLineItem',
       productId: productID,
@@ -37,14 +42,50 @@ export default class CartModel extends BaseView {
       //throws when versions of carts are not the same
       await this.pullCart();
       this.cart = (await EcommerceClient.addProductToCart(this.cart.id, update)).body;
+    } finally {
+      this.loadStatus = true;
     }
   }
 
   public static async pullCart() {
     this.cart = (await EcommerceClient.getCartById(this.cart.id)).body;
   }
-  //когда происходит логин или анлогин токен меняется и достать старую корзину уже невозможно.
+  //когда происходит логин или анлогин, токен меняется и достать старую корзину уже невозможно.
   public static async reuseCart() {
     this.cart = (await EcommerceClient.createCart(this.cart.lineItems)).body;
+  }
+
+  //страшно...очень страшно...мы не знаем что это...
+  private static async makeCheckPromise(productId: string) {
+    return new Promise((resolve) => {
+      if (this.loadStatus) {
+        resolve(this.checkIdInCart(productId));
+      }
+      this.loadTimer = setInterval(() => {
+        if (this.loadStatus) {
+          resolve(this.checkIdInCart(productId));
+        }
+      }, 200);
+    });
+  }
+
+  public static async checkProduct(productId: string) {
+    const p = await this.makeCheckPromise(productId);
+    clearInterval(this.loadTimer);
+    return p;
+  }
+
+  private static checkIdInCart(productId: string) {
+    let status = false;
+    this.cart.lineItems.forEach((item) => {
+      if (item.productId === productId) {
+        status = true;
+      }
+    });
+    return status;
+  }
+
+  public static getLoadStatus() {
+    return this.loadStatus;
   }
 }
