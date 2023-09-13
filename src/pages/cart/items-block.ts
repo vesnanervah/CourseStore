@@ -16,6 +16,7 @@ export default class ItemsBlock extends BaseView {
     this.htmlElement.className = 'cart__items-block cart__block';
     header.className = 'cart__header';
     this.clearBtn.className = 'cart__clear-btn';
+    this.clearBtn.textContent = 'очистить';
     this.itemsContainer.className = 'cart__items';
     this.htmlElement.append(header, this.clearBtn, this.itemsContainer);
   }

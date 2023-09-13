@@ -12,12 +12,13 @@ export default class PriceBlock extends BaseView {
     this.totalCostDispl = document.createElement('div');
     this.btn = document.createElement('button');
     const header = document.createElement('div');
-    header.textContent = 'Корзина';
+    header.textContent = 'Цена';
     this.htmlElement.className = 'cart__empty-block cart__block';
     header.className = 'cart__header';
     this.promoInp.className = 'cart__promocode';
     this.totalCostDispl.className = 'cart__totalprice';
-    this.btn.className = 'cart__next-btn';
+    this.totalCostDispl.textContent = 'Стоимость заказа:...';
+    this.btn.className = 'cart__accent-btn';
     this.promoInp.setAttribute('type', 'text');
     this.promoInp.setAttribute('placeholder', 'Ввести промокод');
     this.btn.textContent = 'ПЕРЕЙТИ К ОПЛАТЕ';

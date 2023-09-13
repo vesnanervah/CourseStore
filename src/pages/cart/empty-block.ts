@@ -10,7 +10,7 @@ export default class EmptyBlock extends BaseView {
     const text = document.createElement('div');
     this.btn = document.createElement('button');
     header.textContent = 'Корзина';
-    text.textContent = 'В вашей корзине пусто. Добавьте товары и они появятся здесь';
+    text.textContent = 'В вашей корзине пусто. Добавьте товары и они появятся здесь.';
     this.btn.textContent = 'КАТАЛОГ';
     this.htmlElement.className = 'cart__empty-block cart__block';
     header.className = 'cart__header';
