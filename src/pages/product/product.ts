@@ -20,6 +20,8 @@ import {
 } from '../../types/product';
 import { Button } from '../../features/ui';
 import CartModel from '../../features/cart/cart-model';
+import { routes } from '../../routes';
+import { AppRouter } from '../../features/router';
 
 export default class ProductView extends BaseView {
   private productTitle = new ProductTitle();
@@ -139,7 +141,7 @@ export default class ProductView extends BaseView {
 
   private blockBtn() {
     this.buyBtn.changeBtnText('В КОРЗИНЕ');
-    this.buyBtn.getHtmlElement().onclick = () => {}; //TODO: Root click on cart page
+    this.buyBtn.getHtmlElement().onclick = () => AppRouter.getInstance().navigate(routes.cart()); //TODO: Root click on cart page
     this.buyBtn.getHtmlElement().classList.add('disabled');
   }
 
