@@ -20,6 +20,8 @@ import {
 } from '../../types/product';
 import { Button } from '../../features/ui';
 import CartModel from '../../features/cart/cart-model';
+import { routes } from '../../routes';
+import { AppRouter } from '../../features/router';
 
 export default class ProductView extends BaseView {
   private productTitle = new ProductTitle();
@@ -83,12 +85,12 @@ export default class ProductView extends BaseView {
     this.productTitle.setTitle(newData.body.masterData.current.name as ProductName);
     this.productCategories.setCategories(newData.body.masterData.current.categories);
     this.productSlider.setImages(newData.body.masterData.current.masterVariant.images as Images);
+    this.checkCartRelation(ID);
     if ((attributes as AttributesCourse)['Course-Name']) {
       this.setCourseAttributes(attributes as AttributesCourse);
     } else {
       this.setProfessionAttributes(attributes as AttributesProfession);
     }
-    this.buyBtn.getHtmlElement().onclick = () => CartModel.addProduct(ID);
   }
 
   private defineAttributes(arr: Attributes): AttributesDefined {
@@ -126,5 +128,29 @@ export default class ProductView extends BaseView {
     await this.productIncludes.setIncludes(includes);
     this.productIncludes.reveal();
     this.productRoadmap.hide();
+  }
+
+  private async checkCartRelation(productId: string) {
+    const status = await CartModel.checkProduct(productId);
+    if (status) {
+      this.blockBtn();
+    } else {
+      await this.unlockBtn(productId);
+    }
+  }
+
+  private blockBtn() {
+    this.buyBtn.changeBtnText('В КОРЗИНЕ');
+    this.buyBtn.getHtmlElement().onclick = () => AppRouter.getInstance().navigate(routes.cart()); //TODO: Root click on cart page
+    this.buyBtn.getHtmlElement().classList.add('disabled');
+  }
+
+  private async unlockBtn(productId: string) {
+    this.buyBtn.changeBtnText('ПРИОБРЕСТИ');
+    this.buyBtn.getHtmlElement().onclick = async () => {
+      await CartModel.addProduct(productId);
+      this.blockBtn();
+    };
+    this.buyBtn.getHtmlElement().classList.remove('disabled');
   }
 }

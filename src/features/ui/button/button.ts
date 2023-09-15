@@ -25,6 +25,8 @@ const defaultProps: ButtonProps = {
 };
 
 export class Button extends BaseView<HTMLButtonElement | HTMLAnchorElement> {
+  private textWrapper = document.createElement('span');
+
   constructor(props: ButtonProps) {
     super();
     this.createElement(props);
@@ -66,5 +68,9 @@ export class Button extends BaseView<HTMLButtonElement | HTMLAnchorElement> {
     }
 
     this.htmlElement = btn;
+  }
+
+  public changeBtnText(text: string) {
+    this.textWrapper.textContent = text;
   }
 }
