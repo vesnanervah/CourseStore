@@ -3,12 +3,14 @@ import BaseView from '../ui/base-view/base-view';
 import { Cart, MyCartUpdate, MyCartAddLineItemAction } from '@commercetools/platform-sdk';
 import { State } from '../../state';
 import { StateKeys } from '../../types';
+import { CartSubscriber } from '../../types/cart-sub';
 
 export default class CartModel extends BaseView {
   private static state: State = State.getInstance();
   private static cart: Cart;
   private static loadStatus = false;
   private static loadTimer: NodeJS.Timer;
+  private static subscribers: CartSubscriber[] = [];
 
   constructor() {
     super();
@@ -25,6 +27,7 @@ export default class CartModel extends BaseView {
         this.cart.lineItems.map((item) => item.productId),
       );
       this.loadStatus = true;
+      this.notifySubs();
     }
   }
 
@@ -55,6 +58,7 @@ export default class CartModel extends BaseView {
         this.cart.lineItems.map((item) => item.productId),
       );
       this.loadStatus = true;
+      this.notifySubs();
     }
   }
 
@@ -98,5 +102,13 @@ export default class CartModel extends BaseView {
 
   public static getLoadStatus() {
     return this.loadStatus;
+  }
+
+  public static subscribeToChanges(sub: CartSubscriber): void {
+    this.subscribers.push(sub);
+  }
+
+  private static notifySubs(): void {
+    this.subscribers.forEach((sub) => sub.listenUpdate());
   }
 }

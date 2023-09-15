@@ -3,6 +3,7 @@ import './cart.scss';
 import EmptyBlock from './empty-block';
 import ItemsBlock from './items-block';
 import PriceBlock from './price-block';
+import CartModel from '../../features/cart/cart-model';
 
 export default class CartView extends BaseView {
   private emptyBlock = new EmptyBlock();
@@ -12,6 +13,9 @@ export default class CartView extends BaseView {
   constructor() {
     super();
     this.createView();
+    if (CartModel.getCart()) {
+      this.itemsBlock.drawItems();
+    }
   }
 
   private createView() {

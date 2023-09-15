@@ -1,10 +1,13 @@
 import { BaseView } from '../../features/ui';
-import { LineItem } from '@commercetools/platform-sdk';
+import { Cart } from '@commercetools/platform-sdk';
+import { CartSubscriber } from '../../types/cart-sub';
+import CartModel from '../../features/cart/cart-model';
+import CartItem from './cart-item';
 
-export default class ItemsBlock extends BaseView {
+export default class ItemsBlock extends BaseView implements CartSubscriber {
   private clearBtn: HTMLButtonElement;
-  private items: LineItem[] = [];
   private itemsContainer: HTMLDivElement;
+  private cart: Cart;
 
   constructor() {
     super();
@@ -19,6 +22,9 @@ export default class ItemsBlock extends BaseView {
     this.clearBtn.textContent = 'очистить';
     this.itemsContainer.className = 'cart__items';
     this.htmlElement.append(header, this.clearBtn, this.itemsContainer);
+    this.clearBtn.addEventListener('click', () => this.clearItems());
+    CartModel.subscribeToChanges(this);
+    this.cart = CartModel.getCart();
   }
 
   public appear(): void {
@@ -27,5 +33,24 @@ export default class ItemsBlock extends BaseView {
 
   public hide(): void {
     (this.htmlElement as HTMLElement).classList.add('hidden');
+  }
+
+  public listenUpdate(): void {
+    this.cart = CartModel.getCart();
+    this.drawItems();
+  }
+
+  public drawItems(): void {
+    this.clearItems();
+    if (this.cart.lineItems.length === 0) {
+      return;
+    }
+    this.cart.lineItems.forEach((item) =>
+      this.itemsContainer.appendChild(new CartItem(item).getHtmlElement()),
+    );
+  }
+
+  private clearItems(): void {
+    this.itemsContainer.innerHTML = '';
   }
 }

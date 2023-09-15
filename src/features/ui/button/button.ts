@@ -25,7 +25,7 @@ const defaultProps: ButtonProps = {
 };
 
 export class Button extends BaseView<HTMLButtonElement | HTMLAnchorElement> {
-  private textWrapper = document.createElement('span');
+  private btnText = document.createElement('span');
 
   constructor(props: ButtonProps) {
     super();
@@ -56,10 +56,9 @@ export class Button extends BaseView<HTMLButtonElement | HTMLAnchorElement> {
     }
 
     if (btnProps.text) {
-      const btnText = document.createElement('span');
-      btnText.textContent = btnProps.text;
-      btnText.classList.add('btn__text');
-      btn.append(btnText);
+      this.btnText.textContent = btnProps.text;
+      this.btnText.classList.add('btn__text');
+      btn.append(this.btnText);
     }
 
     if (btnProps.icon) {
@@ -71,6 +70,6 @@ export class Button extends BaseView<HTMLButtonElement | HTMLAnchorElement> {
   }
 
   public changeBtnText(text: string) {
-    this.textWrapper.textContent = text;
+    this.btnText.textContent = text;
   }
 }
