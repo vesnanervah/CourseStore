@@ -16,6 +16,10 @@
     box-shadow: var(--shadow-hover);
     text-decoration: underline;
   }
+
+  &:disabled {
+    cursor: default;
+  }
 }
 
 .btn--variant {
@@ -24,12 +28,22 @@
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: var(--secondary-color);
+
+    &:disabled {
+      background-color: var(--color-inactive);
+      border-color: var(--color-inactive);
+    }
   }
 
   &--outlined {
     background-color: var(--secondary-color);
     border: 2px solid var(--primary-color);
     border-radius: 1.25rem;
+
+    &:disabled {
+      background-color: var(--color-inactive);
+      border-color: var(--color-inactive);
+    }
   }
 }
 
@@ -55,6 +69,10 @@
   width: 100%;
 }
 
+.btn--icon-only {
+  padding: 0.625rem;
+}
+
 .btn--color {
   &--primary {
     --primary-color: var(--color-primary);
@@ -68,4 +86,9 @@
   line-height: 1;
   text-align: center;
   text-transform: uppercase;
+}
+
+.btn__icon {
+  width: 1.25rem;
+  height: 1.25rem;
 }

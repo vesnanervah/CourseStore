@@ -2,13 +2,14 @@ import './button.scss';
 import { BaseView } from '../base-view';
 
 type ButtonProps = {
-  text: string;
+  text?: string;
   component?: 'button' | 'a';
   type?: HTMLButtonElement['type'];
   href?: string;
   variant?: 'contained' | 'outlined' | 'text';
   size?: 'small' | 'medium';
   fullWidth?: boolean;
+  iconOnly?: boolean;
   color?: 'primary' | 'error' | 'disabled';
   icon?: HTMLElement;
 };
@@ -20,6 +21,7 @@ const defaultProps: ButtonProps = {
   size: 'medium',
   color: 'primary',
   fullWidth: false,
+  iconOnly: false,
 };
 
 export class Button extends BaseView<HTMLButtonElement | HTMLAnchorElement> {
@@ -47,11 +49,16 @@ export class Button extends BaseView<HTMLButtonElement | HTMLAnchorElement> {
     if (btnProps.fullWidth) {
       btn.classList.add('btn--full-width');
     }
+    if (btnProps.iconOnly) {
+      btn.classList.add('btn--icon-only');
+    }
 
-    const btnText = document.createElement('span');
-    btnText.textContent = btnProps.text;
-    btnText.classList.add('btn__text');
-    btn.append(btnText);
+    if (btnProps.text) {
+      const btnText = document.createElement('span');
+      btnText.textContent = btnProps.text;
+      btnText.classList.add('btn__text');
+      btn.append(btnText);
+    }
 
     if (btnProps.icon) {
       btnProps.icon.classList.add('btn__icon');

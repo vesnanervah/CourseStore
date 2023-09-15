@@ -1,15 +1,38 @@
 import './product-card.scss';
-import { BaseView, Button } from '../ui';
-
+import { BaseView, Button, Icon } from '../ui';
 import { AppRouter } from '../router';
-import type { Product } from '../../types';
+import CartModel from '../cart/cart-model';
+import { State } from '../../state';
+import { routes } from '../../routes';
+import cartIcon from '../../assets/images/icons/cart.svg';
+
+import { StateKeys, Product, UniqueId } from '../../types';
 
 export class ProductCard extends BaseView<HTMLElement> {
+  private state: State = State.getInstance();
   private router: AppRouter = AppRouter.getInstance();
+  private cartButtonContainer: HTMLElement = document.createElement('div');
+  private productId: UniqueId;
+  private isInCart: boolean = false;
 
   constructor(product: Product) {
     super();
+    this.productId = product.id;
+    const cartProductIds = this.state.getValue(StateKeys.CartItemIds);
+    this.isInCart = cartProductIds.includes(this.productId);
+
     this.createElement(product);
+    this.init();
+  }
+
+  private init(): void {
+    this.state.subscribe(StateKeys.CartItemIds, this.render.bind(this));
+  }
+
+  private render(cartProductIds: UniqueId[]): void {
+    this.cartButtonContainer.innerHTML = '';
+    this.isInCart = cartProductIds.includes(this.productId);
+    this.cartButtonContainer.append(this.createCartButton());
   }
 
   // eslint-disable-next-line max-lines-per-function
@@ -30,17 +53,25 @@ export class ProductCard extends BaseView<HTMLElement> {
       card.append(cardImage);
     }
 
-    const btn = new Button({
+    const cardActions = document.createElement('div');
+    cardActions.classList.add('product-card__actions');
+    cardContent.append(cardActions);
+
+    const detailsButton = new Button({
       component: 'a',
       href: url,
       text: 'Подробнее',
+      variant: 'outlined',
     }).getHtmlElement();
-    btn.classList.add('product-card__btn');
-    btn.addEventListener('click', (e) => {
+    detailsButton.classList.add('product-card__btn');
+    detailsButton.addEventListener('click', (e) => {
       e.preventDefault();
       this.router.navigate(url);
     });
-    cardContent.append(btn);
+    cardActions.append(detailsButton);
+
+    this.cartButtonContainer.append(this.createCartButton());
+    cardActions.append(this.cartButtonContainer);
 
     this.htmlElement = card;
   }
@@ -80,5 +111,26 @@ export class ProductCard extends BaseView<HTMLElement> {
     }
 
     return cardContent;
+  }
+
+  private createCartButton(): HTMLElement {
+    const cartIconEl = new Icon({ id: cartIcon.id, viewBox: cartIcon.viewBox }).getHtmlElement();
+    const cartButton = new Button({
+      component: 'button',
+      variant: this.isInCart ? 'contained' : 'outlined',
+      icon: cartIconEl,
+      iconOnly: true,
+    }).getHtmlElement() as HTMLButtonElement;
+    cartButton.classList.add('product-card__btn');
+    cartButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (this.isInCart) {
+        this.router.navigate(routes.cart());
+      } else {
+        CartModel.addProduct(this.productId);
+      }
+    });
+
+    return cartButton;
   }
 }

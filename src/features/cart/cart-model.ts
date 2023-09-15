@@ -1,8 +1,11 @@
 import EcommerceClient from '../commerce/BuildClient';
 import BaseView from '../ui/base-view/base-view';
 import { Cart, MyCartUpdate, MyCartAddLineItemAction } from '@commercetools/platform-sdk';
+import { State } from '../../state';
+import { StateKeys } from '../../types';
 
 export default class CartModel extends BaseView {
+  private static state: State = State.getInstance();
   private static cart: Cart;
 
   constructor() {
@@ -14,6 +17,11 @@ export default class CartModel extends BaseView {
       this.cart = (await EcommerceClient.getRecentCart()).body;
     } catch {
       this.cart = (await EcommerceClient.createCart([])).body;
+    } finally {
+      this.state.setValue(
+        StateKeys.CartItemIds,
+        this.cart.lineItems.map((item) => item.productId),
+      );
     }
   }
 
@@ -37,6 +45,11 @@ export default class CartModel extends BaseView {
       //throws when versions of carts are not the same
       await this.pullCart();
       this.cart = (await EcommerceClient.addProductToCart(this.cart.id, update)).body;
+    } finally {
+      this.state.setValue(
+        StateKeys.CartItemIds,
+        this.cart.lineItems.map((item) => item.productId),
+      );
     }
   }
 
