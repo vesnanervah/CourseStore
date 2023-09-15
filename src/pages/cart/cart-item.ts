@@ -1,6 +1,10 @@
+import { ProductCard } from '../../features/products';
 import { BaseView } from '../../features/ui';
 import { LineItem } from '@commercetools/platform-sdk';
 import './cart-item.scss';
+import deleteIcon from './../../assets/delete.png';
+import { routes } from '../../routes';
+import { Image } from '@commercetools/platform-sdk';
 
 export default class CartItem extends BaseView {
   private countMinusBtn: HTMLButtonElement;
@@ -8,11 +12,11 @@ export default class CartItem extends BaseView {
   private countDisplay: HTMLSpanElement;
   private priceDisplay: HTMLDivElement;
   private deleteBtn: HTMLButtonElement;
-  //private card: ProductCard;
+  private card: ProductCard;
 
   constructor(item: LineItem) {
     super();
-    //this.card = this.createCard(item);
+    this.card = this.createCard(item);
     this.htmlElement = document.createElement('div');
     const btnsWrapper = document.createElement('div');
     const countBnts = document.createElement('div');
@@ -33,8 +37,9 @@ export default class CartItem extends BaseView {
     this.priceDisplay.className = 'item__price-display';
     this.deleteBtn.className = 'item__delete';
     btnsWrapper.append(countBnts, this.priceDisplay, this.deleteBtn);
-    this.htmlElement.append(btnsWrapper);
+    this.htmlElement.append(this.card.getHtmlElement(), btnsWrapper);
     this.setValues(item);
+    this.deleteBtn.style.backgroundImage = `url(${deleteIcon})`;
   }
 
   private setValues(item: LineItem) {
@@ -44,14 +49,17 @@ export default class CartItem extends BaseView {
     } USD`;
   }
 
-  /*private createCard(item: LineItem): ProductCard {
+  private createCard(item: LineItem): ProductCard {
     return new ProductCard({
-      image: item.variant.images[0].url,
+      image: (item.variant.images as Image[])[0].url,
       id: item.productId,
       name: item.name.ru as string,
-      type: item.productType,
       url: routes.product(item.productId),
-      price: item.price,
-    } as Product);
-  }*/
+      price: {
+        defaultValue: item.price.value.centAmount / (10 * item.price.value.fractionDigits),
+        currency: 'USD',
+      },
+      type: 'Course',
+    });
+  }
 }
