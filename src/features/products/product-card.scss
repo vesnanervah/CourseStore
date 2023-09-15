@@ -67,6 +67,11 @@
   object-position: top;
 }
 
+.product-card__actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 .product-card__btn {
   @media (max-width: vars.$bp-down-sm) {
     width: 100%;

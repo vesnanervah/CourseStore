@@ -5,10 +5,8 @@ import { AppRouter } from '../../router';
 import { SideNavToggle } from './components/side-nav-toggle';
 import { SearchField } from './components/search-field';
 import { NavCategories } from './components/nav-categories';
+import { CartButton } from './components/cart-button';
 import { Wrapper } from '../wrapper/wrapper';
-import { IconButton } from '../icon-button';
-import { Icon } from '../icon';
-import cartIcon from '../../../assets/images/icons/cart.svg';
 import LogoutBtn from '../logout-btn/logout-btn';
 import Auth from '../../auth/auth';
 import ProfileBtn from '../profile-btn/profile-btn';
@@ -84,18 +82,14 @@ export class AppHeaderView extends BaseView {
   }
 
   private createCartButton(): HTMLElement {
-    // TODO: add cart items counter
-    const icon = new Icon({ id: cartIcon.id, viewBox: cartIcon.viewBox });
-    // TODO: replace with anchor element
-    const button = new IconButton({ icon: icon.getHtmlElement() });
-    const buttonElement = button.getHtmlElement();
-    buttonElement.classList.add('app-header__cart-btn');
+    const button = new CartButton().getHtmlElement();
+    button.classList.add('app-header__cart-btn');
 
-    buttonElement.addEventListener('click', () => {
+    button.addEventListener('click', () => {
       this.router.navigate(routes.cart());
     });
 
-    return buttonElement;
+    return button;
   }
 
   private createProfileButton(): HTMLElement {
