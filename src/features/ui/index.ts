@@ -1,6 +1,7 @@
 export * from './app-header';
 export * from './base-view';
 export * from './button';
+export * from './divider';
 export * from './icon';
 export * from './icon-button';
 export * from './select-field';

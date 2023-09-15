@@ -7,6 +7,7 @@ import { routes } from '../../../routes';
 import closeIcon from '../../../assets/images/icons/close.svg';
 
 import { StateKeys, SideNavStatus, ProductCategory } from '../../../types';
+import { Divider } from '../divider';
 
 type NavItem = {
   id: string;
@@ -218,9 +219,8 @@ export class SideNav extends BaseView<HTMLElement> {
   }
 
   private static createDivider(): HTMLElement {
-    const divider = document.createElement('hr');
-    divider.classList.add('divider');
+    const divider = new Divider();
 
-    return divider;
+    return divider.getHtmlElement();
   }
 }
