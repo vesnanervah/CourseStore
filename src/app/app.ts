@@ -10,6 +10,7 @@ import {
   ProductPage,
   ProductTypePage,
   CategoryPage,
+  AboutUsPage,
   NotFoundPage,
 } from '../pages';
 import Auth from '../features/auth/auth';
@@ -37,6 +38,7 @@ export class App {
         { location: routes.product(':id'), callback: this.renderProductPage.bind(this) },
         { location: routes.productType(':id'), callback: this.renderProductTypePage.bind(this) },
         { location: routes.category(':id'), callback: this.renderCategoryPage.bind(this) },
+        { location: routes.about(), callback: this.renderAboutPage.bind(this) },
       ],
       {
         callback: this.renderNotFoundPage.bind(this),
@@ -114,6 +116,13 @@ export class App {
       return;
     }
     const page = new CategoryPage({ categoryId: params.id });
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderAboutPage(): void {
+    this.appContainer.innerHTML = '';
+
+    const page = new AboutUsPage();
     this.appContainer.append(page.getHtmlElement());
   }
 
