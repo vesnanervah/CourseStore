@@ -1,8 +1,11 @@
 import EcommerceClient from '../commerce/BuildClient';
 import BaseView from '../ui/base-view/base-view';
 import { Cart, MyCartUpdate, MyCartAddLineItemAction } from '@commercetools/platform-sdk';
+import { State } from '../../state';
+import { StateKeys } from '../../types';
 
 export default class CartModel extends BaseView {
+  private static state: State = State.getInstance();
   private static cart: Cart;
   private static loadStatus = false;
   private static loadTimer: NodeJS.Timer;
@@ -17,6 +20,10 @@ export default class CartModel extends BaseView {
     } catch {
       this.cart = (await EcommerceClient.createCart([])).body;
     } finally {
+      this.state.setValue(
+        StateKeys.CartItemIds,
+        this.cart.lineItems.map((item) => item.productId),
+      );
       this.loadStatus = true;
     }
   }
@@ -43,6 +50,10 @@ export default class CartModel extends BaseView {
       await this.pullCart();
       this.cart = (await EcommerceClient.addProductToCart(this.cart.id, update)).body;
     } finally {
+      this.state.setValue(
+        StateKeys.CartItemIds,
+        this.cart.lineItems.map((item) => item.productId),
+      );
       this.loadStatus = true;
     }
   }
