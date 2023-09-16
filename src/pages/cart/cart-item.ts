@@ -5,6 +5,7 @@ import './cart-item.scss';
 import deleteIcon from './../../assets/delete.png';
 import { routes } from '../../routes';
 import { Image } from '@commercetools/platform-sdk';
+import CartModel from '../../features/cart/cart-model';
 
 export default class CartItem extends BaseView {
   private countMinusBtn: HTMLButtonElement;
@@ -40,6 +41,7 @@ export default class CartItem extends BaseView {
     this.htmlElement.append(this.card.getHtmlElement(), btnsWrapper);
     this.setValues(item);
     this.deleteBtn.style.backgroundImage = `url(${deleteIcon})`;
+    this.deleteBtn.addEventListener('click', () => CartModel.removeItemByLineId(item.id));
   }
 
   private setValues(item: LineItem) {
