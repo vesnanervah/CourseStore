@@ -1,4 +1,6 @@
 import { BaseView } from '../../features/ui';
+import { AppRouter } from '../../features/router';
+import { routes } from '../../routes';
 
 export default class EmptyBlock extends BaseView {
   private btn: HTMLButtonElement;
@@ -17,6 +19,7 @@ export default class EmptyBlock extends BaseView {
     text.className = 'cart__emptytext';
     this.btn.className = 'cart__accent-btn';
     this.htmlElement.append(header, text, this.btn);
+    this.btn.addEventListener('click', () => this.handleBackClick());
   }
 
   public appear(): void {
@@ -29,5 +32,9 @@ export default class EmptyBlock extends BaseView {
 
   public setBtnListener(f: () => void): void {
     this.btn.onclick = f;
+  }
+
+  private handleBackClick() {
+    AppRouter.getInstance().navigate(routes.catalog());
   }
 }

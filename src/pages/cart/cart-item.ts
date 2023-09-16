@@ -5,17 +5,22 @@ import './cart-item.scss';
 import deleteIcon from './../../assets/delete.png';
 import { routes } from '../../routes';
 import { Image } from '@commercetools/platform-sdk';
+import CartModel from '../../features/cart/cart-model';
 
 export default class CartItem extends BaseView {
+  private lineItemId: string;
   private countMinusBtn: HTMLButtonElement;
   private countPlusBtn: HTMLButtonElement;
   private countDisplay: HTMLSpanElement;
   private priceDisplay: HTMLDivElement;
   private deleteBtn: HTMLButtonElement;
   private card: ProductCard;
+  private price = 0;
+  private quantity = 0;
 
   constructor(item: LineItem) {
     super();
+    this.lineItemId = item.id;
     this.card = this.createCard(item);
     this.htmlElement = document.createElement('div');
     const btnsWrapper = document.createElement('div');
@@ -39,14 +44,25 @@ export default class CartItem extends BaseView {
     btnsWrapper.append(countBnts, this.priceDisplay, this.deleteBtn);
     this.htmlElement.append(this.card.getHtmlElement(), btnsWrapper);
     this.setValues(item);
+    this.setDisplays();
     this.deleteBtn.style.backgroundImage = `url(${deleteIcon})`;
+    this.deleteBtn.addEventListener('click', () => CartModel.removeItemByLineId(item.id));
+    this.countMinusBtn.addEventListener('click', () => this.handleMinusClick());
+    this.countPlusBtn.addEventListener('click', () => this.handlePlusClick());
   }
 
   private setValues(item: LineItem) {
-    this.countDisplay.textContent = `${item.quantity}`;
-    this.priceDisplay.textContent = `${
-      item.totalPrice.centAmount / (10 * item.totalPrice.fractionDigits)
-    } USD`;
+    if (item.price.discounted) {
+      this.price = item.price.discounted.value.centAmount / 100;
+    } else {
+      this.price = item.price.value.centAmount / 100;
+    }
+    this.quantity = item.quantity;
+  }
+
+  private setDisplays() {
+    this.priceDisplay.textContent = `${this.price * this.quantity} USD`;
+    this.countDisplay.textContent = `${this.quantity}`;
   }
 
   private createCard(item: LineItem): ProductCard {
@@ -56,10 +72,31 @@ export default class CartItem extends BaseView {
       name: item.name.ru as string,
       url: routes.product(item.productId),
       price: {
-        defaultValue: item.price.value.centAmount / (10 * item.price.value.fractionDigits),
+        defaultValue: item.price.value.centAmount / 100,
         currency: 'USD',
+        discountedValue: item.price.discounted ? item.price.discounted.value.centAmount / 100 : 0,
       },
       type: 'Course',
     });
+  }
+
+  private async handleMinusClick() {
+    this.quantity -= 1;
+    if (this.quantity <= 0) {
+      await CartModel.removeItemByLineId(this.lineItemId);
+    } else {
+      await CartModel.changeItemQuantity(this.lineItemId, this.quantity, false);
+      this.setDisplays();
+    }
+  }
+
+  private async handlePlusClick() {
+    this.quantity += 1;
+    if (this.quantity <= 0) {
+      await CartModel.removeItemByLineId(this.lineItemId);
+    } else {
+      await CartModel.changeItemQuantity(this.lineItemId, this.quantity, false);
+      this.setDisplays();
+    }
   }
 }
