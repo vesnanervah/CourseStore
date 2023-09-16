@@ -62,6 +62,7 @@
 
 .product-card__image {
   max-width: 110px;
+  min-width: 1.5rem;
   width: 100%;
   object-fit: contain;
   object-position: top;

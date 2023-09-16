@@ -5,3 +5,13 @@
     fill: currentColor;
   }
 }
+
+.icon--chevron {
+  display: inline-block;
+  transform: translateY(-5px) rotateZ(-45deg);
+  width: 0.625rem;
+  height: 0.625rem;
+  border-left: 3px solid var(--color-text-secondary);
+  border-bottom: 3px solid var(--color-text-secondary);
+  transition: transform 0.15s ease-in-out;
+}

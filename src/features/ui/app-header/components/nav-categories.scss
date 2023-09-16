@@ -6,6 +6,8 @@
   }
 
   @media (min-width: vars.$bp-up-md) {
+    position: relative;
+    z-index: 20;
     padding: 1rem 0;
     background-color: var(--color-white);
     color: var(--color-text-primary);
@@ -17,13 +19,45 @@
 .nav-categories__wrapper {
   display: flex;
   align-items: center;
+  gap: 1.25rem;
 }
 
-// TODO: handle desktop overflow
 .nav-categories__list {
-  display: flex;
-  gap: 1.25rem;
-  flex-wrap: wrap;
+  @media (max-width: vars.$bp-down-md) {
+    display: none;
+  }
+
+  @media (min-width: vars.$bp-up-md) {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 100%;
+    z-index: 10;
+    transform: translateY(-100%);
+    width: 100%;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    border-top: 1px solid var(--color-bg-secondary);
+    color: #000;
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-primary);
+    opacity: 0;
+    transition:
+      transform 0.3s ease-in-out,
+      opacity 0.3s ease-in-out;
+
+    &--show {
+      transform: translateY(0%);
+      opacity: 1;
+    }
+  }
+}
+
+.nav-categories__toggle {
+  &--show .icon {
+    transform: translateY(2px) rotate(135deg);
+  }
 }
 
 .app-logo {

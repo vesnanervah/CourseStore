@@ -88,7 +88,7 @@
   text-transform: uppercase;
 }
 
-.btn__icon {
+:where(.btn__icon) {
   width: 1.25rem;
   height: 1.25rem;
 }

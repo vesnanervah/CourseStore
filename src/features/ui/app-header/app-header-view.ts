@@ -27,6 +27,7 @@ export class AppHeaderView extends BaseView {
     header.classList.add('app-header');
 
     const wrapper = new Wrapper().getHtmlElement();
+    wrapper.classList.add('app-header__wrapper');
     header.append(wrapper);
 
     const content = this.createAppHeaderContent();
