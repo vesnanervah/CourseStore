@@ -36,4 +36,8 @@ export default class PriceBlock extends BaseView {
   public setBtnListener(f: () => void): void {
     this.btn.onclick = f;
   }
+
+  public setTotalPrice(price: number) {
+    this.totalCostDispl.textContent = `Итоговая цена: ${price}USD`;
+  }
 }

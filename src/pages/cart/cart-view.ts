@@ -19,6 +19,7 @@ export default class CartView extends BaseView<HTMLElement> implements CartSubsc
     if (cart) {
       this.itemsBlock.drawItems();
       this.setViewMod(cart.lineItems.length);
+      this.priceBlock.setTotalPrice(CartModel.getCart().totalPrice.centAmount / 100);
     } else {
       this.setViewMod(0); //Cart не инициализированна, следовательно айтемов внутри пока что нет, то есть 0
     }
@@ -37,6 +38,7 @@ export default class CartView extends BaseView<HTMLElement> implements CartSubsc
 
   public listenUpdate(): void {
     this.setViewMod(CartModel.getCart().lineItems.length);
+    this.priceBlock.setTotalPrice(CartModel.getCart().totalPrice.centAmount / 100);
   }
 
   private setViewMod(count: number) {

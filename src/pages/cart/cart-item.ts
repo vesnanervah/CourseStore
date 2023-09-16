@@ -85,7 +85,7 @@ export default class CartItem extends BaseView {
     if (this.quantity <= 0) {
       await CartModel.removeItemByLineId(this.lineItemId);
     } else {
-      await CartModel.changeItemQuantity(this.lineItemId, this.quantity, false);
+      await CartModel.changeItemQuantity(this.lineItemId, this.quantity);
       this.setDisplays();
     }
   }
@@ -95,7 +95,7 @@ export default class CartItem extends BaseView {
     if (this.quantity <= 0) {
       await CartModel.removeItemByLineId(this.lineItemId);
     } else {
-      await CartModel.changeItemQuantity(this.lineItemId, this.quantity, false);
+      await CartModel.changeItemQuantity(this.lineItemId, this.quantity);
       this.setDisplays();
     }
   }
