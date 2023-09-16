@@ -5,6 +5,7 @@ import {
   MyCartUpdate,
   MyCartAddLineItemAction,
   MyCartRemoveLineItemAction,
+  MyCartChangeLineItemQuantityAction,
 } from '@commercetools/platform-sdk';
 import { State } from '../../state';
 import { StateKeys } from '../../types';
@@ -135,7 +136,7 @@ export default class CartModel extends BaseView {
     await this.pushUpdate(update);
   }
 
-  private static async pushUpdate(update: MyCartUpdate) {
+  private static async pushUpdate(update: MyCartUpdate, notify = true) {
     try {
       this.cart = (await EcommerceClient.updateCart(this.cart.id, update)).body;
     } catch {
@@ -148,7 +149,20 @@ export default class CartModel extends BaseView {
         this.cart.lineItems.map((item) => item.productId),
       );
       this.loadStatus = true;
-      this.notifySubs();
+      if (notify) this.notifySubs();
     }
+  }
+
+  public static async changeItemQuantity(lineItemId: string, quantity: number, notify = true) {
+    const action: MyCartChangeLineItemQuantityAction = {
+      action: 'changeLineItemQuantity',
+      lineItemId,
+      quantity,
+    };
+    const update: MyCartUpdate = {
+      version: this.cart.version,
+      actions: [action],
+    };
+    await this.pushUpdate(update, notify);
   }
 }
