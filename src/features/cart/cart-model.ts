@@ -1,6 +1,11 @@
 import EcommerceClient from '../commerce/BuildClient';
 import BaseView from '../ui/base-view/base-view';
-import { Cart, MyCartUpdate, MyCartAddLineItemAction } from '@commercetools/platform-sdk';
+import {
+  Cart,
+  MyCartUpdate,
+  MyCartAddLineItemAction,
+  MyCartRemoveLineItemAction,
+} from '@commercetools/platform-sdk';
 import { State } from '../../state';
 import { StateKeys } from '../../types';
 import { CartSubscriber } from '../../types/cart-sub';
@@ -35,31 +40,19 @@ export default class CartModel extends BaseView {
     return this.cart;
   }
 
-  public static async addProduct(productID: string) {
+  public static async addProduct(productID: string, quantity = 1) {
     this.loadStatus = false;
     const action: MyCartAddLineItemAction = {
       action: 'addLineItem',
       productId: productID,
       variantId: 1,
+      quantity,
     };
     const update: MyCartUpdate = {
       version: this.cart.version,
       actions: [action],
     };
-    try {
-      this.cart = (await EcommerceClient.addProductToCart(this.cart.id, update)).body;
-    } catch {
-      //throws when versions of carts are not the same
-      await this.pullCart();
-      this.cart = (await EcommerceClient.addProductToCart(this.cart.id, update)).body;
-    } finally {
-      this.state.setValue(
-        StateKeys.CartItemIds,
-        this.cart.lineItems.map((item) => item.productId),
-      );
-      this.loadStatus = true;
-      this.notifySubs();
-    }
+    await this.pushUpdate(update);
   }
 
   public static async pullCart() {
@@ -110,5 +103,52 @@ export default class CartModel extends BaseView {
 
   private static notifySubs(): void {
     this.subscribers.forEach((sub) => sub.listenUpdate());
+  }
+
+  public static async removeItemByLineId(lineItemId: string, quantity?: number) {
+    this.loadStatus = false;
+    const action: MyCartRemoveLineItemAction = {
+      action: 'removeLineItem',
+      lineItemId,
+      quantity,
+    };
+    const update: MyCartUpdate = {
+      version: this.cart.version,
+      actions: [action],
+    };
+    await this.pushUpdate(update);
+  }
+
+  public static async removeItemsFromCart() {
+    const actions: MyCartRemoveLineItemAction[] = [];
+    this.cart.lineItems.forEach((item) => {
+      const cartAction: MyCartRemoveLineItemAction = {
+        action: 'removeLineItem',
+        lineItemId: item.id,
+      };
+      actions.push(cartAction);
+    });
+    const update: MyCartUpdate = {
+      version: this.cart.version,
+      actions: actions,
+    };
+    await this.pushUpdate(update);
+  }
+
+  private static async pushUpdate(update: MyCartUpdate) {
+    try {
+      this.cart = (await EcommerceClient.updateCart(this.cart.id, update)).body;
+    } catch {
+      //throws when versions of carts are not the same
+      await this.pullCart();
+      this.cart = (await EcommerceClient.updateCart(this.cart.id, update)).body;
+    } finally {
+      this.state.setValue(
+        StateKeys.CartItemIds,
+        this.cart.lineItems.map((item) => item.productId),
+      );
+      this.loadStatus = true;
+      this.notifySubs();
+    }
   }
 }

@@ -22,7 +22,7 @@ export default class ItemsBlock extends BaseView implements CartSubscriber {
     this.clearBtn.textContent = 'очистить';
     this.itemsContainer.className = 'cart__items';
     this.htmlElement.append(header, this.clearBtn, this.itemsContainer);
-    this.clearBtn.addEventListener('click', () => this.clearItems());
+    this.clearBtn.addEventListener('click', () => CartModel.removeItemsFromCart());
     CartModel.subscribeToChanges(this);
     this.cart = CartModel.getCart();
   }

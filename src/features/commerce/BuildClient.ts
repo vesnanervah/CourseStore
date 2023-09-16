@@ -371,7 +371,7 @@ export default class EcommerceClient {
       .execute();
   }
 
-  public static async addProductToCart(cartId: string, update: MyCartUpdate) {
+  public static async updateCart(cartId: string, update: MyCartUpdate) {
     return this.apiRoot
       .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
       .me()
