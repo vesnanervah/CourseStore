@@ -7,7 +7,7 @@
 
   @media (min-width: vars.$bp-up-md) {
     position: relative;
-    z-index: 20;
+    z-index: 6;
     padding: 1rem 0;
     background-color: var(--color-white);
     color: var(--color-text-primary);
@@ -33,7 +33,7 @@
     flex-wrap: wrap;
     position: absolute;
     top: 100%;
-    z-index: 10;
+    z-index: 5;
     transform: translateY(-100%);
     width: 100%;
     padding-top: 2rem;
