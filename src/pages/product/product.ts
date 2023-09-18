@@ -22,8 +22,10 @@ import { Button } from '../../features/ui';
 import CartModel from '../../features/cart/cart-model';
 import { routes } from '../../routes';
 import { AppRouter } from '../../features/router';
+import ProductPageLoad from '../../features/ui/product-page-load/product-page-load';
 
 export default class ProductView extends BaseView {
+  private content = document.createElement('div');
   private productTitle = new ProductTitle();
   private productPrice = new ProductPrice();
   private productSlider = new ProductSlider();
@@ -32,7 +34,7 @@ export default class ProductView extends BaseView {
   private productIncludes = new ProductIncludes();
   private productRoadmap = new ProductRoadmap();
   private buyBtn = new Button({ text: 'Приобрести' });
-
+  private pageLoad = new ProductPageLoad();
   constructor() {
     super();
     this.createView();
@@ -40,7 +42,6 @@ export default class ProductView extends BaseView {
 
   private createView() {
     const wrapper = document.createElement('div');
-    const content = document.createElement('div');
     const productHead = document.createElement('div');
     const productMiddle = document.createElement('div');
     const productBottom = document.createElement('div');
@@ -61,35 +62,42 @@ export default class ProductView extends BaseView {
     productMiddle.className = 'product__middle';
     productBottom.appendChild(this.buyBtn.getHtmlElement());
     productBottom.className = 'product__bottom';
-    content.append(productHead, productMiddle, productBottom);
-    content.className = 'product__content';
-    wrapper.appendChild(content);
+    this.content.append(productHead, productMiddle, productBottom);
+    this.content.className = 'product__content';
+    this.pageLoad.hide();
+    wrapper.append(this.content, this.pageLoad.getHtmlElement());
     wrapper.className = 'product__wrapper';
     this.htmlElement = wrapper;
   }
 
   public async updateProductPage(ID: string) {
-    const newData = await EcommerceClient.getProductById(ID);
-    // TODO: refactor
-    const [rawPrice] = newData.body.masterData.current.masterVariant.prices || [];
-    const price: Price = { currency: '', defaultValue: 0, discountedValue: 0 };
-    if (rawPrice) {
-      price.currency = rawPrice.value.currencyCode === 'USD' ? '$' : '₽';
-      price.defaultValue = rawPrice.value.centAmount / 100;
-      price.discountedValue = (rawPrice.discounted?.value.centAmount || 0) / 100;
-    }
-    this.productPrice.setPrice(price);
-    const attributes = this.defineAttributes(
-      newData.body.masterData.current.masterVariant.attributes as Attributes,
-    );
-    this.productTitle.setTitle(newData.body.masterData.current.name as ProductName);
-    this.productCategories.setCategories(newData.body.masterData.current.categories);
-    this.productSlider.setImages(newData.body.masterData.current.masterVariant.images as Images);
-    this.checkCartRelation(ID);
-    if ((attributes as AttributesCourse)['Course-Name']) {
-      this.setCourseAttributes(attributes as AttributesCourse);
-    } else {
-      this.setProfessionAttributes(attributes as AttributesProfession);
+    this.startLoad();
+    try {
+      const newData = await EcommerceClient.getProductById(ID);
+      // TODO: refactor
+      const [rawPrice] = newData.body.masterData.current.masterVariant.prices || [];
+      const price: Price = { currency: '', defaultValue: 0, discountedValue: 0 };
+      if (rawPrice) {
+        price.currency = rawPrice.value.currencyCode === 'USD' ? '$' : '₽';
+        price.defaultValue = rawPrice.value.centAmount / 100;
+        price.discountedValue = (rawPrice.discounted?.value.centAmount || 0) / 100;
+      }
+      this.productPrice.setPrice(price);
+      const attributes = this.defineAttributes(
+        newData.body.masterData.current.masterVariant.attributes as Attributes,
+      );
+      this.productTitle.setTitle(newData.body.masterData.current.name as ProductName);
+      this.productCategories.setCategories(newData.body.masterData.current.categories);
+      this.productSlider.setImages(newData.body.masterData.current.masterVariant.images as Images);
+      this.checkCartRelation(ID);
+      if ((attributes as AttributesCourse)['Course-Name']) {
+        this.setCourseAttributes(attributes as AttributesCourse);
+      } else {
+        this.setProfessionAttributes(attributes as AttributesProfession);
+      }
+      this.finishLoad();
+    } catch {
+      this.failLoad();
     }
   }
 
@@ -152,5 +160,20 @@ export default class ProductView extends BaseView {
       this.blockBtn();
     };
     this.buyBtn.getHtmlElement().classList.remove('disabled');
+  }
+
+  private async startLoad() {
+    this.pageLoad.startLoad();
+    this.pageLoad.reveal();
+    this.content.classList.add('hidden');
+  }
+
+  private async finishLoad() {
+    this.pageLoad.hide();
+    this.content.classList.remove('hidden');
+  }
+
+  private async failLoad() {
+    this.pageLoad.failLoad();
   }
 }
