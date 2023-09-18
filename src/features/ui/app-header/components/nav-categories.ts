@@ -4,7 +4,6 @@ import { Wrapper } from '../../wrapper';
 import { State } from '../../../../state';
 import { routes } from '../../../../routes';
 import { AppRouter } from '../../../router';
-
 import { ProductCategory, StateKeys } from '../../../../types';
 import { Button } from '../../button';
 import { Divider } from '../../divider';

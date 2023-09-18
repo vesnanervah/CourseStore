@@ -60,7 +60,6 @@ export class SearchField extends BaseView<HTMLElement> {
 
   private async searchQuery(query: string) {
     const prods = await EcommerceClient.getProductByQuery(5, query);
-    console.log(prods);
     this.searchResults.setContent(prods);
     (this.searchResults.getHtmlElement() as HTMLElement).style.top = `${
       (this.htmlElement as HTMLElement).getBoundingClientRect().y + 40
