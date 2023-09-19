@@ -22,7 +22,7 @@ import { Button } from '../../features/ui';
 import CartModel from '../../features/cart/cart-model';
 import { routes } from '../../routes';
 import { AppRouter } from '../../features/router';
-import ProductPageLoad from '../../features/ui/product-page-load/product-page-load';
+import PageLoad from '../../features/ui/page-load/page-load';
 
 export default class ProductView extends BaseView {
   private content = document.createElement('div');
@@ -34,7 +34,7 @@ export default class ProductView extends BaseView {
   private productIncludes = new ProductIncludes();
   private productRoadmap = new ProductRoadmap();
   private buyBtn = new Button({ text: 'Приобрести' });
-  private pageLoad = new ProductPageLoad();
+  private pageLoad = new PageLoad();
   constructor() {
     super();
     this.createView();
