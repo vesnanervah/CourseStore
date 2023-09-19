@@ -1,7 +1,7 @@
 import { BaseView } from '../base-view';
-import './product-page-load.scss';
+import './page-load.scss';
 
-export default class ProductPageLoad extends BaseView<HTMLElement> {
+export default class PageLoad extends BaseView<HTMLElement> {
   constructor() {
     super();
     this.htmlElement = this.createElement();
