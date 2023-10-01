@@ -4,9 +4,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  .hidden {
-    display: none;
-  }
   .product__content {
     background-color: white;
     display: flex;
@@ -33,5 +30,8 @@
   .product__bottom {
     display: flex;
     justify-content: center;
+  }
+  .hidden {
+    display: none;
   }
 }

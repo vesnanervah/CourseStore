@@ -3,10 +3,11 @@ import fetch from 'node-fetch';
 import {
   createApiBuilderFromCtpClient,
   ApiRoot,
-  Category,
   MyCustomerUpdate,
   MyCustomerChangePassword,
   _BaseAddress,
+  MyCartUpdate,
+  LineItem,
 } from '@commercetools/platform-sdk';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { getProductsResource } from './products-resource';
@@ -336,5 +337,70 @@ export default class EcommerceClient {
         .get({ queryArgs: { limit, 'text.ru': query } })
         .execute()
     ).body.results;
+  }
+
+  public static async createCart(products: LineItem[]) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .carts()
+      .post({
+        body: {
+          currency: 'USD',
+          lineItems: products,
+        },
+      })
+      .execute();
+  }
+
+  public static async getCarts() {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .carts()
+      .get()
+      .execute();
+  }
+
+  public static async getRecentCart() {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .activeCart()
+      .get()
+      .execute();
+  }
+
+  public static async updateCart(cartId: string, update: MyCartUpdate) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .post({ body: update })
+      .execute();
+  }
+
+  public static async getCartById(cartId: string) {
+    return this.apiRoot
+      .withProjectKey({ projectKey: CUSTOMER_API_CREDS.project_key })
+      .me()
+      .carts()
+      .withId({ ID: cartId })
+      .get()
+      .execute();
+  }
+
+  public static async anonRootPrepare() {
+    const builder = this.clientBuilder
+      .withAnonymousSessionFlow({
+        host: this.authOptions.host,
+        projectKey: this.authOptions.projectKey,
+        credentials: this.authOptions.credentials,
+      })
+      .withHttpMiddleware(this.httpMiddlewareOptions)
+      .withLoggerMiddleware()
+      .build();
+    this.apiRoot = createApiBuilderFromCtpClient(builder);
   }
 }

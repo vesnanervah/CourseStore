@@ -5,6 +5,12 @@ $gap: 1.25rem;
 $btn-size: 1.5rem;
 
 .app-header {
+  position: relative;
+}
+
+.app-header__wrapper {
+  position: relative;
+  z-index: 20;
   color: var(--color-button-text);
   background-color: var(--color-dark);
 }

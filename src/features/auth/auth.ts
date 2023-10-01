@@ -1,6 +1,7 @@
 import EcommerceClient from '../commerce/BuildClient';
 import { CUSTOMER_API_CREDS } from '../../constants/customer-api-creds';
 import { AuthToken, LocaleData, AuthListener, InvalidTokenResp } from '../../types/auth';
+import CartModel from '../cart/cart-model';
 
 const LS_AUTH_TOKEN_KEY = 'coursestore_token';
 
@@ -15,11 +16,18 @@ export default class Auth {
   public static async init() {
     const storageData = Auth.getDataFromStorage();
     if (storageData.token) {
-      Auth.isLoggedIn = true;
-      Auth.notifyLogin();
+      try {
+        EcommerceClient.tokenRootPrepare();
+        await EcommerceClient.getCustomer(); //check if saved token is valid
+        Auth.isLoggedIn = true;
+        Auth.notifyLogin();
+      } catch {
+        Auth.loggout();
+      }
     } else {
       Auth.loggout();
     }
+    await CartModel.init();
   }
 
   public static async loggin(email: string, password: string): Promise<AuthToken> {
@@ -35,6 +43,7 @@ export default class Auth {
       Auth.accessToken = token.access_token;
       Auth.notifyLogin();
       Auth.isLoggedIn = true;
+      CartModel.reuseCart();
       return token;
     } catch {
       Auth.loggout();
@@ -42,12 +51,12 @@ export default class Auth {
     }
   }
 
-  public static loggout(): void {
+  public static async loggout() {
+    EcommerceClient.anonRootPrepare();
     window.localStorage.removeItem(LS_AUTH_TOKEN_KEY);
     Auth.isLoggedIn = false;
     Auth.accessToken = null;
     Auth.notifyLogout();
-    EcommerceClient.stockRootPrepare();
   }
 
   public static checkLogin(): boolean {

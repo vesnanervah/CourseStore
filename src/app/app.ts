@@ -1,6 +1,7 @@
 import './app.scss';
 import { routes } from '../routes';
 import { AppRouter, type UrlParams } from '../features/router';
+import { CartPage } from '../pages/cart/cart-page';
 import {
   MainPage,
   LoginPage,
@@ -10,6 +11,7 @@ import {
   ProductPage,
   ProductTypePage,
   CategoryPage,
+  AboutUsPage,
   NotFoundPage,
 } from '../pages';
 import Auth from '../features/auth/auth';
@@ -37,6 +39,8 @@ export class App {
         { location: routes.product(':id'), callback: this.renderProductPage.bind(this) },
         { location: routes.productType(':id'), callback: this.renderProductTypePage.bind(this) },
         { location: routes.category(':id'), callback: this.renderCategoryPage.bind(this) },
+        { location: routes.about(), callback: this.renderAboutPage.bind(this) },
+        { location: routes.cart(), callback: this.renderCartPage.bind(this) },
       ],
       {
         callback: this.renderNotFoundPage.bind(this),
@@ -117,10 +121,23 @@ export class App {
     this.appContainer.append(page.getHtmlElement());
   }
 
+  private renderAboutPage(): void {
+    this.appContainer.innerHTML = '';
+
+    const page = new AboutUsPage();
+    this.appContainer.append(page.getHtmlElement());
+  }
+
   private renderNotFoundPage(): void {
     this.appContainer.innerHTML = '';
 
     const page = new NotFoundPage();
+    this.appContainer.append(page.getHtmlElement());
+  }
+
+  private renderCartPage(): void {
+    this.appContainer.innerHTML = '';
+    const page = new CartPage();
     this.appContainer.append(page.getHtmlElement());
   }
 }

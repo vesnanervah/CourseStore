@@ -1,7 +1,6 @@
 @use '../../../style/abstracts/constants' as vars;
 
-.wrapper {
-  max-width: vars.$content-width;
+:where(.wrapper) {
   margin: 0 auto;
   padding: 0 20px;
 }

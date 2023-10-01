@@ -1,0 +1,80 @@
+//delete
+body {
+  flex-direction: column;
+}
+//
+.about_us__block {
+  padding: 50px;
+  h2 {
+    color: #45a173;
+    font-size: 32px;
+    font-weight: 800;
+    font-family: Roboto, sans-serif;
+  }
+  p {
+    color: #1e1e1e;
+    font-size: 20px;
+    font-weight: 400;
+    font-family: Inter, sans-serif;
+    text-align: justify;
+  }
+  .span__about_us {
+    color: #068747;
+    padding-left: 5px;
+  }
+  .about_us__title,
+  .about_us__middle,
+  .developer {
+    background-color: white;
+    padding: 25px;
+    border-radius: 2.5rem;
+  }
+}
+.block__members {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 50px;
+  .developer {
+    width: 350px;
+    margin-right: 50px;
+    margin-top: 15px;
+
+    li {
+      color: #1e1e1e;
+      font-size: 20px;
+      font-weight: 400;
+      font-family: Inter, sans-serif;
+      padding-top: 5px;
+    }
+    .about__us_github {
+      width: 45px;
+      padding-left: 10px;
+    }
+    .title__text_about_us {
+      text-align: center;
+    }
+    .about_us__photo {
+      height: 250px;
+      width: 250px;
+      border-radius: 50%;
+      background-color: #45a173;
+      margin: auto;
+    }
+  }
+}
+.about__us_rsschool-logo {
+  width: 70px;
+  padding-left: 15px;
+}
+.about_us__block .developer:nth-child(2) div:nth-child(1) {
+  background: url(../../assets/me.jpg) 40%/115% no-repeat;
+}
+
+.about_us__block .developer:nth-child(1) div:nth-child(1) {
+  background: url(../../assets/kerik.jpg) 50%/100% no-repeat;
+}
+
+.about_us__block .developer:nth-child(3) div:nth-child(1) {
+  background: url(../../assets/ilya.jpg) 50%/100% no-repeat;
+}

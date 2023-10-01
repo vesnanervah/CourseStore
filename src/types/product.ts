@@ -4,7 +4,7 @@ import { UniqueId } from './common';
 export type ProductPrice = {
   defaultValue: number;
   currency: string;
-  discountedValue: number;
+  discountedValue?: number;
 };
 
 export type ProductType = ApiProductType;
